@@ -29,6 +29,7 @@ type Policier = {
     grade?: string;
     unite?: string;
     uniteMere?: string;
+    dateNaissance: string;
 };
 
 /* ========================= PAGE ========================= */
@@ -143,15 +144,11 @@ export default function RecherchePage() {
     /* ========================= SEARCH CONTROLE IDENTITE ========================= */
 
     const handleSearchIdentiteControle = async () => {
-
         try {
-
             setControleIdentiteLoading(true);
             setControleError(null);
 
-            const formattedDate = formatToISO(
-                controleDateNaissance
-            );
+            const formattedDate = formatToISO(controleDateNaissance);
 
             const res = await searchControleByIdentite({
                 noms: controleNom.trim() || undefined,
@@ -161,27 +158,16 @@ export default function RecherchePage() {
             });
 
             if (res && res.length > 0) {
-
                 setControle(res[0]);
-
             } else {
-
                 setControle(null);
                 setControleError("Aucun contrôle trouvé");
             }
-
         } catch (err) {
-
             console.error(err);
-
             setControle(null);
-
-            setControleError(
-                "Erreur lors de la recherche"
-            );
-
+            setControleError("Erreur lors de la recherche");
         } finally {
-
             setControleIdentiteLoading(false);
         }
     };
@@ -231,46 +217,30 @@ export default function RecherchePage() {
     /* ========================= SEARCH IDENTITE ========================= */
 
     const handleSearchIdentite = async () => {
-
         try {
-
             setIdentiteLoading(true);
 
-            const formattedDate = formatToISO(
-                identiteDateNaissance
-            );
+            const formattedDate = formatToISO(identiteDateNaissance);
 
-            const res = await api.get(
-                "/policiers/identite",
-                {
-                    params: {
-                        nom: identiteNom,
-                        postnom: identitePostnom,
-                        prenom: identitePrenom,
-                        dateNaissance:
-                            formattedDate || undefined,
-                    },
-                }
-            );
+            const res = await api.get("/policiers/identite", {
+                params: {
+                    nom: identiteNom.trim() || undefined,
+                    postnom: identitePostnom.trim() || undefined,
+                    prenom: identitePrenom.trim() || undefined,
+                    dateNaissance: formattedDate || undefined,
+                },
+            });
 
             setIdentite(res.data);
-
         } catch (error: any) {
-
-            console.log(
-                "IDENTITE ERROR:",
-                error?.response?.data || error
-            );
+            console.log("IDENTITE ERROR:", error?.response?.data || error);
 
             setIdentite(null);
 
             toast.error(
-                error?.response?.data?.message ||
-                "Policier introuvable"
+                error?.response?.data?.message || "Policier introuvable"
             );
-
         } finally {
-
             setIdentiteLoading(false);
         }
     };
@@ -699,6 +669,10 @@ export default function RecherchePage() {
                                             </p>
 
                                             <p>
+                                                <b>Date Naissance :</b> {policier.dateNaissance}
+                                            </p>
+
+                                            <p>
                                                 <b>Téléphone :</b> {policier.telephone || "-"}
                                             </p>
 
@@ -910,26 +884,44 @@ export default function RecherchePage() {
                                     <div className="flex gap-4 items-start">
 
                                         {/* ================= INFOS ================= */}
+                                        {/* ================= INFOS ================= */}
                                         <div className="flex-1 space-y-2 text-sm">
 
                                             <h3 className="text-xl font-bold text-primary">
                                                 {identite.nom} {identite.postnom}
                                             </h3>
 
-                                            <p><b>Prénom :</b> {identite.prenom}</p>
-                                            <p><b>Matricule :</b> {identite.matricule}</p>
+                                            <p>
+                                                <b>Prénom :</b> {identite.prenom}
+                                            </p>
+
+                                            <p>
+                                                <b>Matricule :</b> {identite.matricule}
+                                            </p>
+
+                                            <p>
+                                                <b>Sexe :</b> {identite.sexe}
+                                            </p>
+
+                                            <p>
+                                                <b>Date Naissance :</b> {identite.dateNaissance}
+                                            </p>
+
+                                            <p>
+                                                <b>Téléphone :</b> {identite.telephone || "-"}
+                                            </p>
 
                                             <p>
                                                 <b>Grade :</b>{" "}
                                                 <span className="badge badge-primary">
-                                                    {identite.grade ?? "-"}
+                                                    {identite.grade || "-"}
                                                 </span>
                                             </p>
 
                                             <p>
                                                 <b>Unité :</b>{" "}
                                                 <span className="badge badge-secondary">
-                                                    {identite.unite ?? "-"}
+                                                    {identite.unite || "-"}
                                                 </span>
                                             </p>
 

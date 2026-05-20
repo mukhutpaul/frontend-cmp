@@ -72,6 +72,7 @@ export default function LoginPage() {
                     console.log("REMOTE OK:", syncResponse);
 
                     localStorage.setItem("username", syncResponse.username ?? "");
+                    localStorage.setItem("user", JSON.stringify(syncResponse.user));
                     localStorage.setItem("profile", syncResponse.profile ?? "");
                     localStorage.setItem("noms", syncResponse.noms ?? "");
 

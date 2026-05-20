@@ -12,6 +12,7 @@ export type Policier = {
     statut: string;
     dateNaissance:string;
     groupeSanguin:string;
+  
 };
 
 type GetPoliciersParams = {
