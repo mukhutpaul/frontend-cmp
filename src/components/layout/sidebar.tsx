@@ -48,7 +48,12 @@ export default function Sidebar({
   ]
 
   useEffect(() => {
-    setUser(localStorage.getItem("user"))
+    const storedUser = localStorage.getItem("username")
+    const storedProfile = localStorage.getItem("profile")
+
+    console.log("USER =", storedUser)
+    console.log("PROFILE =", storedProfile)
+    setUser(localStorage.getItem("username"))
     setProfile(localStorage.getItem("profile") as Role)
   }, [])
 
