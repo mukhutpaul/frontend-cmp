@@ -948,10 +948,18 @@ export default function EquipesPage() {
                                 </label>
 
                                 <Select
-                                    options={controleurs.map((u: any) => ({
-                                        value: u.id,
-                                        label: u.username,
-                                    }))}
+                                    options={controleurs
+                                        .filter(
+                                            (u: any) =>
+                                                !detailEquipeList.some(
+                                                    (d: any) => d.user?.id === u.id
+                                                )
+                                        )
+                                        .map((u: any) => ({
+                                            value: u.id,
+                                            label: u.username,
+                                        }))
+                                    }
 
                                     value={selectedControleur}
 
