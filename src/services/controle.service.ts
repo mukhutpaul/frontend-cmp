@@ -57,14 +57,14 @@ export const getControles = async () => {
 /* ========================= SEARCH BY IDENTITE ========================= */
 
 export const searchControleByIdentite = async (params: {
-    noms?: string;
+    nom?: string;
     postnom?: string;
     prenom?: string;
     dateNaissance?: string; // format attendu: yyyy-MM-dd
 }) => {
     const res = await api.get<Controle[]>("/controles/search/identite", {
         params: {
-            nom: params.noms ?? "",
+            nom: params.nom ?? "",
             postnom: params.postnom ?? "",
             prenom: params.prenom ?? "",
             dateNaissance: params.dateNaissance ?? "",

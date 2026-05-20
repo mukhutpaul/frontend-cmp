@@ -151,23 +151,51 @@ export default function RecherchePage() {
             const formattedDate = formatToISO(controleDateNaissance);
 
             const res = await searchControleByIdentite({
-                noms: controleNom.trim() || undefined,
+                nom: controleNom.trim() || undefined,
                 postnom: controlePostnom.trim() || undefined,
                 prenom: controlePrenom.trim() || undefined,
                 dateNaissance: formattedDate,
             });
 
-            if (res && res.length > 0) {
-                setControle(res[0]);
-            } else {
+            console.log("CONTROLE IDENTITE RESPONSE :", res);
+
+            // ================= CAS TABLEAU =================
+            if (Array.isArray(res)) {
+
+                if (res.length > 0) {
+
+                    setControle(res[0]);
+                    return;
+                }
+
                 setControle(null);
                 setControleError("Aucun contrôle trouvé");
+                return;
             }
-        } catch (err) {
-            console.error(err);
+
+            // ================= CAS OBJET UNIQUE =================
+            if (res && typeof res === "object") {
+
+                setControle(res);
+                return;
+            }
+
+            // ================= AUCUN RESULTAT =================
             setControle(null);
-            setControleError("Erreur lors de la recherche");
+            setControleError("Aucun contrôle trouvé");
+
+        } catch (err) {
+
+            console.error("ERREUR CONTROLE IDENTITE :", err);
+
+            setControle(null);
+
+            setControleError(
+                "Erreur lors de la recherche"
+            );
+
         } finally {
+
             setControleIdentiteLoading(false);
         }
     };
