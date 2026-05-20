@@ -124,25 +124,60 @@ export default function SeancesPage() {
      */
     const handleCreate = async () => {
         try {
-
             const user = JSON.parse(localStorage.getItem("user") || "{}");
 
             if (!user?.id) {
                 toast.error("Utilisateur non connecté");
                 return;
             }
+
+            // ✅ vérifier mission sélectionnée
+            const mission = missions.find(
+                (m) => m.id === form.missionId
+            );
+
+            if (!mission) {
+                toast.error("Mission introuvable");
+                return;
+            }
+
+            // ✅ REFUSER si mission inactive
+            if (!mission.isActive) {
+                toast.error("Impossible de créer une séance : mission inactive");
+                return;
+            }
+
+            // ✅ vérifier séance déjà ouverte
+            const existingSeance = seances.find(
+                (s) =>
+                    s.mission?.id === form.missionId &&
+                    !s.dateFin
+            );
+
+            if (existingSeance) {
+                toast.error("Une séance existe déjà pour cette mission");
+                return;
+            }
+
+            // ✅ création séance
             await createSeance({
                 missionId: form.missionId,
-                chefEquipeId: user.id, // ✅ important
+                chefEquipeId: user.id,
             });
 
             toast.success("Séance créée");
+
             setOpenModal(false);
+
+            setForm({
+                missionId: 0,
+            });
+
             fetchData();
 
         } catch (e) {
+            console.error(e);
             toast.error("Erreur création");
-            console.log(e);
         }
     };
 
