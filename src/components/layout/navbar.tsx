@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 
 const themes = [
     "light",
-    "dark",
+    "dim",
     "cupcake",
     "corporate",
     "nord",
@@ -13,7 +13,6 @@ const themes = [
     "acid",
     "lemonade",
     "winter",
-    "dim",
     "caramellatte",
     "abyss",
     "silk",
