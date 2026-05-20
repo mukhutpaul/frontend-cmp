@@ -57,3 +57,34 @@ export const getUnitesByEquipe = async (equipeId: number) => {
     const response = await api.get(`/equipe-unites/${equipeId}/unites`);
     return response.data;
 };
+
+export const addControleurToEquipe = async (
+  equipeId: number,
+  userId: number
+) => {
+  const response = await api.post("/detail-equipes", {
+    equipe: {
+      id: equipeId,
+    },
+    user: {
+      id: userId,
+    },
+    isActive: true,
+  });
+
+  return response.data;
+};
+
+export const removeControleurFromEquipe = async (id: number) => {
+  const response = await api.delete(`/detail-equipes/${id}`);
+
+  return response.data;
+};
+
+export const getDetailEquipeByEquipe = async (equipeId: number) => {
+  const response = await api.get("/detail-equipes");
+
+  return response.data.filter(
+    (d: any) => d.equipe?.id === equipeId
+  );
+};

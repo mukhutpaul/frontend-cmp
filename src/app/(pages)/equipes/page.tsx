@@ -8,11 +8,15 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import Select from "react-select";
 
-import equipeService, { Equipe } from "@/services/equipe.service";
+import equipeService, { addControleurToEquipe, Equipe, getDetailEquipeByEquipe, removeControleurFromEquipe } from "@/services/equipe.service";
 import { getUsers } from "@/services/auth.service";
 import { getMissions } from "@/services/mission.service";
 import { Eye } from "lucide-react";
 import { getUnitesByEquipe } from "@/services/equipe.service";
+import {
+    UserPlus,
+    ShieldX,
+} from "lucide-react";
 
 import {
     Trash2,
@@ -84,6 +88,16 @@ export default function EquipesPage() {
     const [unitesEquipe, setUnitesEquipe] = useState<any[]>([]);
     const [loadingUnites, setLoadingUnites] = useState(false);
 
+    const [openControleurModal, setOpenControleurModal] = useState(false);
+
+    const [selectedEquipeControleur, setSelectedEquipeControleur] = useState<any>(null);
+
+    const [controleurs, setControleurs] = useState<any[]>([]);
+
+    const [selectedControleur, setSelectedControleur] = useState<any>(null);
+
+    const [detailEquipeList, setDetailEquipeList] = useState<any[]>([]);
+
     const [filters, setFilters] = useState({
         search: "",
         status: "",
@@ -110,6 +124,22 @@ export default function EquipesPage() {
             toast.error("Erreur chargement unités");
         } finally {
             setLoadingUnites(false);
+        }
+    };
+
+    const fetchControleurs = async () => {
+        try {
+
+            const data = await getUsers();
+
+            const filtered = data.filter(
+                (u: any) => u.profile?.name === "CONTROLEUR"
+            );
+
+            setControleurs(filtered);
+
+        } catch (error) {
+            console.error(error);
         }
     };
 
@@ -170,10 +200,66 @@ export default function EquipesPage() {
         }
     };
 
+    const fetchDetailEquipe = async (equipeId: number) => {
+        try {
+
+            const data = await getDetailEquipeByEquipe(equipeId);
+
+            setDetailEquipeList(data);
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Erreur chargement contrôleurs");
+        }
+    };
+
+    const handleAddControleur = async () => {
+
+        if (!selectedControleur) {
+            toast.error("Sélectionnez un contrôleur");
+            return;
+        }
+
+        try {
+
+            await addControleurToEquipe(
+                selectedEquipeControleur.id,
+                selectedControleur.value
+            );
+
+            toast.success("Contrôleur ajouté");
+
+            fetchDetailEquipe(selectedEquipeControleur.id);
+
+            setSelectedControleur(null);
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Erreur ajout");
+        }
+    };
+
+    const handleDeleteControleur = async (id: number) => {
+
+        try {
+
+            await removeControleurFromEquipe(id);
+
+            toast.success("Contrôleur supprimé");
+
+            fetchDetailEquipe(selectedEquipeControleur.id);
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Erreur suppression");
+        }
+    };
+
     useEffect(() => {
         fetchEquipes();
         fetchUsers();
         fetchMissions();
+        fetchControleurs();
     }, []);
 
     /**
@@ -511,6 +597,22 @@ export default function EquipesPage() {
                                                         </button>
                                                     </div>
 
+                                                    <div className="tooltip" data-tip="Ajouter contrôleur">
+                                                        <button
+                                                            className="btn btn-xs btn-warning btn-outline"
+                                                            onClick={async () => {
+
+                                                                setSelectedEquipeControleur(e);
+
+                                                                await fetchDetailEquipe(e.id);
+
+                                                                setOpenControleurModal(true);
+                                                            }}
+                                                        >
+                                                            <UserPlus size={14} />
+                                                        </button>
+                                                    </div>
+
                                                 </td>
 
                                             </tr>
@@ -792,6 +894,161 @@ export default function EquipesPage() {
                             >
                                 Fermer
                             </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            )}
+
+            {openControleurModal && selectedEquipeControleur && (
+
+                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+
+                    <div className="bg-base-100 w-full max-w-xl rounded-2xl shadow-2xl border border-base-300 overflow-hidden">
+
+                        {/* HEADER */}
+                        <div className="px-5 py-4 border-b border-base-300 bg-base-200">
+
+                            <div className="flex justify-between items-center">
+
+                                <div>
+                                    <h2 className="text-xl font-bold">
+                                        Contrôleurs de l'équipe
+                                    </h2>
+
+                                    <p className="text-xs opacity-70 mt-1">
+                                        Equipe-{selectedEquipeControleur.user?.username}
+                                    </p>
+                                </div>
+
+                                <button
+                                    className="btn btn-sm btn-circle btn-ghost"
+                                    onClick={() => setOpenControleurModal(false)}
+                                >
+                                    ✕
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        {/* BODY */}
+                        <div className="p-5 space-y-5">
+
+                            {/* SELECT */}
+                            <div>
+
+                                <label className="label">
+                                    <span className="label-text">
+                                        Ajouter un contrôleur
+                                    </span>
+                                </label>
+
+                                <Select
+                                    options={controleurs.map((u: any) => ({
+                                        value: u.id,
+                                        label: u.username,
+                                    }))}
+
+                                    value={selectedControleur}
+
+                                    onChange={(val: any) =>
+                                        setSelectedControleur(val)
+                                    }
+
+                                    placeholder="Choisir un contrôleur..."
+                                    isSearchable
+                                    unstyled
+                                    classNames={selectStyles}
+                                />
+
+                            </div>
+
+                            {/* BTN */}
+                            <button
+                                className="btn btn-primary w-full"
+                                onClick={handleAddControleur}
+                            >
+                                Ajouter contrôleur
+                            </button>
+
+                            {/* LISTE */}
+                            <div className="space-y-3">
+
+                                <div className="flex justify-between items-center">
+
+                                    <h3 className="font-semibold">
+                                        Contrôleurs affectés
+                                    </h3>
+
+                                    <div className="badge badge-primary">
+                                        {detailEquipeList.length}
+                                    </div>
+
+                                </div>
+
+                                {detailEquipeList.length === 0 ? (
+
+                                    <div className="border border-dashed border-base-300 rounded-xl p-8 text-center">
+
+                                        <Users className="mx-auto mb-2 opacity-40" />
+
+                                        <p className="text-sm opacity-70">
+                                            Aucun contrôleur affecté
+                                        </p>
+
+                                    </div>
+
+                                ) : (
+
+                                    <div className="space-y-2 max-h-[300px] overflow-y-auto">
+
+                                        {detailEquipeList.map((d: any) => (
+
+                                            <div
+                                                key={d.id}
+                                                className="
+                                        bg-base-200
+                                        border border-base-300
+                                        rounded-xl
+                                        p-4
+                                        flex items-center justify-between
+                                    "
+                                            >
+
+                                                <div>
+
+                                                    <p className="font-semibold">
+                                                        {d.user?.username}
+                                                    </p>
+
+                                                    <p className="text-xs opacity-60">
+                                                        Contrôleur
+                                                    </p>
+
+                                                </div>
+
+                                                <button
+                                                    className="btn btn-sm btn-error btn-outline"
+                                                    onClick={() =>
+                                                        handleDeleteControleur(d.id)
+                                                    }
+                                                >
+                                                    <ShieldX size={16} />
+                                                </button>
+
+                                            </div>
+
+                                        ))}
+
+                                    </div>
+
+                                )}
+
+                            </div>
 
                         </div>
 
