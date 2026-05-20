@@ -10,11 +10,45 @@ import { useRouter } from "next/navigation";
 import { logindistant } from "@/services/pc-sync.service";
 import { loginRequest } from "@/services/auth.service";
 import Swal from "sweetalert2";
+import confetti from "canvas-confetti";
 
 type LoginForm = {
     username: string;
     password: string;
 };
+
+export const launchConfetti = () => {
+
+        const duration = 3000;
+        const animationEnd = Date.now() + duration;
+
+        const colors = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626"];
+
+        const frame = () => {
+
+            confetti({
+                particleCount: 4,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+                colors
+            });
+
+            confetti({
+                particleCount: 4,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+                colors
+            });
+
+            if (Date.now() < animationEnd) {
+                requestAnimationFrame(frame);
+            }
+        };
+
+        frame();
+    };
 
 export default function LoginPage() {
     const [mode, setMode] = useState<"local" | "remote">("local");
@@ -22,6 +56,8 @@ export default function LoginPage() {
 
     const router = useRouter();
     const { register, handleSubmit } = useForm<LoginForm>();
+
+  
 
     // restore mode
     useEffect(() => {
@@ -56,6 +92,7 @@ export default function LoginPage() {
                 localStorage.setItem("user", JSON.stringify(response.user));
 
                 toast.success("Connexion locale réussie");
+                launchConfetti()
                 router.push("/dashboard");
                 return;
             }
@@ -88,7 +125,7 @@ export default function LoginPage() {
                         showConfirmButton: false
                     });
 
-
+                    launchConfetti();
                     // router.push("/dashboard");
                     return;
 
