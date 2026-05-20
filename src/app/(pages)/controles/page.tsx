@@ -10,8 +10,17 @@ import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
 import { Controle, getControles } from "@/services/controle.service";
+import { getMissions } from "@/services/mission.service";
 
 /* ========================= STYLE SELECT ========================= */
+
+type Mission = {
+    id: string | number;
+    zone: string;
+    chargeMission?: {
+        id: string;
+    };
+};
 
 export const selectStyles = {
     control: () =>
@@ -41,10 +50,28 @@ export default function ControlePage() {
 
     const [selectedControle, setSelectedControle] = useState<Controle | null>(null);
 
+    const [missions, setMissions] = useState<any[]>([]);
+
+   
+
     /* ========================= QR DATA ========================= */
 
+
+
     const buildQRData = (c: Controle) => {
+        
         const p = c.policier;
+
+        // 🔥 chargeMission = userId
+        const chargeMissionId =
+            typeof c.chargeMission === "string"
+                ? c.chargeMission
+                : c.chargeMission;
+
+        // 🔥 trouver mission liée à ce user
+        const mission = missions.find(
+            (m: any) => m.chargeMission?.id === chargeMissionId
+        );
 
         return JSON.stringify({
             matricule: c.matricule,
@@ -54,7 +81,9 @@ export default function ControlePage() {
             groupe: p?.groupeSanguin || "",
             dateNaissance: p?.dateNaissance || "",
             lieuNaissance: p?.lieuNaissance || "",
-            equipe: p?.chefEquipe || ""
+
+            //equipe: c?.chefEquipe || "",
+            province: mission?.zone || ""   // ✅ ICI CORRECT
         });
     };
 
@@ -63,6 +92,8 @@ export default function ControlePage() {
     const loadData = async () => {
         try {
             const res = await getControles();
+            const m = await getMissions();
+            setMissions(m);
             setControles(Array.isArray(res) ? res : []);
         } catch (err) {
             console.error(err);

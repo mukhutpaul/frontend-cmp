@@ -234,8 +234,16 @@ export default function UsersPage() {
 
     const [filters, setFilters] = useState({
         search: "",
-        profile: "",
+        profile: "ALL",
     });
+
+    const profileOptions = [
+        { value: "ALL", label: "Tous les profils" },
+        ...profiles.map((p) => ({
+            value: p.name,
+            label: p.name,
+        })),
+    ];
 
     const [filtered, setFiltered] = useState<User[]>([]);
 
@@ -403,40 +411,29 @@ export default function UsersPage() {
      * 🔎 FILTERS
      */
     useEffect(() => {
-
         let data = [...users];
 
-        if (filters.search) {
-
-            const s =
-                filters.search.toLowerCase();
+        // SEARCH
+        if (filters.search.trim() !== "") {
+            const s = filters.search.toLowerCase();
 
             data = data.filter(
                 (u) =>
-                    u.username
-                        .toLowerCase()
-                        .includes(s) ||
-                    u.email
-                        .toLowerCase()
-                        .includes(s) ||
-                    u.noms
-                        .toLowerCase()
-                        .includes(s)
+                    u.username.toLowerCase().includes(s) ||
+                    u.email.toLowerCase().includes(s) ||
+                    u.noms.toLowerCase().includes(s)
             );
         }
 
-        if (filters.profile) {
-
+        // PROFILE (IMPORTANT FIX)
+        if (filters.profile !== "ALL") {
             data = data.filter(
-                (u) =>
-                    u.profile?.name ===
-                    filters.profile
+                (u) => u.profile?.name === filters.profile
             );
         }
 
         setFiltered(data);
         setPage(1);
-
     }, [filters, users]);
 
     /**
@@ -538,24 +535,28 @@ export default function UsersPage() {
                                 }
                             />
                             <Select
-                                options={profiles.map((p: any) => ({
-                                    value: p.name,
-                                    label: p.name,
-                                }))}
+                                options={[
+                                    { value: "ALL", label: "Tous les profils" },
+                                    ...profiles.map((p: any) => ({
+                                        value: p.name,
+                                        label: p.name,
+                                    })),
+                                ]}
 
                                 value={
-                                    profiles
-                                        .map((p: any) => ({
+                                    [
+                                        { value: "ALL", label: "Tous les profils" },
+                                        ...profiles.map((p: any) => ({
                                             value: p.name,
                                             label: p.name,
-                                        }))
-                                        .find((opt: any) => opt.value === filters.profile) || null
+                                        })),
+                                    ].find(opt => opt.value === filters.profile) || null
                                 }
 
                                 onChange={(selected: any) =>
                                     setFilters({
                                         ...filters,
-                                        profile: selected?.value || "",
+                                        profile: selected?.value ?? "ALL",
                                     })
                                 }
 

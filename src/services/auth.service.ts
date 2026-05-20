@@ -25,6 +25,7 @@ export type LoginResponse = {
   noms?: string;
   profile?: string;
   userId?: number;
+  user: string;
 };
 
 export type User = {
@@ -32,6 +33,7 @@ export type User = {
   username: string;
   email: string;
   noms: string;
+  user: string;
   profile?: {
     id: number;
     name: string;

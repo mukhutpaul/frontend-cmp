@@ -53,6 +53,7 @@ export default function LoginPage() {
                 localStorage.setItem("username", response.username ?? "");
                 localStorage.setItem("profile", response.profile ?? "");
                 localStorage.setItem("noms", response.noms ?? "");
+                localStorage.setItem("user", JSON.stringify(response.user));
 
                 toast.success("Connexion locale réussie");
                 router.push("/dashboard");
