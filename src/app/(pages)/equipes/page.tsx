@@ -665,6 +665,7 @@ export default function EquipesPage() {
                         setForm={setForm}
                         users={users}
                         missions={missions}
+                        equipes={equipes}   // 👈 AJOUT OBLIGATOIRE
                         onClose={() => {
                             setOpenModal(false);
                             resetForm();
@@ -681,6 +682,7 @@ export default function EquipesPage() {
                         setForm={setForm}
                         users={users}
                         missions={missions}
+                        equipes={equipes}   // 👈 AJOUT OBLIGATOIRE
                         onClose={() => {
                             setEditModal(false);
                             resetForm();
@@ -1078,6 +1080,7 @@ function EquipeModal({
     setForm,
     users,
     missions,
+    equipes,
     onClose,
     onSubmit,
 }: any) {
@@ -1104,10 +1107,21 @@ function EquipeModal({
                     </label>
 
                     <Select
-                        options={users.map((u: any) => ({
-                            value: u.id,
-                            label: u.noms || u.username,
-                        }))}
+                        options={users
+                            .filter((u: any) => {
+                                const isChefEquipe = u.profile?.name === "CHEF_EQUIPE";
+
+                                const alreadyInEquipe = equipes.some(
+                                    (e: any) => e.user?.id === u.id
+                                );
+
+                                return isChefEquipe && !alreadyInEquipe;
+                            })
+                            .map((u: any) => ({
+                                value: u.id,
+                                label: u.noms || u.username,
+                            }))
+                        }
 
                         value={
                             users

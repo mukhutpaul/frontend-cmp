@@ -757,10 +757,19 @@ export default function MissionsPage() {
                                 isSearchable
                                 placeholder="Rechercher superviseur..."
 
-                                options={superviseurs.map((u: any) => ({
-                                    value: u.id,
-                                    label: u.noms || u.username,
-                                }))}
+                                options={superviseurs
+                                    .filter(
+                                        (u: any) =>
+                                            !missions.some(
+                                                (m: any) =>
+                                                    m.chargeMission?.id === u.id
+                                            )
+                                    )
+                                    .map((u: any) => ({
+                                        value: u.id,
+                                        label: u.noms || u.username,
+                                    }))
+                                }
 
                                 value={
                                     superviseurs
