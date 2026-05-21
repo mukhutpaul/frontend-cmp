@@ -52,38 +52,39 @@ export default function ControlePage() {
 
     const [missions, setMissions] = useState<any[]>([]);
 
-   
+
 
     /* ========================= QR DATA ========================= */
 
 
 
     const buildQRData = (c: Controle) => {
-        
+
         const p = c.policier;
 
-        // 🔥 chargeMission = userId
-        const chargeMissionId =
-            typeof c.chargeMission === "string"
-                ? c.chargeMission
-                : c.chargeMission;
-
-        // 🔥 trouver mission liée à ce user
-        const mission = missions.find(
-            (m: any) => m.chargeMission?.id === chargeMissionId
-        );
-
         return JSON.stringify({
+
             matricule: c.matricule,
+
             nom: p?.nom || "",
+
             postnom: p?.postnom || "",
+            grade : c?.grade || "",
+            unite: c?.unite || "",
+
             genre: p?.sexe || "",
+        
             groupe: p?.groupeSanguin || "",
+
             dateNaissance: p?.dateNaissance || "",
+
             lieuNaissance: p?.lieuNaissance || "",
 
-            //equipe: c?.chefEquipe || "",
-            province: mission?.zone || ""   // ✅ ICI CORRECT
+            // ✅ username chef équipe
+            equipe: c?.chefEquipe?.username || "",
+
+            // ✅ zone mission
+            province: c?.seance?.mission?.zone || ""
         });
     };
 

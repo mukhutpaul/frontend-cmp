@@ -69,16 +69,32 @@ export default function RecherchePage() {
     /* ========================= RESET ========================= */
 
     const buildQRData = (c: Controle) => {
+
         const p = c.policier;
 
         return JSON.stringify({
+
             matricule: c.matricule,
+
             nom: p?.nom || "",
+
             postnom: p?.postnom || "",
-            prenom: p?.prenom || "",
-            grade: c.grade || "",
-            unite: c.unite || "",
-            present: c.present ?? false
+            grade: c?.grade || "",
+            unite: c?.unite || "",
+
+            genre: p?.sexe || "",
+
+            groupe: p?.groupeSanguin || "",
+
+            dateNaissance: p?.dateNaissance || "",
+
+            lieuNaissance: p?.lieuNaissance || "",
+
+            // ✅ username chef équipe
+            equipe: c?.chefEquipe?.username || "",
+
+            // ✅ zone mission
+            province: c?.seance?.mission?.zone || ""
         });
     };
 

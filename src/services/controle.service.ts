@@ -2,6 +2,39 @@ import { api } from "@/lib/axios";
 
 /* ========================= TYPES ========================= */
 
+export interface Profile {
+    id: number;
+    name: string;
+}
+
+export interface User {
+    id: number;
+    username: string;
+    email: string;
+    noms: string;
+    profile: Profile;
+}
+
+export interface Mission {
+    id: number;
+    zone: string;
+    numero: string;
+    dateDebut: string;
+    dateFin: string;
+    isActive: boolean;
+    chargeMission: User;
+}
+
+export interface Seance {
+    id: string;
+    dateSeance: string;
+    dateFin: string;
+    isActive: boolean;
+    chefEquipe: User;
+    mission: Mission;
+}
+
+
 type Policier = {
     id: string;
     matricule: string;
@@ -13,6 +46,7 @@ type Policier = {
     lieuNaissance?: string;
     groupeSanguin?: string; // ✅ AJOUT
     chefEquipe?: string;
+    originAdminGrade?: string;
 };
 
 export type Controle = {
@@ -25,10 +59,10 @@ export type Controle = {
     noms?: string;
     unite?: string;
     grade?: string;
-    chargeMission?: string;
-    chefEquipe: string;
-    controleur: string;
-    seance : string;
+    chargeMission?: User;
+    chefEquipe: User;
+    controleur: User;
+    seance : Seance;
     present?: boolean;
     justifie?: boolean;
 
