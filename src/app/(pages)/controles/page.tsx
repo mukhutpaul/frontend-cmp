@@ -276,6 +276,7 @@ export default function ControlePage() {
 
                             <thead className="bg-base-200">
                                 <tr>
+                                    <th>Id</th>
                                     <th>Matricule</th>
                                     <th>Noms</th>
                                     <th>Unité</th>
@@ -321,7 +322,7 @@ export default function ControlePage() {
                                 {/* DATA */}
                                 {!initialLoading && paginatedControles.map((c) => (
                                     <tr key={c.id}>
-
+                                        <td>{c.uid}</td>
                                         <td>{c.matricule}</td>
 
                                         <td>{c.noms}</td>
