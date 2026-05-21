@@ -51,6 +51,8 @@ export default function ControlePage() {
     const [selectedControle, setSelectedControle] = useState<Controle | null>(null);
 
     const [missions, setMissions] = useState<any[]>([]);
+    const [filterPresent, setFilterPresent] = useState<string | null>(null);
+    const [filterJustifie, setFilterJustifie] = useState<string | null>(null);
 
 
 
@@ -126,22 +128,49 @@ export default function ControlePage() {
 
     /* ========================= FILTER DATA ========================= */
 
+    const normalize = (v: any) =>
+        (v ?? "")
+            .toString()
+            .toLowerCase()
+            .trim();
+
     const filteredControles = useMemo(() => {
+        const searchValue = normalize(search);
+
         return controles.filter((c) => {
+            const p = c.policier;
 
             const matchSearch =
-                !search ||
-                c.matricule?.toLowerCase().includes(search.toLowerCase()) ||
-                c.noms?.toLowerCase().includes(search.toLowerCase()) ||
-                c.grade?.toLowerCase().includes(search.toLowerCase()) ||
-                c.unite?.toLowerCase().includes(search.toLowerCase());
+                !searchValue ||
+                normalize(c.uid).includes(searchValue) ||
+                normalize(c.matricule).includes(searchValue) ||
+                normalize(c.grade).includes(searchValue) ||
+                normalize(c.unite).includes(searchValue) ||
+                normalize(c.noms).includes(searchValue) ||   // OK si existe
+                normalize(p?.nom).includes(searchValue) ||
+                normalize(p?.postnom).includes(searchValue) ||
+                normalize(p?.prenom).includes(searchValue);
 
             const matchUnite =
                 !selectedUnite || c.unite === selectedUnite;
 
-            return matchSearch && matchUnite;
+            const matchPresent =
+                filterPresent === null
+                    ? true
+                    : filterPresent === "true"
+                        ? c.present === true
+                        : c.present === false;
+
+            const matchJustifie =
+                filterJustifie === null
+                    ? true
+                    : filterJustifie === "true"
+                        ? c.justifie === true
+                        : c.justifie === false;
+
+            return matchSearch && matchUnite && matchPresent && matchJustifie;
         });
-    }, [controles, search, selectedUnite]);
+    }, [controles, search, selectedUnite, filterPresent, filterJustifie]);
 
     /* ========================= PAGINATION ========================= */
 
@@ -232,14 +261,17 @@ export default function ControlePage() {
                 <h1 className="text-2xl font-bold">Contrôles</h1>
 
                 {/* SEARCH */}
-                <div className="card bg-base-200">
-                    <div className="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
 
+
+                <div className="card bg-base-200 shadow mb-4">
+                    <div className="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
+
+                        {/* SEARCH */}
                         <div className="relative">
                             <Search className="absolute left-3 top-3 opacity-50" />
                             <input
                                 className="input input-bordered w-full pl-10"
-                                placeholder="Recherche..."
+                                placeholder="Recherche matricule, nom..."
                                 value={search}
                                 onChange={(e) => {
                                     setSearch(e.target.value);
@@ -248,20 +280,55 @@ export default function ControlePage() {
                             />
                         </div>
 
+                        {/* UNITE */}
                         <Select
                             placeholder="Filtrer unité"
                             unstyled
                             isClearable
                             classNames={selectStyles}
-                            options={uniqueUnites.map((u) => ({
-                                value: u,
-                                label: u,
-                            }))}
+                            options={[
+                                { value: "", label: "Toutes les unités" },
+                                ...uniqueUnites.map((u) => ({
+                                    value: u,
+                                    label: u,
+                                }))
+                            ]}
                             onChange={(opt: any) => {
                                 setSelectedUnite(opt?.value || null);
                                 setPage(1);
                             }}
                         />
+
+                        {/* STATUS QUICK FILTER */}
+                        <div className="flex gap-2">
+
+                            <select
+                                className="select select-bordered w-full"
+                                value={filterPresent ?? ""}
+                                onChange={(e) => {
+                                    setFilterPresent(e.target.value || null);
+                                    setPage(1);
+                                }}
+                            >
+                                <option value="">Présence</option>
+                                <option value="true">Présent</option>
+                                <option value="false">Absent</option>
+                            </select>
+
+                            <select
+                                className="select select-bordered w-full"
+                                value={filterJustifie ?? ""}
+                                onChange={(e) => {
+                                    setFilterJustifie(e.target.value || null);
+                                    setPage(1);
+                                }}
+                            >
+                                <option value="">Justif</option>
+                                <option value="true">Oui</option>
+                                <option value="false">Non</option>
+                            </select>
+
+                        </div>
 
                     </div>
                 </div>
@@ -269,14 +336,14 @@ export default function ControlePage() {
                 {/* TOTAL */}
                 <div className="flex items-center justify-between mb-2">
                     <div className="text-sm opacity-70">
-                        Total résultats :{" "}
+                        Total résultats :
                         <span className="font-bold text-primary">
                             {filteredControles.length}
                         </span>
                     </div>
 
                     <div className="text-sm opacity-60">
-                       
+
                     </div>
                 </div>
                 {/* TABLE */}
@@ -386,59 +453,32 @@ export default function ControlePage() {
                     </div>
 
                     {/* PAGINATION */}
+                    {/* PAGINATION SIMPLE */}
                     {!initialLoading && filteredControles.length > 0 && (
-                        <div className="flex flex-col md:flex-row items-center justify-between gap-4 px-4 py-4 border-t border-base-200">
+                        <div className="flex items-center justify-between px-4 py-4 border-t border-base-200">
 
-                            {/* INFOS */}
                             <div className="text-sm text-gray-500">
-                                Page <span className="font-bold">{page}</span> sur{" "}
-                                <span className="font-bold">{totalPages}</span>
+                                Page <span className="font-bold">{page}</span> / {totalPages}
                             </div>
 
-                            {/* BUTTONS */}
                             <div className="join">
 
-                                {/* PREV */}
                                 <button
-                                    className="join-item btn"
+                                    className="join-item btn btn-sm"
                                     disabled={page === 1}
-                                    onClick={() =>
-                                        setPage((p) => Math.max(p - 1, 1))
-                                    }
+                                    onClick={() => setPage((p) => Math.max(p - 1, 1))}
                                 >
-                                    «Précdent
+                                    « Précédent
                                 </button>
 
-                                {/* PAGES */}
-                                {Array.from(
-                                    { length: totalPages },
-                                    (_, i) => i + 1
-                                ).map((p) => (
-
-                                    <button
-                                        key={p}
-                                        className={`join-item btn ${page === p
-                                            ? "btn-primary"
-                                            : ""
-                                            }`}
-                                        onClick={() => setPage(p)}
-                                    >
-                                        page
-                                    </button>
-
-                                ))}
-
-                                {/* NEXT */}
                                 <button
-                                    className="join-item btn"
+                                    className="join-item btn btn-sm"
                                     disabled={page === totalPages}
                                     onClick={() =>
-                                        setPage((p) =>
-                                            Math.min(p + 1, totalPages)
-                                        )
+                                        setPage((p) => Math.min(p + 1, totalPages))
                                     }
                                 >
-                                    Suivant»
+                                    Suivant »
                                 </button>
 
                             </div>
