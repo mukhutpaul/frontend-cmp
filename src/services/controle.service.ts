@@ -38,15 +38,15 @@ export interface Seance {
 type Policier = {
     id: string;
     matricule: string;
-    nom: string;
-    postnom: string;
-    prenom: string;
-    sexe?: string;
-    dateNaissance?: string;
-    lieuNaissance?: string;
+    lastname: string;
+    postname: string;
+    firstnames: string;
+    gender?: string;
+    birthDate?: string;
+    lieu?: string;
     groupeSanguin?: string; // ✅ AJOUT
     chefEquipe?: string;
-    originAdminGrade?: string;
+    rank?: string;
 };
 
 export type Controle = {

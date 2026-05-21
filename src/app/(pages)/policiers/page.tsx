@@ -19,14 +19,12 @@ type Unite = {
 type Policier = {
     id: number;
     matricule: string;
-    nom: string;
-    postnom: string;
-    prenom: string;
-    unite:string;
-    sexe: string;
+    lastname: string;
+    postname: string;
+    firstnames: string;
+    unit:string;
+    gender: string;
     telephone?: string;
-    email?: string;
-    statut: string;
 };
 
 /* ========================= SELECT STYLE ========================= */
@@ -171,8 +169,6 @@ export default function PolicierPage() {
                                         <th>Unité</th>
                                         <th>Sexe</th>
                                         <th>Téléphone</th>
-                                        <th>Email</th>
-                                        <th>Statut</th>
                                     </tr>
                                 </thead>
 
@@ -198,14 +194,12 @@ export default function PolicierPage() {
                                     {!loading && policiers.map((p) => (
                                         <tr key={p.id}>
                                             <td>{p.matricule}</td>
-                                            <td>{p.nom}</td>
-                                            <td>{p.postnom}</td>
-                                            <td>{p.prenom}</td>
-                                            <td>{p.unite}</td>
-                                            <td>{p.sexe}</td>
+                                            <td>{p.lastname}</td>
+                                            <td>{p.postname}</td>
+                                            <td>{p.firstnames}</td>
+                                            <td>{p.unit}</td>
+                                            <td>{p.gender}</td>
                                             <td>{p.telephone || "-"}</td>
-                                            <td>{p.email || "-"}</td>
-                                            <td>{p.statut}</td>
                                         </tr>
                                     ))}
 

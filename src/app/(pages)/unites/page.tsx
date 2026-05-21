@@ -368,7 +368,7 @@ export default function UnitePage() {
                 <div className="flex justify-between items-center">
 
                     <p className="text-sm opacity-70">
-                        Page {page} / {totalPages || 1} — Total : {filtered.length} utilisateur(s)
+                        Page {page} / {totalPages || 1} — Total : {filtered.length} unités
                     </p>
 
                     <div className="join">

@@ -68,22 +68,22 @@ export default function ControlePage() {
 
             matricule: c.matricule,
 
-            nom: p?.nom || "",
+            nom: p?.lastname || "X",
 
-            postnom: p?.postnom || "",
-            grade: c?.grade || "",
-            unite: c?.unite || "",
+            postnom: p?.postname || "X",
+            grade: c?.grade || "X",
+            unite: c?.unite || "X",
 
-            genre: p?.sexe || "",
+            genre: p?.gender || "X",
 
-            groupe: p?.groupeSanguin || "",
+            groupe: p?.groupeSanguin || "X",
 
-            dateNaissance: p?.dateNaissance || "",
+            dateNaissance: p?.birthDate || "X",
 
-            lieuNaissance: p?.lieuNaissance || "",
+            lieuNaissance: p?.lieu || "X",
 
             // ✅ username chef équipe
-            equipe: c?.chefEquipe?.username || "",
+            equipe: c?.chefEquipe?.username || "X",
 
             // ✅ zone mission
             province: c?.seance?.mission?.zone || ""
@@ -147,9 +147,9 @@ export default function ControlePage() {
                 normalize(c.grade).includes(searchValue) ||
                 normalize(c.unite).includes(searchValue) ||
                 normalize(c.noms).includes(searchValue) ||   // OK si existe
-                normalize(p?.nom).includes(searchValue) ||
-                normalize(p?.postnom).includes(searchValue) ||
-                normalize(p?.prenom).includes(searchValue);
+                normalize(p?.lastname).includes(searchValue) ||
+                normalize(p?.postname).includes(searchValue) ||
+                normalize(p?.firstnames).includes(searchValue);
 
             const matchUnite =
                 !selectedUnite || c.unite === selectedUnite;
@@ -210,8 +210,8 @@ export default function ControlePage() {
         doc.text("IDENTITE", 5, 25);
 
         doc.setFontSize(7);
-        doc.text(`Nom: ${p?.nom ?? "-"}`, 5, 32);
-        doc.text(`Postnom: ${p?.postnom ?? "-"}`, 5, 37);
+        doc.text(`Nom: ${p?.lastname?? "-"}`, 5, 32);
+        doc.text(`Postnom: ${p?.postname ?? "-"}`, 5, 37);
         doc.text(`Matricule: ${c.matricule}`, 5, 45);
 
         const qrString = buildQRData(c);
@@ -510,11 +510,11 @@ export default function ControlePage() {
                                 {/* NOM PRINCIPAL */}
                                 <div className="text-center">
                                     <p className="text-xl font-extrabold uppercase text-gray-800">
-                                        {selectedControle?.policier?.nom}
+                                        {selectedControle?.policier?.lastname}
                                     </p>
 
                                     <p className="text-sm text-gray-500">
-                                        {selectedControle?.policier?.postnom} {selectedControle?.policier?.prenom}
+                                        {selectedControle?.policier?.postname} {selectedControle?.policier?.firstnames}
                                     </p>
                                 </div>
 
