@@ -69,11 +69,11 @@ export default function ControlePage() {
             nom: p?.nom || "",
 
             postnom: p?.postnom || "",
-            grade : c?.grade || "",
+            grade: c?.grade || "",
             unite: c?.unite || "",
 
             genre: p?.sexe || "",
-        
+
             groupe: p?.groupeSanguin || "",
 
             dateNaissance: p?.dateNaissance || "",
@@ -266,7 +266,19 @@ export default function ControlePage() {
                     </div>
                 </div>
 
-                {/* TABLE */}
+                {/* TOTAL */}
+                <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm opacity-70">
+                        Total résultats :{" "}
+                        <span className="font-bold text-primary">
+                            {filteredControles.length}
+                        </span>
+                    </div>
+
+                    <div className="text-sm opacity-60">
+                       
+                    </div>
+                </div>
                 {/* TABLE */}
                 <div className="card bg-base-100 shadow-md">
 
