@@ -3,7 +3,7 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
-import { Search, User } from "lucide-react";
+import { Search, User, X } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { getPoliciers } from "@/services/policier.service";
@@ -67,6 +67,10 @@ export default function PolicierPage() {
     const [page, setPage] = useState(1);
 
     const [loading, setLoading] = useState(false);
+
+    /* ========================= MODAL PHOTO ========================= */
+
+    const [selectedPhoto, setSelectedPhoto] = useState<string | null>(null);
 
     /* ========================= LOAD ========================= */
 
@@ -188,6 +192,7 @@ export default function PolicierPage() {
     }, [filteredPoliciers, page]);
 
     /* reset page on filters */
+
     useEffect(() => {
         setPage(1);
     }, [
@@ -205,6 +210,7 @@ export default function PolicierPage() {
             <div className="p-6 space-y-6">
 
                 {/* HEADER */}
+
                 <div>
                     <h1 className="text-2xl font-bold">
                         Policiers
@@ -216,11 +222,13 @@ export default function PolicierPage() {
                 </div>
 
                 {/* FILTERS */}
+
                 <div className="card bg-base-200">
 
                     <div className="card-body grid grid-cols-1 md:grid-cols-4 gap-4">
 
                         {/* SEARCH */}
+
                         <input
                             className="input input-bordered w-full"
                             placeholder="Recherche (nom, matricule...)"
@@ -231,6 +239,7 @@ export default function PolicierPage() {
                         />
 
                         {/* UNITE */}
+
                         <Select
                             placeholder="Filtrer par unité"
                             unstyled
@@ -246,6 +255,7 @@ export default function PolicierPage() {
                         />
 
                         {/* MAIN UNIT */}
+
                         <Select
                             placeholder="Filtrer par mainUnit"
                             unstyled
@@ -261,6 +271,7 @@ export default function PolicierPage() {
                         />
 
                         {/* GENDER */}
+
                         <Select
                             placeholder="Filtrer par sexe"
                             unstyled
@@ -280,6 +291,7 @@ export default function PolicierPage() {
                 </div>
 
                 {/* TABLE */}
+
                 <div className="card bg-base-100 shadow-md">
 
                     <div className="card-body p-0">
@@ -307,7 +319,7 @@ export default function PolicierPage() {
                                     {loading && (
                                         <tr>
                                             <td
-                                                colSpan={8}
+                                                colSpan={9}
                                                 className="text-center py-10"
                                             >
                                                 <span className="loading loading-spinner"></span>
@@ -319,7 +331,7 @@ export default function PolicierPage() {
                                         paginatedPoliciers.length === 0 && (
                                             <tr>
                                                 <td
-                                                    colSpan={8}
+                                                    colSpan={9}
                                                     className="text-center py-10"
                                                 >
                                                     <Search className="mx-auto opacity-50" />
@@ -341,44 +353,67 @@ export default function PolicierPage() {
                                                 <td>{p.mainUnit || "-"}</td>
                                                 <td>{p.gender}</td>
                                                 <td>{p.telephone || "-"}</td>
+
+                                                {/* PHOTO */}
+
                                                 <td>
+
                                                     {p.photoUrl ? (
-                                                        <div className="w-12 h-12 rounded-full overflow-hidden border flex items-center justify-center bg-base-200">
-                                                            <Image
-                                                                src={p.photoUrl}
-                                                                alt="photo"
-                                                                width={48}
-                                                                height={48}
-                                                                className="w-full h-full object-cover"
-                                                                unoptimized
-                                                                onError={(e) => {
-                                                                    e.currentTarget.style.display = "none";
 
-                                                                    const fallback =
-                                                                        e.currentTarget.parentElement?.querySelector(
-                                                                            ".fallback-user"
-                                                                        ) as HTMLElement;
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => {
+                                                                setSelectedPhoto(p.photoUrl!);
+                                                            }}
+                                                            className="cursor-pointer"
+                                                        >
 
-                                                                    if (fallback) {
-                                                                        fallback.style.display = "flex";
-                                                                    }
+                                                            <div className="w-14 h-14 rounded-full overflow-hidden border flex items-center justify-center bg-base-200 hover:scale-105 transition">
 
-                                                                    console.log("IMAGE INTROUVABLE :", p.photoUrl);
-                                                                }}
-                                                            />
+                                                                <Image
+                                                                    src={p.photoUrl}
+                                                                    alt="photo"
+                                                                    width={56}
+                                                                    height={56}
+                                                                    className="w-full h-full object-cover"
+                                                                    unoptimized
+                                                                    onError={(e) => {
 
-                                                            <div
-                                                                className="fallback-user hidden w-full h-full items-center justify-center"
-                                                            >
-                                                                <User className="w-6 h-6 opacity-60" />
+                                                                        e.currentTarget.style.display = "none";
+
+                                                                        const fallback =
+                                                                            e.currentTarget.parentElement?.querySelector(
+                                                                                ".fallback-user"
+                                                                            ) as HTMLElement;
+
+                                                                        if (fallback) {
+                                                                            fallback.style.display = "flex";
+                                                                        }
+
+                                                                        console.log("IMAGE INTROUVABLE :", p.photoUrl);
+                                                                    }}
+                                                                />
+
+                                                                <div
+                                                                    className="fallback-user hidden w-full h-full items-center justify-center"
+                                                                >
+                                                                    <User className="w-7 h-7 opacity-60" />
+                                                                </div>
+
                                                             </div>
-                                                        </div>
+
+                                                        </button>
+
                                                     ) : (
-                                                        <div className="w-12 h-12 rounded-full bg-base-200 flex items-center justify-center border">
-                                                            <User className="w-6 h-6 opacity-60" />
+
+                                                        <div className="w-14 h-14 rounded-full bg-base-200 flex items-center justify-center border">
+                                                            <User className="w-7 h-7 opacity-60" />
                                                         </div>
+
                                                     )}
+
                                                 </td>
+
                                             </tr>
                                         ))}
 
@@ -393,6 +428,7 @@ export default function PolicierPage() {
                 </div>
 
                 {/* PAGINATION */}
+
                 <div className="flex justify-between items-center">
 
                     <p className="text-sm opacity-70">
@@ -422,6 +458,54 @@ export default function PolicierPage() {
                 </div>
 
             </div>
+
+            {/* ========================= MODAL PHOTO ========================= */}
+
+            {selectedPhoto && (
+
+                <dialog className="modal modal-open">
+
+                    <div className="modal-box max-w-4xl bg-base-100">
+
+                        {/* CLOSE */}
+
+                        <button
+                            className="btn btn-sm btn-circle btn-error absolute right-3 top-3"
+                            onClick={() => setSelectedPhoto(null)}
+                        >
+                            <X className="w-4 h-4" />
+                        </button>
+
+                        {/* IMAGE */}
+
+                        <div className="flex justify-center items-center py-4">
+
+                            <Image
+                                src={selectedPhoto}
+                                alt="Grande photo"
+                                width={900}
+                                height={900}
+                                unoptimized
+                                className="max-h-[80vh] w-auto rounded-xl object-contain border shadow-lg"
+                            />
+
+                        </div>
+
+                    </div>
+
+                    {/* BACKDROP */}
+
+                    <form
+                        method="dialog"
+                        className="modal-backdrop"
+                        onClick={() => setSelectedPhoto(null)}
+                    >
+                        <button>close</button>
+                    </form>
+
+                </dialog>
+
+            )}
 
         </DashboardLayout>
     );
