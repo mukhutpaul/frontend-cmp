@@ -1,7 +1,7 @@
 "use client";
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
 import { Search } from "lucide-react";
 import { toast } from "react-toastify";
@@ -14,6 +14,7 @@ import { getUnites } from "@/services/unite.service";
 type Unite = {
     id: number;
     name: string;
+    mainUnit?: string;
 };
 
 type Policier = {
@@ -22,10 +23,15 @@ type Policier = {
     lastname: string;
     postname: string;
     firstnames: string;
-    unit:string;
+    unit: string;
+    mainUnit?: string;
     gender: string;
     telephone?: string;
 };
+
+/* ========================= CONSTANTES ========================= */
+
+const PAGE_SIZE = 40;
 
 /* ========================= SELECT STYLE ========================= */
 
@@ -53,11 +59,10 @@ export default function PolicierPage() {
 
     const [search, setSearch] = useState("");
     const [selectedUnite, setSelectedUnite] = useState<number | null>(null);
+    const [selectedMainUnit, setSelectedMainUnit] = useState<string | null>(null);
 
-    const [page, setPage] = useState(0);
-    const size = 100;
+    const [page, setPage] = useState(1);
 
-    const [totalPages, setTotalPages] = useState(0);
     const [loading, setLoading] = useState(false);
 
     /* ========================= LOAD ========================= */
@@ -66,19 +71,14 @@ export default function PolicierPage() {
         try {
             setLoading(true);
 
-            const res = await getPoliciers({
-                page,
-                size,
-                search,
-                uniteId: selectedUnite ?? undefined,
-            });
+            const res = await getPoliciers();
 
-            // backend Spring Page<>
-            setPoliciers(res.content);
-            setTotalPages(res.totalPages);
+            setPoliciers(Array.isArray(res) ? res : []);
 
         } catch (err) {
+            console.error(err);
             toast.error("Erreur chargement policiers");
+            setPoliciers([]);
         } finally {
             setLoading(false);
         }
@@ -86,13 +86,13 @@ export default function PolicierPage() {
 
     useEffect(() => {
         loadData();
-    }, [page, search, selectedUnite]);
+    }, []);
 
     useEffect(() => {
         const loadUnites = async () => {
             try {
                 const uni = await getUnites();
-                setUnites(uni);
+                setUnites(Array.isArray(uni) ? uni : []);
             } catch {
                 toast.error("Erreur chargement unités");
             }
@@ -100,6 +100,73 @@ export default function PolicierPage() {
 
         loadUnites();
     }, []);
+
+    /* ========================= MAIN UNITS ========================= */
+
+    const mainUnits = useMemo(() => {
+        return [...new Set(
+            policiers
+                .map((p) => p.mainUnit)
+                .filter(Boolean)
+        )];
+    }, [policiers]);
+
+    /* ========================= FILTER ========================= */
+
+    const filteredPoliciers = useMemo(() => {
+
+        return policiers.filter((p) => {
+
+            const fullText =
+                `${p.lastname} ${p.postname} ${p.firstnames} ${p.matricule}`
+                    .toLowerCase();
+
+            const matchSearch =
+                fullText.includes(search.toLowerCase());
+
+            const matchUnite =
+                !selectedUnite ||
+                p.unit ===
+                unites.find((u) => u.id === selectedUnite)?.name;
+
+            const matchMainUnit =
+                !selectedMainUnit ||
+                p.mainUnit === selectedMainUnit;
+
+            return (
+                matchSearch &&
+                matchUnite &&
+                matchMainUnit
+            );
+        });
+
+    }, [
+        policiers,
+        search,
+        selectedUnite,
+        selectedMainUnit,
+        unites
+    ]);
+
+    /* ========================= PAGINATION ========================= */
+
+    const totalPages = Math.ceil(
+        filteredPoliciers.length / PAGE_SIZE
+    );
+
+    const paginatedPoliciers = useMemo(() => {
+
+        const start = (page - 1) * PAGE_SIZE;
+        const end = start + PAGE_SIZE;
+
+        return filteredPoliciers.slice(start, end);
+
+    }, [filteredPoliciers, page]);
+
+    /* reset page on filters */
+    useEffect(() => {
+        setPage(1);
+    }, [search, selectedUnite, selectedMainUnit]);
 
     /* ========================= UI ========================= */
 
@@ -110,28 +177,31 @@ export default function PolicierPage() {
 
                 {/* HEADER */}
                 <div>
-                    <h1 className="text-2xl font-bold">Policiers</h1>
+                    <h1 className="text-2xl font-bold">
+                        Policiers
+                    </h1>
+
                     <p className="text-sm opacity-70">
-                        Liste paginée des policiers
+                        {filteredPoliciers.length} élément(s) trouvé(s)
                     </p>
                 </div>
 
                 {/* FILTERS */}
                 <div className="card bg-base-200">
 
-                    <div className="card-body grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
 
                         {/* SEARCH */}
                         <input
                             className="input input-bordered w-full"
                             placeholder="Recherche (nom, matricule...)"
+                            value={search}
                             onChange={(e) => {
                                 setSearch(e.target.value);
-                                setPage(0);
                             }}
                         />
 
-                        {/* UNITE FILTER */}
+                        {/* UNITE */}
                         <Select
                             placeholder="Filtrer par unité"
                             unstyled
@@ -143,7 +213,21 @@ export default function PolicierPage() {
                             }))}
                             onChange={(opt: any) => {
                                 setSelectedUnite(opt?.value || null);
-                                setPage(0);
+                            }}
+                        />
+
+                        {/* MAIN UNIT */}
+                        <Select
+                            placeholder="Filtrer par mainUnit"
+                            unstyled
+                            isClearable
+                            classNames={selectStyles}
+                            options={mainUnits.map((m) => ({
+                                value: m,
+                                label: m,
+                            }))}
+                            onChange={(opt: any) => {
+                                setSelectedMainUnit(opt?.value || null);
                             }}
                         />
 
@@ -167,6 +251,7 @@ export default function PolicierPage() {
                                         <th>Postnom</th>
                                         <th>Prénom</th>
                                         <th>Unité</th>
+                                        <th>Main Unit</th>
                                         <th>Sexe</th>
                                         <th>Téléphone</th>
                                     </tr>
@@ -176,32 +261,43 @@ export default function PolicierPage() {
 
                                     {loading && (
                                         <tr>
-                                            <td colSpan={8} className="text-center py-10">
+                                            <td
+                                                colSpan={8}
+                                                className="text-center py-10"
+                                            >
                                                 <span className="loading loading-spinner"></span>
                                             </td>
                                         </tr>
                                     )}
 
-                                    {!loading && policiers.length === 0 && (
-                                        <tr>
-                                            <td colSpan={8} className="text-center py-10">
-                                                <Search className="mx-auto opacity-50" />
-                                                <p>Aucun policier trouvé</p>
-                                            </td>
-                                        </tr>
-                                    )}
+                                    {!loading &&
+                                        paginatedPoliciers.length === 0 && (
+                                            <tr>
+                                                <td
+                                                    colSpan={8}
+                                                    className="text-center py-10"
+                                                >
+                                                    <Search className="mx-auto opacity-50" />
+                                                    <p>
+                                                        Aucun policier trouvé
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        )}
 
-                                    {!loading && policiers.map((p) => (
-                                        <tr key={p.id}>
-                                            <td>{p.matricule}</td>
-                                            <td>{p.lastname}</td>
-                                            <td>{p.postname}</td>
-                                            <td>{p.firstnames}</td>
-                                            <td>{p.unit}</td>
-                                            <td>{p.gender}</td>
-                                            <td>{p.telephone || "-"}</td>
-                                        </tr>
-                                    ))}
+                                    {!loading &&
+                                        paginatedPoliciers.map((p) => (
+                                            <tr key={p.id}>
+                                                <td>{p.matricule}</td>
+                                                <td>{p.lastname}</td>
+                                                <td>{p.postname}</td>
+                                                <td>{p.firstnames}</td>
+                                                <td>{p.unit}</td>
+                                                <td>{p.mainUnit || "-"}</td>
+                                                <td>{p.gender}</td>
+                                                <td>{p.telephone || "-"}</td>
+                                            </tr>
+                                        ))}
 
                                 </tbody>
 
@@ -217,14 +313,14 @@ export default function PolicierPage() {
                 <div className="flex justify-between items-center">
 
                     <p className="text-sm opacity-70">
-                        Page {page + 1} / {totalPages || 1}
+                        Page {page} / {totalPages || 1}
                     </p>
 
                     <div className="join">
 
                         <button
                             className="join-item btn btn-sm"
-                            disabled={page === 0}
+                            disabled={page <= 1}
                             onClick={() => setPage((p) => p - 1)}
                         >
                             « Précédent
@@ -232,7 +328,7 @@ export default function PolicierPage() {
 
                         <button
                             className="join-item btn btn-sm"
-                            disabled={page + 1 >= totalPages}
+                            disabled={page >= totalPages}
                             onClick={() => setPage((p) => p + 1)}
                         >
                             Suivant »

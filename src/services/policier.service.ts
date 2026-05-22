@@ -3,15 +3,13 @@ import { api } from "@/lib/axios";
 export type Policier = {
     id: string;
     matricule: string;
-    nom: string;
-    postnom: string;
-    prenom: string;
-    sexe: string;
+    lastname: string;
+    postname: string;
+    firstnames: string;
+    gender: string;
     telephone?: string;
-    email?: string;
-    statut: string;
-    dateNaissance:string;
-    groupeSanguin:string;
+    birthDate:string;
+    bloodtype:string;
   
 };
 
@@ -24,10 +22,10 @@ type GetPoliciersParams = {
 
 
 type SearchIdentiteParams = {
-    nom: string;
-    postnom: string;
-    prenom: string;
-    dateNaissance: string; // format YYYY-MM-DD recommandé
+    lastname: string;
+    postname: string;
+    firstname: string;
+    birthDate: string; // format YYYY-MM-DD recommandé
 };
 
 export const getPolicierByIdentite = async (
@@ -41,11 +39,8 @@ export const getPolicierByIdentite = async (
     return res.data;
 };
 
-export const getPoliciers = async (params: GetPoliciersParams) => {
-    const res = await api.get("/policiers", {
-        params,
-    });
-
+export const getPoliciers = async () => {
+    const res = await api.get("/policiers");
     return res.data;
 };
 
