@@ -1,16 +1,25 @@
 import { api } from "@/lib/axios";
 
-export type Policier = {
-    id: string;
+type Policier = {
+    id: number;
+
     matricule: string;
+
     lastname: string;
     postname: string;
     firstnames: string;
+
     gender: string;
+
     telephone?: string;
-    birthDate:string;
-    bloodtype:string;
-  
+
+    unit?: string;
+    mainUnit?: string;
+    birthDate?: string;
+    rank?: string;
+
+    pkPhoto?: string;
+    photoUrl?: string;
 };
 
 type GetPoliciersParams = {

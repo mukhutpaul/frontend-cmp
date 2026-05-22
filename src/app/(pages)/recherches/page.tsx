@@ -17,19 +17,26 @@ import {
 } from "@/services/controle.service";
 
 /* ========================= TYPES ========================= */
-
 type Policier = {
-    id: string;
+    id: number;
+
     matricule: string;
-    nom: string;
-    postnom: string;
-    prenom: string;
-    sexe: string;
+
+    lastname?: string;
+    postname?: string;
+    firstnames?: string;
+
+    gender?: string;
+
     telephone?: string;
-    grade?: string;
-    unite?: string;
-    uniteMere?: string;
-    dateNaissance: string;
+
+    unit?: string;
+    mainUnit?: string;
+
+    pkPhoto?: string;
+    photoUrl?: string;
+    birthDate?: string;
+    rank?: string;
 };
 
 /* ========================= PAGE ========================= */
@@ -68,6 +75,84 @@ export default function RecherchePage() {
 
     /* ========================= RESET ========================= */
 
+    /* ========================= PHOTO COMPONENT ========================= */
+
+    const PhotoCard = ({
+        pkPhoto,
+        photoUrl,
+    }: {
+        pkPhoto?: string;
+        photoUrl?: string;
+    }) => {
+        const [imageError, setImageError] = useState(false);
+        const [open, setOpen] = useState(false);
+
+        const imageSrc =
+            photoUrl
+                ? photoUrl
+                : pkPhoto
+                    ? `http://localhost:8090/photos/${pkPhoto}.jpg`
+                    : null;
+
+        return (
+            <>
+                {/* ================= THUMB ================= */}
+                <div
+                    className="relative cursor-pointer"
+                    onClick={() => imageSrc && setOpen(true)}
+                >
+                    <div className="w-32 h-32 rounded-xl border-2 border-primary/30 bg-white shadow overflow-hidden flex items-center justify-center">
+
+                        {imageSrc && !imageError ? (
+                            <img
+                                src={imageSrc}
+                                alt="Photo policier"
+                                className="w-full h-full object-cover hover:scale-105 transition"
+                                onError={() => setImageError(true)}
+                            />
+                        ) : (
+                            <div className="flex flex-col items-center justify-center text-gray-400">
+                                <User size={28} className="opacity-70" />
+                                <span className="text-[11px] mt-1 text-center">
+                                    Photo indisponible
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                </div>
+
+                {/* ================= DAISYUI MODAL ================= */}
+                {open && (
+                    <div className="modal modal-open">
+                        <div className="modal-box relative max-w-3xl">
+
+                            {/* CLOSE BUTTON */}
+                            <button
+                                className="btn btn-sm btn-circle absolute right-2 top-2"
+                                onClick={() => setOpen(false)}
+                            >
+                                ✕
+                            </button>
+
+                            {/* IMAGE ZOOM */}
+                            <img
+                                src={imageSrc || ""}
+                                alt="Zoom photo policier"
+                                className="w-full max-h-[70vh] object-contain rounded-lg"
+                            />
+                        </div>
+
+                        {/* BACKDROP */}
+                        <div
+                            className="modal-backdrop"
+                            onClick={() => setOpen(false)}
+                        ></div>
+                    </div>
+                )}
+            </>
+        );
+    };
+
     const buildQRData = (c: Controle) => {
 
         const p = c.policier;
@@ -76,19 +161,19 @@ export default function RecherchePage() {
 
             matricule: c.matricule,
 
-            nom: p?.nom || "",
+            nom: p?.lastname || "",
 
-            postnom: p?.postnom || "",
+            postnom: p?.postname || "",
             grade: c?.grade || "",
             unite: c?.unite || "",
 
-            genre: p?.sexe || "",
+            genre: p?.gender || "",
 
             groupe: p?.groupeSanguin || "",
 
-            dateNaissance: p?.dateNaissance || "",
+            dateNaissance: p?.birthDate || "",
 
-            lieuNaissance: p?.lieuNaissance || "",
+            lieuNaissance: p?.lieu || "",
 
             // ✅ username chef équipe
             equipe: c?.chefEquipe?.username || "",
@@ -296,7 +381,6 @@ export default function RecherchePage() {
         if (!policierMatricule.trim()) {
 
             toast.warning("Entrez un matricule");
-
             return;
         }
 
@@ -304,12 +388,30 @@ export default function RecherchePage() {
 
             setPolicierLoading(true);
 
-            const data =
-                await getPolicierByMatricule(
-                    policierMatricule
-                );
+            const data = await getPolicierByMatricule(
+                policierMatricule.trim()
+            );
+
+            console.log("POLICIER =", data);
+
+            if (!data) {
+
+                setPolicier(null);
+
+                toast.error("Policier introuvable");
+
+                return;
+            }
+
+            // PHOTO DEBUG
+            console.log("PHOTO =", {
+                pkPhoto: data.pkPhoto,
+                photoUrl: data.photoUrl,
+            });
 
             setPolicier(data);
+
+            toast.success("Policier trouvé");
 
         } catch (error) {
 
@@ -317,9 +419,7 @@ export default function RecherchePage() {
 
             setPolicier(null);
 
-            toast.error(
-                "Policier introuvable"
-            );
+            toast.error("Policier introuvable");
 
         } finally {
 
@@ -389,19 +489,19 @@ export default function RecherchePage() {
         );
 
         doc.text(
-            `Nom : ${p?.nom ?? "-"}`,
+            `Nom : ${p?.lastname ?? "-"}`,
             5,
             32
         );
 
         doc.text(
-            `Postnom : ${p?.postnom ?? "-"}`,
+            `Postnom : ${p?.postname ?? "-"}`,
             5,
             37
         );
 
         doc.text(
-            `Prenom : ${p?.prenom ?? "-"}`,
+            `Prenom : ${p?.firstnames ?? "-"}`,
             5,
             42
         );
@@ -566,12 +666,12 @@ export default function RecherchePage() {
                                                 {
                                                     controle
                                                         .policier
-                                                        ?.nom
+                                                        ?.lastname
                                                 }{" "}
                                                 {
                                                     controle
                                                         .policier
-                                                        ?.postnom
+                                                        ?.postname
                                                 }
                                             </h3>
 
@@ -580,7 +680,7 @@ export default function RecherchePage() {
                                                 {
                                                     controle
                                                         .policier
-                                                        ?.prenom
+                                                        ?.firstnames
                                                 }
                                             </p>
 
@@ -697,11 +797,11 @@ export default function RecherchePage() {
                                         <div className="flex-1 space-y-2 text-sm">
 
                                             <h3 className="text-xl font-bold text-primary">
-                                                {policier.nom} {policier.postnom}
+                                                {policier.lastname} {policier.postname}
                                             </h3>
 
                                             <p>
-                                                <b>Prénom :</b> {policier.prenom}
+                                                <b>Prénom :</b> {policier.firstnames}
                                             </p>
 
                                             <p>
@@ -709,11 +809,11 @@ export default function RecherchePage() {
                                             </p>
 
                                             <p>
-                                                <b>Sexe :</b> {policier.sexe}
+                                                <b>Sexe :</b> {policier.gender}
                                             </p>
 
                                             <p>
-                                                <b>Date Naissance :</b> {policier.dateNaissance}
+                                                <b>Date Naissance :</b> {policier.birthDate}
                                             </p>
 
                                             <p>
@@ -723,14 +823,14 @@ export default function RecherchePage() {
                                             <p>
                                                 <b>Grade :</b>{" "}
                                                 <span className="badge badge-primary">
-                                                    {policier.grade || "-"}
+                                                    {policier.rank || "-"}
                                                 </span>
                                             </p>
 
                                             <p>
                                                 <b>Unité :</b>{" "}
                                                 <span className="badge badge-secondary">
-                                                    {policier.unite || "-"}
+                                                    {policier.unit || "-"}
                                                 </span>
                                             </p>
 
@@ -740,7 +840,10 @@ export default function RecherchePage() {
                                         <div className="w-32 h-32 rounded-xl border-2 border-dashed border-primary/50 bg-white shadow flex items-center justify-center">
 
                                             <span className="text-xs text-gray-400 text-center">
-                                                Photo<br />Policier
+                                                <PhotoCard
+                                                    pkPhoto={policier.pkPhoto}
+                                                    photoUrl={policier.photoUrl}
+                                                />
                                             </span>
 
                                         </div>
@@ -932,11 +1035,11 @@ export default function RecherchePage() {
                                         <div className="flex-1 space-y-2 text-sm">
 
                                             <h3 className="text-xl font-bold text-primary">
-                                                {identite.nom} {identite.postnom}
+                                                {identite.lastname} {identite.postname}
                                             </h3>
 
                                             <p>
-                                                <b>Prénom :</b> {identite.prenom}
+                                                <b>Prénom :</b> {identite.firstnames}
                                             </p>
 
                                             <p>
@@ -944,11 +1047,11 @@ export default function RecherchePage() {
                                             </p>
 
                                             <p>
-                                                <b>Sexe :</b> {identite.sexe}
+                                                <b>Sexe :</b> {identite.gender}
                                             </p>
 
                                             <p>
-                                                <b>Date Naissance :</b> {identite.dateNaissance}
+                                                <b>Date Naissance :</b> {identite.birthDate}
                                             </p>
 
                                             <p>
@@ -958,46 +1061,25 @@ export default function RecherchePage() {
                                             <p>
                                                 <b>Grade :</b>{" "}
                                                 <span className="badge badge-primary">
-                                                    {identite.grade || "-"}
+                                                    {identite.rank || "X"}
                                                 </span>
                                             </p>
 
                                             <p>
                                                 <b>Unité :</b>{" "}
                                                 <span className="badge badge-secondary">
-                                                    {identite.unite || "-"}
+                                                    {identite.unit || "-"}
                                                 </span>
                                             </p>
 
                                         </div>
 
                                         {/* ================= PHOTO FRAME ================= */}
-                                        <div className="w-32 h-32 rounded-xl border-2 border-dashed border-primary/40 bg-white shadow flex items-center justify-center overflow-hidden relative">
-                                            {/* 
-                                            {identite.photoUrl ? (
-                                                <img
-                                                    src={identite.photoUrl}
-                                                    alt="Policier"
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            ) : (
-                                                <div className="flex flex-col items-center justify-center text-gray-400">
-                                                    <User size={28} className="opacity-70" />
-                                                    <span className="text-[11px] mt-1 text-center">
-                                                        Photo non disponible
-                                                    </span>
-                                                </div>
-                                            )} */}
-
-                                            {/* badge caméra */}
-                                            <div className="absolute bottom-1 right-1 bg-primary text-white p-1 rounded-full shadow">
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3" viewBox="0 0 24 24" fill="currentColor">
-                                                    <path d="M9 2l1.5 2H13l1.5-2H17a2 2 0 0 1 2 2v2h-3l-1.5-2h-5L8 6H5V4a2 2 0 0 1 2-2h2z" />
-                                                    <path d="M5 8h14v12a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8z" />
-                                                    <circle cx="12" cy="14" r="3" />
-                                                </svg>
-                                            </div>
-
+                                        <div className="w-32 h-32 flex items-center justify-center">
+                                            <PhotoCard
+                                                pkPhoto={identite.pkPhoto}
+                                                photoUrl={identite.photoUrl}
+                                            />
                                         </div>
 
                                     </div>

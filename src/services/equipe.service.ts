@@ -13,6 +13,7 @@ export interface Equipe {
     [key: string]: any;
   };
   isActive?: boolean;
+  site: string;
   createdAt?: string;
   updatedAt?: string;
 }
