@@ -60,6 +60,7 @@ export default function PolicierPage() {
     const [search, setSearch] = useState("");
     const [selectedUnite, setSelectedUnite] = useState<number | null>(null);
     const [selectedMainUnit, setSelectedMainUnit] = useState<string | null>(null);
+    const [selectedGender, setSelectedGender] = useState<string | null>(null);
 
     const [page, setPage] = useState(1);
 
@@ -104,11 +105,13 @@ export default function PolicierPage() {
     /* ========================= MAIN UNITS ========================= */
 
     const mainUnits = useMemo(() => {
-        return [...new Set(
-            policiers
-                .map((p) => p.mainUnit)
-                .filter(Boolean)
-        )];
+        return [
+            ...new Set(
+                policiers
+                    .map((p) => p.mainUnit)
+                    .filter(Boolean)
+            ),
+        ];
     }, [policiers]);
 
     /* ========================= FILTER ========================= */
@@ -133,10 +136,15 @@ export default function PolicierPage() {
                 !selectedMainUnit ||
                 p.mainUnit === selectedMainUnit;
 
+            const matchGender =
+                !selectedGender ||
+                p.gender === selectedGender;
+
             return (
                 matchSearch &&
                 matchUnite &&
-                matchMainUnit
+                matchMainUnit &&
+                matchGender
             );
         });
 
@@ -145,6 +153,7 @@ export default function PolicierPage() {
         search,
         selectedUnite,
         selectedMainUnit,
+        selectedGender,
         unites
     ]);
 
@@ -166,7 +175,12 @@ export default function PolicierPage() {
     /* reset page on filters */
     useEffect(() => {
         setPage(1);
-    }, [search, selectedUnite, selectedMainUnit]);
+    }, [
+        search,
+        selectedUnite,
+        selectedMainUnit,
+        selectedGender
+    ]);
 
     /* ========================= UI ========================= */
 
@@ -189,7 +203,7 @@ export default function PolicierPage() {
                 {/* FILTERS */}
                 <div className="card bg-base-200">
 
-                    <div className="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div className="card-body grid grid-cols-1 md:grid-cols-4 gap-4">
 
                         {/* SEARCH */}
                         <input
@@ -228,6 +242,21 @@ export default function PolicierPage() {
                             }))}
                             onChange={(opt: any) => {
                                 setSelectedMainUnit(opt?.value || null);
+                            }}
+                        />
+
+                        {/* GENDER */}
+                        <Select
+                            placeholder="Filtrer par sexe"
+                            unstyled
+                            isClearable
+                            classNames={selectStyles}
+                            options={[
+                                { value: "M", label: "Masculin" },
+                                { value: "F", label: "Féminin" },
+                            ]}
+                            onChange={(opt: any) => {
+                                setSelectedGender(opt?.value || null);
                             }}
                         />
 
