@@ -307,9 +307,18 @@ export default function ControlePage() {
     return (
         <DashboardLayout>
 
-            <div className="p-6 space-y-6">
 
-                <h1 className="text-2xl font-bold">Contrôles</h1>
+
+            <div className="p-6 space-y-6">
+                <div>
+                    <h1 className="text-2xl font-bold">
+                        Contrôles
+                    </h1>
+
+                    <p className="text-sm opacity-70">
+                        {filteredControles.length} élément(s) trouvé(s)
+                    </p>
+                </div>
 
                 {/* SEARCH */}
 

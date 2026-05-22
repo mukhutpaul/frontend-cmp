@@ -43,7 +43,7 @@ export default function Sidebar({
     { href: "/seances", icon: Shield, label: "Séances", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
     { href: "/equipes", icon: Shield, label: "Equipes", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
     { href: "/recherches", icon: Shield, label: "Recherches", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
-    { href: "/infosManques", icon: Shield, label: "Infos Manquantes", auth: true, roles: ["SUPERVISEUR", "ADMIN"] }
+    //{ href: "/infosManques", icon: Shield, label: "Infos Manquantes", auth: true, roles: ["SUPERVISEUR", "ADMIN"] }
 
   ]
 
