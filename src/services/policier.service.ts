@@ -17,6 +17,7 @@ type Policier = {
     mainUnit?: string;
     birthDate?: string;
     rank?: string;
+    bloodtype: string;
 
     pkPhoto?: string;
     photoUrl?: string;

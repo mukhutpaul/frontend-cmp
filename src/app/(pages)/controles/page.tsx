@@ -119,25 +119,19 @@ export default function ControlePage() {
 
         return JSON.stringify({
 
+            numero:c.uid,
             matricule: c.matricule,
-
             nom: p?.lastname || "X",
-
             postnom: p?.postname || "X",
-            grade: c?.grade || "X",
+            prenom: p?.firstnames || "X",
             unite: c?.unite || "X",
-
-            genre: p?.gender || "X",
-
-            groupe: p?.groupeSanguin || "X",
-
+            sexe: p?.gender || "X",
+            groupe: p?.bloodtype || "X",
             dateNaissance: p?.birthDate || "X",
-
             lieuNaissance: p?.lieu || "X",
-
+            site_controle:c?.equipe?.site || "X",
             // ✅ username chef équipe
             equipe: c?.chefEquipe?.username || "X",
-
             // ✅ zone mission
             province: c?.seance?.mission?.zone || ""
         });

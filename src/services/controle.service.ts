@@ -76,9 +76,13 @@ export interface Controle {
         postname?: string;
         firstnames?: string;
         gender?: string;
-        groupeSanguin?: string;
+        bloodtype?: string;
         birthDate?: string;
         lieu?: string;
+    };
+
+     equipe?: {
+        site?: string;
     };
 
     chefEquipe?: {

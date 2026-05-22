@@ -159,25 +159,19 @@ export default function RecherchePage() {
 
         return JSON.stringify({
 
+            numero: c.uid,
             matricule: c.matricule,
-
-            nom: p?.lastname || "",
-
-            postnom: p?.postname || "",
-            grade: c?.grade || "",
-            unite: c?.unite || "",
-
-            genre: p?.gender || "",
-
-            groupe: p?.groupeSanguin || "",
-
-            dateNaissance: p?.birthDate || "",
-
-            lieuNaissance: p?.lieu || "",
-
+            nom: p?.lastname || "X",
+            postnom: p?.postname || "X",
+            prenom: p?.firstnames || "X",
+            unite: c?.unite || "X",
+            sexe: p?.gender || "X",
+            groupe: p?.bloodtype || "X",
+            dateNaissance: p?.birthDate || "X",
+            lieuNaissance: p?.lieu || "X",
+            site_controle: c?.equipe?.site || "X",
             // ✅ username chef équipe
-            equipe: c?.chefEquipe?.username || "",
-
+            equipe: c?.chefEquipe?.username || "X",
             // ✅ zone mission
             province: c?.seance?.mission?.zone || ""
         });
