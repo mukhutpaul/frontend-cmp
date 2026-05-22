@@ -3,11 +3,12 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
-import { Search } from "lucide-react";
+import { Search, User } from "lucide-react";
 import { toast } from "react-toastify";
 
 import { getPoliciers } from "@/services/policier.service";
 import { getUnites } from "@/services/unite.service";
+import Image from "next/image";
 
 /* ========================= TYPES ========================= */
 
@@ -27,6 +28,7 @@ type Policier = {
     mainUnit?: string;
     gender: string;
     telephone?: string;
+    photoUrl?: string;
 };
 
 /* ========================= CONSTANTES ========================= */
@@ -73,6 +75,19 @@ export default function PolicierPage() {
             setLoading(true);
 
             const res = await getPoliciers();
+
+            console.log("POLICIERS API =", res);
+
+            if (Array.isArray(res)) {
+
+                res.forEach((p: any) => {
+                    console.log("PHOTO =>", {
+                        matricule: p.matricule,
+                        pkPhoto: p.pkPhoto,
+                        photoUrl: p.photoUrl,
+                    });
+                });
+            }
 
             setPoliciers(Array.isArray(res) ? res : []);
 
@@ -283,6 +298,7 @@ export default function PolicierPage() {
                                         <th>Main Unit</th>
                                         <th>Sexe</th>
                                         <th>Téléphone</th>
+                                        <th>Photo</th>
                                     </tr>
                                 </thead>
 
@@ -325,6 +341,44 @@ export default function PolicierPage() {
                                                 <td>{p.mainUnit || "-"}</td>
                                                 <td>{p.gender}</td>
                                                 <td>{p.telephone || "-"}</td>
+                                                <td>
+                                                    {p.photoUrl ? (
+                                                        <div className="w-12 h-12 rounded-full overflow-hidden border flex items-center justify-center bg-base-200">
+                                                            <Image
+                                                                src={p.photoUrl}
+                                                                alt="photo"
+                                                                width={48}
+                                                                height={48}
+                                                                className="w-full h-full object-cover"
+                                                                unoptimized
+                                                                onError={(e) => {
+                                                                    e.currentTarget.style.display = "none";
+
+                                                                    const fallback =
+                                                                        e.currentTarget.parentElement?.querySelector(
+                                                                            ".fallback-user"
+                                                                        ) as HTMLElement;
+
+                                                                    if (fallback) {
+                                                                        fallback.style.display = "flex";
+                                                                    }
+
+                                                                    console.log("IMAGE INTROUVABLE :", p.photoUrl);
+                                                                }}
+                                                            />
+
+                                                            <div
+                                                                className="fallback-user hidden w-full h-full items-center justify-center"
+                                                            >
+                                                                <User className="w-6 h-6 opacity-60" />
+                                                            </div>
+                                                        </div>
+                                                    ) : (
+                                                        <div className="w-12 h-12 rounded-full bg-base-200 flex items-center justify-center border">
+                                                            <User className="w-6 h-6 opacity-60" />
+                                                        </div>
+                                                    )}
+                                                </td>
                                             </tr>
                                         ))}
 
