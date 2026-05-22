@@ -3,7 +3,7 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
-import { Search, Printer, Box } from "lucide-react";
+import { Search, Printer, Box, User } from "lucide-react";
 import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
 import jsPDF from "jspdf";
@@ -11,6 +11,7 @@ import QRCode from "qrcode";
 
 import { Controle, getControles } from "@/services/controle.service";
 import { getMissions } from "@/services/mission.service";
+import Image from "next/image";
 
 /* ========================= STYLE SELECT ========================= */
 
@@ -53,6 +54,58 @@ export default function ControlePage() {
     const [missions, setMissions] = useState<any[]>([]);
     const [filterPresent, setFilterPresent] = useState<string | null>(null);
     const [filterJustifie, setFilterJustifie] = useState<string | null>(null);
+
+    const [zoomPhoto, setZoomPhoto] = useState<string | null>(null);
+    const [scale, setScale] = useState(1);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [dragging, setDragging] = useState(false);
+    const [start, setStart] = useState({ x: 0, y: 0 });
+
+    /* ========================= PHOTO ZOOM ========================= */
+    useEffect(() => {
+        if (zoomPhoto) {
+            setScale(1);
+            setPosition({ x: 0, y: 0 });
+        }
+    }, [zoomPhoto]);
+
+    useEffect(() => {
+        const stop = () => setDragging(false);
+        window.addEventListener("mouseup", stop);
+        return () => window.removeEventListener("mouseup", stop);
+    }, []);
+
+    const handleWheel = (e: React.WheelEvent) => {
+        e.preventDefault();
+
+        setScale((prev) => {
+            const next = prev - e.deltaY * 0.001;
+            return Math.min(Math.max(next, 1), 4);
+        });
+    };
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        setDragging(true);
+        setStart({
+            x: e.clientX - position.x,
+            y: e.clientY - position.y,
+        });
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (!dragging) return;
+
+        setPosition({
+            x: e.clientX - start.x,
+            y: e.clientY - start.y,
+        });
+    };
+
+    const handleMouseUp = () => {
+        setDragging(false);
+    };
+
+
 
 
 
@@ -122,7 +175,11 @@ export default function ControlePage() {
 
     const uniqueUnites = useMemo(() => {
         return Array.from(
-            new Set(controles.map((c) => c.unite).filter(Boolean))
+            new Set(
+                controles
+                    .map((c) => c.unite)
+                    .filter((u) => u && u.trim() !== "" && u !== "null")
+            )
         );
     }, [controles]);
 
@@ -210,7 +267,7 @@ export default function ControlePage() {
         doc.text("IDENTITE", 5, 25);
 
         doc.setFontSize(7);
-        doc.text(`Nom: ${p?.lastname?? "-"}`, 5, 32);
+        doc.text(`Nom: ${p?.lastname ?? "-"}`, 5, 32);
         doc.text(`Postnom: ${p?.postname ?? "-"}`, 5, 37);
         doc.text(`Matricule: ${c.matricule}`, 5, 45);
 
@@ -362,6 +419,7 @@ export default function ControlePage() {
                                     <th>Grade</th>
                                     <th>Présent</th>
                                     <th>Justifié</th>
+                                    <th>Photo</th>
                                     <th>Action</th>
                                 </tr>
                             </thead>
@@ -430,6 +488,36 @@ export default function ControlePage() {
                                             >
                                                 {c.justifie ? "Oui" : "Non"}
                                             </span>
+                                        </td>
+
+                                        <td>
+                                            {c.photoUrl && c.photoUrl !== "null" ? (
+                                                <button
+                                                    type="button"
+                                                    onClick={() => setZoomPhoto(c.photoUrl!)}
+                                                    className="cursor-pointer"
+                                                >
+                                                    <div className="w-12 h-12 rounded-full overflow-hidden border bg-base-200 flex items-center justify-center cursor-pointer">
+
+                                                        <Image
+                                                            src={c.photoUrl}
+                                                            alt="photo"
+                                                            width={48}
+                                                            height={48}
+                                                            className="w-full h-full object-cover"
+                                                            unoptimized
+                                                            onError={(e) => {
+                                                                e.currentTarget.style.display = "none";
+                                                            }}
+                                                        />
+
+                                                    </div>
+                                                </button>
+                                            ) : (
+                                                <div className="w-12 h-12 rounded-full bg-base-200 flex items-center justify-center border">
+                                                    <User size={22} className="text-gray-400" />
+                                                </div>
+                                            )}
                                         </td>
 
                                         <td>
@@ -576,6 +664,74 @@ export default function ControlePage() {
 
             </div>
 
+            {zoomPhoto && (
+                <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+
+                    <div className="relative bg-base-100 p-4 rounded-xl shadow-xl max-w-3xl w-full">
+
+                        {/* CLOSE */}
+                        <button
+                            className="btn btn-sm btn-circle btn-error absolute top-2 right-2 z-50"
+                            onClick={() => setZoomPhoto(null)}
+                        >
+                            ✕
+                        </button>
+
+                        {/* IMAGE AREA */}
+                        <div
+                            className="w-full h-[500px] overflow-hidden flex items-center justify-center cursor-grab active:cursor-grabbing"
+                            onWheel={handleWheel}
+                            onMouseDown={handleMouseDown}
+                            onMouseMove={handleMouseMove}
+                            onMouseUp={handleMouseUp}
+                            onMouseLeave={handleMouseUp}
+                        >
+                            <img
+                                src={zoomPhoto}
+                                alt="zoom"
+                                className="select-none max-w-none"
+                                style={{
+                                    transform: `translate(${position.x}px, ${position.y}px) scale(${scale})`,
+                                    transition: dragging ? "none" : "transform 0.1s ease",
+                                    cursor: dragging ? "grabbing" : "grab"
+                                }}
+                                draggable={false}
+                                onError={() => {
+                                    console.log("Image zoom failed:", zoomPhoto);
+                                }}
+                            />
+                        </div>
+
+                        {/* CONTROLS */}
+                        <div className="flex justify-center gap-2 mt-3">
+                            <button
+                                className="btn btn-sm"
+                                onClick={() => setScale((s) => Math.min(s + 0.2, 4))}
+                            >
+                                Zoom +
+                            </button>
+
+                            <button
+                                className="btn btn-sm"
+                                onClick={() => setScale((s) => Math.max(s - 0.2, 1))}
+                            >
+                                Zoom -
+                            </button>
+
+                            <button
+                                className="btn btn-sm"
+                                onClick={() => {
+                                    setScale(1);
+                                    setPosition({ x: 0, y: 0 });
+                                }}
+                            >
+                                Reset
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
 }

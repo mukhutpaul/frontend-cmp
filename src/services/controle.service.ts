@@ -49,29 +49,48 @@ type Policier = {
     rank?: string;
 };
 
-export type Controle = {
+export interface Controle {
+
     id: string;
-    uid?: string;
 
-    policier?: Policier;
+    uid: string;
 
-    matricule?: string;
-    noms?: string;
-    unite?: string;
-    grade?: string;
-    chargeMission?: User;
-    chefEquipe: User;
-    controleur: User;
-    seance : Seance;
-    present?: boolean;
-    justifie?: boolean;
+    matricule: string;
 
-    situation?: string;
-    status?: string;
+    noms: string;
 
-    isActif?: boolean;
-    createdAt?: string;
-};
+    unite: string;
+
+    grade: string;
+
+    present: boolean;
+
+    justifie: boolean;
+
+    pkPhoto?: string;
+
+    photoUrl?: string;
+
+    policier?: {
+        lastname?: string;
+        postname?: string;
+        firstnames?: string;
+        gender?: string;
+        groupeSanguin?: string;
+        birthDate?: string;
+        lieu?: string;
+    };
+
+    chefEquipe?: {
+        username?: string;
+    };
+
+    seance?: {
+        mission?: {
+            zone?: string;
+        };
+    };
+}
 
 /* ========================= PAGINATION RESPONSE ========================= */
 
