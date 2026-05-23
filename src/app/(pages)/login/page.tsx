@@ -212,7 +212,7 @@ export default function LoginPage() {
                             {/* ARMES RDC - GAUCHE */}
                             <div className="w-14 flex justify-start">
                                 <img
-                                    src="/arm.png"
+                                    src="/aba.png"
                                     alt="Armoiries RDC"
                                     className="w-12 h-12 object-contain opacity-90"
                                 />
