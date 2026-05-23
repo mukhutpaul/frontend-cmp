@@ -210,7 +210,7 @@ function ReportExporter({ data }: { data: any }) {
 
   // 🔢 NUMÉRO STABLE OFFICIEL
   const reportNumber = useMemo(() => {
-    return `PNC-RAP-${Date.now().toString().slice(-6)}`;
+    return `PNC-ABA-RAP-${Date.now().toString().slice(-6)}`;
   }, []);
 
   const generatePDF = async () => {
