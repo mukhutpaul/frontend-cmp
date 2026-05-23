@@ -19,36 +19,75 @@ type LoginForm = {
 
 export const launchConfetti = () => {
 
-        const duration = 3000;
-        const animationEnd = Date.now() + duration;
+    const duration = 3000;
+    const animationEnd = Date.now() + duration;
 
-        const colors = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626"];
+    const colors = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626"];
 
-        const frame = () => {
+    const frame = () => {
 
-            confetti({
-                particleCount: 4,
-                angle: 60,
-                spread: 55,
-                origin: { x: 0 },
-                colors
-            });
+        confetti({
+            particleCount: 4,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0 },
+            colors
+        });
 
-            confetti({
-                particleCount: 4,
-                angle: 120,
-                spread: 55,
-                origin: { x: 1 },
-                colors
-            });
+        confetti({
+            particleCount: 4,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1 },
+            colors
+        });
 
-            if (Date.now() < animationEnd) {
-                requestAnimationFrame(frame);
-            }
-        };
-
-        frame();
+        if (Date.now() < animationEnd) {
+            requestAnimationFrame(frame);
+        }
     };
+
+    frame();
+};
+
+const openServerConfig = async () => {
+    const { value: formValues } = await Swal.fire({
+        title: "Configuration serveur",
+        html: `
+            <div style="display:flex; flex-direction:column; gap:10px;">
+                <input id="swal-ip" class="swal2-input" placeholder="Adresse IP (ex: 192.168.1.10)" />
+                <input id="swal-port" class="swal2-input" placeholder="Port (ex: 8080)" />
+            </div>
+        `,
+        focusConfirm: false,
+        showCancelButton: true,
+        confirmButtonText: "Enregistrer",
+        preConfirm: () => {
+            const ip = (document.getElementById("swal-ip") as HTMLInputElement)?.value;
+            const port = (document.getElementById("swal-port") as HTMLInputElement)?.value;
+
+            if (!ip || !port) {
+                Swal.showValidationMessage("IP et PORT sont obligatoires");
+                return;
+            }
+
+            return { ip, port };
+        }
+    });
+
+    if (formValues) {
+        localStorage.setItem("server_ip", formValues.ip);
+        localStorage.setItem("server_port", formValues.port);
+
+        await Swal.fire({
+            icon: "success",
+            title: "Serveur configuré",
+            text: `${formValues.ip}:${formValues.port}`,
+            timer: 1500,
+            showConfirmButton: false
+        });
+    }
+};
 
 export default function LoginPage() {
     const [mode, setMode] = useState<"local" | "remote">("local");
@@ -57,7 +96,7 @@ export default function LoginPage() {
     const router = useRouter();
     const { register, handleSubmit } = useForm<LoginForm>();
 
-  
+
 
     // restore mode
     useEffect(() => {
@@ -165,13 +204,45 @@ export default function LoginPage() {
                 <div className="card-body">
 
                     {/* HEADER */}
-                    <div className="text-center mb-6">
-                        <h1 className="text-3xl font-bold text-primary">
-                            ABA-CM PNC
-                        </h1>
-                        <p className="text-sm opacity-60 mt-1">
-                            Authentification sécurisée
-                        </p>
+                    {/* HEADER AVEC SYMBOLES OFFICIELS */}
+                    <div className="mb-6">
+
+                        <div className="flex items-center justify-between">
+
+                            {/* ARMES RDC - GAUCHE */}
+                            <div className="w-14 flex justify-start">
+                                <img
+                                    src="/arm.png"
+                                    alt="Armoiries RDC"
+                                    className="w-12 h-12 object-contain opacity-90"
+                                />
+                            </div>
+
+                            {/* CENTRE - LOGO PNC + TITRE */}
+                            <div className="text-center flex-1 space-y-2">
+
+
+
+                                <h1 className="text-2xl font-bold text-primary tracking-widest">
+                                    ABA-CM PNC
+                                </h1>
+
+                                <p className="text-xs opacity-60 uppercase tracking-wide">
+                                    Authentification sécurisée du système
+                                </p>
+
+                            </div>
+
+                            {/* PNC - DROITE */}
+                            <img
+                                src="/pnc.png"
+                                alt="PNC"
+                                onClick={openServerConfig}
+                                className="w-12 h-12 object-contain opacity-90 cursor-pointer hover:scale-110 transition-transform duration-200"
+                            />
+
+                        </div>
+
                     </div>
 
                     {/* MODE */}
