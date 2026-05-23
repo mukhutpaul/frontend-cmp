@@ -12,6 +12,7 @@ import QRCode from "qrcode";
 import { Controle, getControles } from "@/services/controle.service";
 import { getMissions } from "@/services/mission.service";
 import Image from "next/image";
+import { FileText } from "lucide-react";
 
 /* ========================= STYLE SELECT ========================= */
 
@@ -60,6 +61,9 @@ export default function ControlePage() {
     const [position, setPosition] = useState({ x: 0, y: 0 });
     const [dragging, setDragging] = useState(false);
     const [start, setStart] = useState({ x: 0, y: 0 });
+    const [selectedDocuments, setSelectedDocuments] = useState<Controle | null>(null);
+    const [docZoom, setDocZoom] = useState<string | null>(null);
+    const [docScale, setDocScale] = useState(1);
 
     /* ========================= PHOTO ZOOM ========================= */
     useEffect(() => {
@@ -119,7 +123,7 @@ export default function ControlePage() {
 
         return JSON.stringify({
 
-            numero:c.uid,
+            numero: c.uid,
             matricule: c.matricule,
             nom: p?.lastname || "X",
             postnom: p?.postname || "X",
@@ -129,7 +133,7 @@ export default function ControlePage() {
             groupe: p?.bloodtype || "X",
             dateNaissance: p?.birthDate || "X",
             lieuNaissance: p?.lieu || "X",
-            site_controle:c?.equipe?.site || "X",
+            site_controle: c?.equipe?.site || "X",
             // ✅ username chef équipe
             equipe: c?.chefEquipe?.username || "X",
             // ✅ zone mission
@@ -523,7 +527,9 @@ export default function ControlePage() {
                                             )}
                                         </td>
 
-                                        <td>
+                                        <td className="flex gap-2">
+
+                                            {/* PRINT */}
                                             {c.present && (
                                                 <button
                                                     className="btn btn-sm btn-primary btn-outline"
@@ -532,6 +538,17 @@ export default function ControlePage() {
                                                     <Printer size={16} />
                                                 </button>
                                             )}
+
+                                            {/* DOCUMENT ICON (ONLY IF JUSTIFIE) */}
+                                            {c.justifie && c.documents && c.documents.length > 0 && (
+                                                <button
+                                                    className="btn btn-sm btn-secondary btn-outline"
+                                                    onClick={() => setSelectedDocuments(c)}
+                                                >
+                                                    <FileText size={16} />
+                                                </button>
+                                            )}
+
                                         </td>
 
                                     </tr>
@@ -730,6 +747,135 @@ export default function ControlePage() {
                             >
                                 Reset
                             </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
+
+            {selectedDocuments && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center">
+
+                    {/* BACKDROP (click outside DOES NOT close) */}
+                    <div className="absolute inset-0 bg-black/70"></div>
+
+                    {/* MODAL */}
+                    <div className="relative bg-base-100 w-full max-w-4xl rounded-xl shadow-xl p-4 z-10">
+
+                        {/* CLOSE BUTTON ONLY */}
+                        <button
+                            className="btn btn-sm btn-circle btn-error absolute top-2 right-2"
+                            onClick={() => {
+                                setSelectedDocuments(null);
+                                setDocZoom(null);
+                                setDocScale(1);
+                            }}
+                        >
+                            ✕
+                        </button>
+
+                        <h2 className="text-lg font-bold mb-4">
+                            Documents du contrôle
+                        </h2>
+
+                        {/* LIST SCROLL */}
+                        <div className="flex gap-4 overflow-x-auto p-2">
+
+                            {selectedDocuments.documents?.map((doc) => (
+                                <div
+                                    key={doc.id}
+                                    className="min-w-[250px] bg-base-200 rounded-lg p-2 shadow"
+                                >
+
+                                    <p className="font-semibold text-sm">{doc.title}</p>
+                                    <p className="text-xs opacity-70">{doc.description}</p>
+
+                                    {/* IMAGE */}
+                                    <img
+                                        src={doc.imageUrl}
+                                        className="w-full h-40 object-cover rounded mt-2 cursor-zoom-in"
+                                        onClick={() => {
+                                            setDocZoom(doc.imageUrl);
+                                            setDocScale(1);
+                                        }}
+                                    />
+                                </div>
+                            ))}
+
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            {docZoom && (
+                <div className="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 p-4">
+
+                    {/* MODAL WRAPPER */}
+                    <div className="relative bg-base-100 w-full max-w-6xl h-[90vh] rounded-xl shadow-2xl flex flex-col overflow-hidden">
+
+                        {/* HEADER (FIXED + SAFE BUTTON) */}
+                        <div className="relative px-4 py-3 border-b bg-base-200 flex items-center justify-between shrink-0">
+
+                            <h3 className="font-semibold text-sm">
+                                Aperçu document
+                            </h3>
+
+                            {/* CLOSE BUTTON (SAFE INSIDE HEADER) */}
+                            <button
+                                className="btn btn-sm btn-circle btn-error"
+                                onClick={() => {
+                                    setDocZoom(null);
+                                    setDocScale(1);
+                                }}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* SCROLLABLE VIEWPORT */}
+                        <div className="flex-1 overflow-auto bg-black/10 p-6">
+
+                            {/* IMAGE ZOOM CONTAINER */}
+                            <div className="min-w-max min-h-max flex items-center justify-center">
+
+                                <img
+                                    src={docZoom}
+                                    draggable={false}
+                                    className="select-none"
+                                    style={{
+                                        transform: `scale(${docScale})`,
+                                        transformOrigin: "center",
+                                        transition: "transform 0.2s ease",
+                                    }}
+                                />
+                            </div>
+
+                        </div>
+
+                        {/* CONTROLS */}
+                        <div className="shrink-0 px-4 py-3 border-t bg-base-200 flex justify-center gap-2">
+
+                            <button
+                                className="btn btn-sm"
+                                onClick={() => setDocScale((s) => Math.min(s + 0.2, 4))}
+                            >
+                                Zoom +
+                            </button>
+
+                            <button
+                                className="btn btn-sm"
+                                onClick={() => setDocScale((s) => Math.max(s - 0.2, 1))}
+                            >
+                                Zoom -
+                            </button>
+
+                            <button
+                                className="btn btn-sm btn-outline"
+                                onClick={() => setDocScale(1)}
+                            >
+                                Reset
+                            </button>
+
                         </div>
 
                     </div>

@@ -20,7 +20,7 @@ export interface Mission {
     zone: string;
     numero: string;
     dateDebut: string;
-    dateFin: string;
+    dateFin?: string;
     isActive: boolean;
     chargeMission: User;
 }
@@ -28,48 +28,42 @@ export interface Mission {
 export interface Seance {
     id: string;
     dateSeance: string;
-    dateFin: string;
+    dateFin?: string;
     isActive: boolean;
     chefEquipe: User;
     mission: Mission;
 }
 
+/* ========================= DOCUMENT ========================= */
 
-type Policier = {
+export interface Document {
     id: string;
-    matricule: string;
-    lastname: string;
-    postname: string;
-    firstnames: string;
-    gender?: string;
-    birthDate?: string;
-    lieu?: string;
-    groupeSanguin?: string; // ✅ AJOUT
-    chefEquipe?: string;
-    rank?: string;
-};
+    title: string;
+    description: string;
+    imageUrl: string;
+}
+
+/* ========================= CONTROLE ========================= */
 
 export interface Controle {
 
     id: string;
-
     uid: string;
 
     matricule: string;
-
     noms: string;
-
     unite: string;
 
-    grade: string;
+    grade?: string;
 
     present: boolean;
-
     justifie: boolean;
 
     pkPhoto?: string;
-
     photoUrl?: string;
+
+    /* 🔥 FIX IMPORTANT */
+    documents?: Document[];
 
     policier?: {
         lastname?: string;
@@ -81,7 +75,7 @@ export interface Controle {
         lieu?: string;
     };
 
-     equipe?: {
+    equipe?: {
         site?: string;
     };
 
