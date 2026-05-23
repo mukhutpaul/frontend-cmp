@@ -75,14 +75,27 @@ export default function DashboardCards() {
     <div className="space-y-10">
 
       {/* HEADER */}
-      <div className="space-y-1">
-        <h1 className="text-3xl font-bold tracking-tight">
-          Tableau de bord
-        </h1>
+      {/* HEADER */}
+      <div className="flex items-start justify-between gap-4">
 
-        <p className="text-sm text-base-content/60">
-          Système de contrôle des effectifs policiers
-        </p>
+        <div className="space-y-1">
+          <h1 className="text-3xl font-bold tracking-tight">
+            Tableau de bord
+          </h1>
+
+          <p className="text-sm text-base-content/60">
+            Système de contrôle des effectifs policiers
+          </p>
+        </div>
+
+        {/* ACTION BUTTON */}
+        <button
+          onClick={() => window.print()}
+          className="btn btn-primary btn-sm gap-2 shadow-md"
+        >
+          🖨️ Imprimer rapport national
+        </button>
+
       </div>
 
       {/* ================= PANELS ================= */}
