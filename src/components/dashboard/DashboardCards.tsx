@@ -535,7 +535,7 @@ function ReportExporter({ data }: { data: any }) {
                 </div>
 
                 {/* FOOTER */}
-                <p className="text-[10px] text-center text-gray-400 mt-14">
+                <p className="text-[10px] text-center mt-14 text-blue-900/60 italic tracking-wide">
                   Document officiel généré automatiquement par le Système National de Gestion des Effectifs ABA-PNC
                 </p>
 
