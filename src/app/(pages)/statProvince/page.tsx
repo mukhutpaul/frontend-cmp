@@ -152,7 +152,7 @@ export default function StatProvincePage() {
                                             <div className="stat-title">Équipes</div>
                                             <div className="stat-value flex items-center gap-2">
                                                 <Shield size={18} />
-                                                {p.totalUnites}
+                                                {p.totalEquipes}
                                             </div>
                                         </div>
 
@@ -164,12 +164,27 @@ export default function StatProvincePage() {
                                             </div>
                                         </div>
 
+                                        <div className="stat bg-base-200 rounded-xl">
+                                            <div className="stat-title">Contrôles</div>
+                                            <div className="stat-value text-info flex items-center gap-2">
+                                                <Activity size={18} />
+                                                {p.totalControles}
+                                            </div>
+                                        </div>
 
                                         <div className="stat bg-base-200 rounded-xl">
                                             <div className="stat-title">Présents</div>
                                             <div className="stat-value text-success flex items-center gap-2">
                                                 <CheckCircle size={18} />
                                                 {p.presents}
+                                            </div>
+                                        </div>
+
+                                         <div className="stat bg-base-200 rounded-xl">
+                                            <div className="stat-title">Justifiés</div>
+                                            <div className="stat-value text-success flex items-center gap-2">
+                                                <CheckCircle size={18} />
+                                                {p.justifies}
                                             </div>
                                         </div>
 
