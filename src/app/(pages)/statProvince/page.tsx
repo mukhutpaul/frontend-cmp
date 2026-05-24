@@ -16,6 +16,9 @@ export default function StatProvincePage() {
     const [selectedMission, setSelectedMission] = useState<StatMission | null>(null);
     const [openPreview, setOpenPreview] = useState(false);
     const reportRef = useRef<HTMLDivElement>(null);
+    const [selectedZone, setSelectedZone] = useState("ALL");
+
+    const zones = [...new Set(data.map((m) => m.zone))];
 
     const fetchStats = async () => {
         try {
@@ -66,7 +69,9 @@ export default function StatProvincePage() {
 
     }, {});
 
-    const provinces = Object.values(grouped);
+    const provinces = Object.values(grouped).filter((p: any) =>
+        selectedZone === "ALL" ? true : p.zone === selectedZone
+    );
     const policiersNonChargesAuControle =
         (selectedMission?.totalPoliciers ?? 0) - (selectedMission?.totalControles ?? 0);
 
@@ -102,6 +107,41 @@ export default function StatProvincePage() {
                     <p className="text-sm opacity-70">
                         Vue globale des missions et effectifs par zone
                     </p>
+
+                    {/* FILTRE PAR ZONE */}
+                    <div className="flex justify-end">
+
+                        <div className="form-control w-full max-w-xs">
+
+                            <label className="label">
+                                <span className="label-text font-semibold">
+                                    Filtrer par zone
+                                </span>
+                            </label>
+
+                            <select
+                                className="select select-bordered"
+                                value={selectedZone}
+                                onChange={(e) => setSelectedZone(e.target.value)}
+                            >
+
+                                <option value="ALL">
+                                    Toutes les zones
+                                </option>
+
+                                {zones.map((zone) => (
+
+                                    <option key={zone} value={zone}>
+                                        {zone}
+                                    </option>
+
+                                ))}
+
+                            </select>
+
+                        </div>
+
+                    </div>
                 </div>
 
                 {/* LOADING */}
@@ -180,7 +220,7 @@ export default function StatProvincePage() {
                                             </div>
                                         </div>
 
-                                         <div className="stat bg-base-200 rounded-xl">
+                                        <div className="stat bg-base-200 rounded-xl">
                                             <div className="stat-title">Justifiés</div>
                                             <div className="stat-value text-success flex items-center gap-2">
                                                 <CheckCircle size={18} />
@@ -198,13 +238,62 @@ export default function StatProvincePage() {
 
                                         {/* 🔥 NOUVEAU BOUTON PDF */}
                                         <button
-                                            className="btn btn-xs btn-primary"
+                                        className="
+                                            group
+                                            relative
+                                            overflow-hidden
+                                            rounded-xl
+                                            bg-gradient-to-r
+                                            from-blue-700
+                                            via-blue-800
+                                            to-indigo-900
+                                            px-5
+                                            py-3
+                                            text-white
+                                            shadow-lg
+                                            transition-all
+                                            duration-300
+                                            hover:scale-105
+                                            hover:shadow-2xl
+                                            active:scale-95
+                                            flex
+                                            items-center
+                                            gap-3
+                                        "
                                             onClick={() => {
                                                 setSelectedMission(p);
                                                 setOpenPreview(true);
                                             }}
                                         >
-                                            PDF
+
+                                                {/* Glow */}
+                                                <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition" />
+
+                                            {/* ICON */}
+                                            <div className="
+                                                    w-9
+                                                    h-9
+                                                    rounded-lg
+                                                    bg-white/15
+                                                    flex
+                                                    items-center
+                                                    justify-center
+                                                    backdrop-blur-sm
+                                                ">
+                                                📄
+                                            </div>
+
+                                            {/* TEXT */}
+                                            <div className="text-left leading-tight">
+                                                <p className="text-sm font-bold uppercase tracking-wide">
+                                                    Rapport PDF
+                                                </p>
+
+                                                <p className="text-[11px] opacity-80">
+                                                    Télécharger le document
+                                                </p>
+                                            </div>
+
                                         </button>
 
                                     </div>
