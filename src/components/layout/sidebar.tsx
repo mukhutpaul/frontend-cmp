@@ -11,7 +11,7 @@ import {
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-type Role = "ADMIN" | "CONTROLEUR" | "MANAGER" | "SUPERVISEUR"
+type Role = "ADMIN" | "CONTROLEUR" | "MANAGER" | "CHEF_EQUIPE"
 
 import { LucideIcon } from "lucide-react";
 
@@ -34,15 +34,15 @@ export default function Sidebar({
   const [profile, setProfile] = useState<Role | null>(null)
 
   const navLinks: NavLink[] = [
-    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", roles: ["ADMIN", "SUPERVISEUR"] },
-    { href: "/policiers", icon: Users, label: "Policiers", auth: true, roles: ["ADMIN", "SUPERVISEUR"] },
+    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", roles: ["ADMIN", "CHEF_EQUIPE"] },
+    { href: "/policiers", icon: Users, label: "Policiers", auth: true, roles: ["ADMIN", "CHEF_EQUIPE"] },
     { href: "/controles", icon: ClipboardCheck, label: "Contrôles", auth: true, roles: ["ADMIN"] },
-    { href: "/users", icon: Shield, label: "Utilisateurs", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
-    { href: "/unites", icon: Shield, label: "Unités", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
-    { href: "/missions", icon: Shield, label: "Missions", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
-    { href: "/seances", icon: Shield, label: "Séances", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
-    { href: "/equipes", icon: Shield, label: "Equipes", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
-    { href: "/recherches", icon: Shield, label: "Recherches", auth: true, roles: ["SUPERVISEUR", "ADMIN"] },
+    { href: "/users", icon: Shield, label: "Utilisateurs", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
+    { href: "/unites", icon: Shield, label: "Unités", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
+    { href: "/missions", icon: Shield, label: "Missions", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
+    { href: "/seances", icon: Shield, label: "Séances", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
+    { href: "/equipes", icon: Shield, label: "Equipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
+    { href: "/recherches", icon: Shield, label: "Recherches", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
     //{ href: "/infosManques", icon: Shield, label: "Infos Manquantes", auth: true, roles: ["SUPERVISEUR", "ADMIN"] }
 
   ]
