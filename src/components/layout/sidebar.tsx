@@ -44,6 +44,7 @@ export default function Sidebar({
     { href: "/equipes", icon: Shield, label: "Equipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
     { href: "/recherches", icon: Shield, label: "Recherches", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
     { href: "/statProvince", icon: Shield, label: "Stats Provinces", auth: true, roles: ["MANAGER", "ADMIN","MANAGER"] }
+    { href: "/statEquipe", icon: Shield, label: "Stats Equipes", auth: true, roles: ["MANAGER", "ADMIN","MANAGER"] }
 
   ]
 
