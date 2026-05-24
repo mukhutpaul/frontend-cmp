@@ -13,6 +13,7 @@ export interface StatMission {
     presents: number;
     justifies: number;
     nonJustifies: number;
+    totalUnites: number;
 
     totalEquipes: number;
 }
