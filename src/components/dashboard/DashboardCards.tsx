@@ -49,7 +49,7 @@ export default function DashboardCards() {
   const justifie = data?.totalJustifies ?? 0;
 
   const nonJustifies = Math.abs(total - (present + justifie));
-  
+
 
   if (loading) {
     return (
@@ -255,7 +255,7 @@ function ReportExporter({ data }: { data: any }) {
         </button>
       )}
 
-        {(profile === "CHEF_EQUIPE") && (
+      {(profile === "CHEF_EQUIPE") && (
         <button
           onClick={() => setOpenPreview(true)}
           className="btn btn-primary btn-sm gap-2 shadow-lg"
@@ -339,15 +339,15 @@ function ReportExporter({ data }: { data: any }) {
                         POLICE NATIONALE CONGOLAISE
                       </h2>
                       {(profile === "ADMIN" || profile === "MANAGER") && (
-                      <p className="text-sm text-gray-700 mt-4 font-medium uppercase tracking-wide">
-                        RAPPORT NATIONAL DES CONTRÔLES DES EFFECTIFS
-                      </p>
+                        <p className="text-sm text-gray-700 mt-4 font-medium uppercase tracking-wide">
+                          RAPPORT NATIONAL DES CONTRÔLES DES EFFECTIFS
+                        </p>
                       )}
 
-                       {(profile === "CHEF_EQUIPE") && (
-                      <p className="text-sm text-gray-700 mt-4 font-medium uppercase tracking-wide">
-                        RAPPORT DES CONTRÔLES DES EFFECTIFS DE L'EQUIPE {user}
-                      </p>
+                      {(profile === "CHEF_EQUIPE") && (
+                        <p className="text-sm text-gray-700 mt-4 font-medium uppercase tracking-wide">
+                          RAPPORT DES CONTRÔLES DES EFFECTIFS DE L'EQUIPE {user}
+                        </p>
                       )}
                       <p className="text-xs mt-2 font-bold text-primary tracking-widest">
                         N° {reportNumber}
@@ -554,9 +554,17 @@ function ReportExporter({ data }: { data: any }) {
                 </div>
 
                 {/* FOOTER */}
-                <p className="text-[10px] text-center mt-14 text-blue-900/60 italic tracking-wide">
-                  Document officiel généré automatiquement par le Système National de Gestion des Effectifs ABA-PNC
-                </p>
+                <div className="flex flex-col items-center mt-14">
+                  <p className="text-[10px] text-center text-blue-900/60 italic tracking-wide">
+                    Document officiel généré automatiquement par le Système National de Gestion des Effectifs ABA-PNC
+                  </p>
+
+                  <img
+                    src="/aba.png"
+                    alt="Logo ABA"
+                    className="w-12 h-12 mt-2 object-contain"
+                  />
+                </div>
 
               </div>
             </div>
