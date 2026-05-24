@@ -210,13 +210,23 @@ export default function LoginPage() {
                         <div className="flex items-center justify-between">
 
                             {/* ARMES RDC - GAUCHE */}
-                            <div className="w-14 flex justify-start">
-                                <img
-                                    src="/aba.png"
-                                    alt="Armoiries RDC"
-                                    className="w-12 h-12 object-contain opacity-90"
-                                />
-                            </div>
+                            <img
+                                src="/aba.png"
+                                alt="Armoiries RDC"
+                                onClick={() => {
+
+                                    // 🧹 Nettoyage configuration serveur
+                                    localStorage.removeItem("server_ip");
+                                    localStorage.removeItem("server_port");
+
+                                    // ✅ Notification
+                                    toast.success("Configuration serveur supprimée");
+
+                                    // 🔄 Refresh optionnel
+                                    window.location.reload();
+                                }}
+                                className="w-12 h-12 object-contain opacity-90 cursor-pointer hover:scale-110 transition-transform duration-200"
+                            />
 
                             {/* CENTRE - LOGO PNC + TITRE */}
                             <div className="text-center flex-1 space-y-2">

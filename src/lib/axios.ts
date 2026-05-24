@@ -5,17 +5,21 @@ import axios from "axios";
  * Tu peux changer dynamiquement selon login
  */
 const LOCAL_API = "http://localhost:8090/api";
-const REMOTE_API = `http://${localStorage.getItem("server_ip")}:${localStorage.getItem("server_port")}`;; // exemple production
 
-// 👉 récupérer le mode choisi (local / remote)
+// 👉 Déterminer automatiquement quelle API utiliser
 const getBaseURL = () => {
   if (typeof window !== "undefined") {
-    const mode = localStorage.getItem("mode");
 
-    if (mode === "local") return LOCAL_API;
-    if (mode === "remote") return REMOTE_API;
+    const serverIp = localStorage.getItem("server_ip");
+    const serverPort = localStorage.getItem("server_port");
+
+    // ✅ Si IP + PORT existent → REMOTE
+    if (serverIp && serverPort) {
+      return `http://${serverIp}:${serverPort}/api`;
+    }
   }
 
+  // ✅ Sinon → LOCAL
   return LOCAL_API;
 };
 
