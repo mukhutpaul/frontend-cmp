@@ -34,16 +34,16 @@ export default function Sidebar({
   const [profile, setProfile] = useState<Role | null>(null)
 
   const navLinks: NavLink[] = [
-    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", roles: ["ADMIN", "CHEF_EQUIPE"] },
-    { href: "/policiers", icon: Users, label: "Policiers", auth: true, roles: ["ADMIN", "CHEF_EQUIPE"] },
-    { href: "/controles", icon: ClipboardCheck, label: "Contrôles", auth: true, roles: ["ADMIN"] },
-    { href: "/users", icon: Shield, label: "Utilisateurs", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
-    { href: "/unites", icon: Shield, label: "Unités", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
-    { href: "/missions", icon: Shield, label: "Missions", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
-    { href: "/seances", icon: Shield, label: "Séances", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
-    { href: "/equipes", icon: Shield, label: "Equipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
-    { href: "/recherches", icon: Shield, label: "Recherches", auth: true, roles: ["CHEF_EQUIPE", "ADMIN"] },
-    //{ href: "/infosManques", icon: Shield, label: "Infos Manquantes", auth: true, roles: ["SUPERVISEUR", "ADMIN"] }
+    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", roles: ["ADMIN", "CHEF_EQUIPE","MANAGER"] },
+    { href: "/policiers", icon: Users, label: "Policiers", auth: true, roles: ["ADMIN", "CHEF_EQUIPE","MANAGER"] },
+    { href: "/controles", icon: ClipboardCheck, label: "Contrôles", auth: true, roles: ["ADMIN","MANAGER","CHEF_EQUIPE"] },
+    { href: "/users", icon: Shield, label: "Utilisateurs", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
+    { href: "/unites", icon: Shield, label: "Unités", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
+    { href: "/missions", icon: Shield, label: "Missions", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
+    { href: "/seances", icon: Shield, label: "Séances", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
+    { href: "/equipes", icon: Shield, label: "Equipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
+    { href: "/recherches", icon: Shield, label: "Recherches", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
+    { href: "/statProvince", icon: Shield, label: "Stats Provinces", auth: true, roles: ["MANAGER", "ADMIN","MANAGER"] }
 
   ]
 
