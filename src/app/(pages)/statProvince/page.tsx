@@ -238,9 +238,10 @@ export default function StatProvincePage() {
 
                                         {/* 🔥 NOUVEAU BOUTON PDF */}
                                         <button
-                                        className="
+                                            className="
                                             group
                                             relative
+                                            cursor-pointer
                                             overflow-hidden
                                             rounded-xl
                                             bg-gradient-to-r
@@ -266,8 +267,8 @@ export default function StatProvincePage() {
                                             }}
                                         >
 
-                                                {/* Glow */}
-                                                <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition" />
+                                            {/* Glow */}
+                                            <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition" />
 
                                             {/* ICON */}
                                             <div className="
