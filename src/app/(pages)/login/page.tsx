@@ -127,6 +127,7 @@ export default function LoginPage() {
                 localStorage.setItem("token", response.token);
                 localStorage.setItem("username", response.username ?? "");
                 localStorage.setItem("profile", response.profile ?? "");
+                localStorage.setItem("idUser", String(response.id));
                 localStorage.setItem("noms", response.noms ?? "");
                 localStorage.setItem("user", JSON.stringify(response.user));
 

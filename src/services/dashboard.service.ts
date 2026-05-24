@@ -3,12 +3,20 @@ import type { DashboardStats } from "@/types/dashboard.types";
 
 /**
  * =========================
- * DASHBOARD STATS
+ * DASHBOARD STATS (profil + user)
  * =========================
  */
-export const getDashboardStats = async (): Promise<DashboardStats> => {
+export const getDashboardStats = async (
+  profile: string,
+  userId: number
+): Promise<DashboardStats> => {
   try {
-    const res = await api.get<DashboardStats>("/dashboard/stats");
+    const res = await api.get<DashboardStats>("/dashboard/stats", {
+      params: {
+        profile,
+        userId,
+      },
+    });
 
     console.log("DASHBOARD API RESPONSE:", res.data);
 

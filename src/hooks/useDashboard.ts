@@ -23,27 +23,30 @@ export function useDashboard() {
   const [error, setError] = useState("");
 
   const loadDashboard = async () => {
-
     try {
+      const profile = localStorage.getItem("profile") || "";
 
-      const res = await getDashboardStats();
+      const rawUserId = localStorage.getItem("idUser");
+
+      if (!rawUserId) {
+        throw new Error("ID utilisateur introuvable");
+      }
+
+      const userId = Number(rawUserId);
+
+      if (isNaN(userId) || userId <= 0) {
+        throw new Error("ID utilisateur invalide");
+      }
+
+      const res = await getDashboardStats(profile, userId);
 
       setData(res);
-
       setError("");
-
     } catch (err: any) {
-
       console.error(err);
-
-      setError(
-        err?.message || "Erreur chargement dashboard"
-      );
-
+      setError(err?.message || "Erreur chargement dashboard");
     } finally {
-
       setLoading(false);
-
     }
   };
 
