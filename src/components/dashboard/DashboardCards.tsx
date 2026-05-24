@@ -49,6 +49,7 @@ export default function DashboardCards() {
   const justifie = data?.totalJustifies ?? 0;
 
   const nonJustifies = Math.abs(total - (present + justifie));
+  
 
   if (loading) {
     return (
@@ -240,16 +241,28 @@ function ReportExporter({ data }: { data: any }) {
   };
   const policiersNonChargesAuControle =
     (data?.totalPoliciers ?? 0) - (data?.totalControles ?? 0);
+  const profile = localStorage.getItem("profile") || "";
+  const user = localStorage.getItem("username") || "";
 
   return (
     <>
-      {/* BUTTON OFFICIEL */}
-      <button
-        onClick={() => setOpenPreview(true)}
-        className="btn btn-primary btn-sm gap-2 shadow-lg"
-      >
-        🖨️ Imprimer rapport national
-      </button>
+      {(profile === "ADMIN" || profile === "MANAGER") && (
+        <button
+          onClick={() => setOpenPreview(true)}
+          className="btn btn-primary btn-sm gap-2 shadow-lg"
+        >
+          🖨️ Imprimer rapport national
+        </button>
+      )}
+
+        {(profile === "CHEF_EQUIPE") && (
+        <button
+          onClick={() => setOpenPreview(true)}
+          className="btn btn-primary btn-sm gap-2 shadow-lg"
+        >
+          🖨️ Imprimer rapport de l'équipe {user}
+        </button>
+      )}
 
       {/* MODAL */}
       {openPreview && (
@@ -325,11 +338,17 @@ function ReportExporter({ data }: { data: any }) {
                       <h2 className="text-md font-semibold text-red-700 uppercase mt-1">
                         POLICE NATIONALE CONGOLAISE
                       </h2>
-
+                      {(profile === "ADMIN" || profile === "MANAGER") && (
                       <p className="text-sm text-gray-700 mt-4 font-medium uppercase tracking-wide">
                         RAPPORT NATIONAL DES CONTRÔLES DES EFFECTIFS
                       </p>
+                      )}
 
+                       {(profile === "CHEF_EQUIPE") && (
+                      <p className="text-sm text-gray-700 mt-4 font-medium uppercase tracking-wide">
+                        RAPPORT DES CONTRÔLES DES EFFECTIFS DE L'EQUIPE {user}
+                      </p>
+                      )}
                       <p className="text-xs mt-2 font-bold text-primary tracking-widest">
                         N° {reportNumber}
                       </p>
