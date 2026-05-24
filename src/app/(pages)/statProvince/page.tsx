@@ -189,10 +189,10 @@ export default function StatProvincePage() {
                                         </div>
 
                                         <div className="stat bg-base-200 rounded-xl">
-                                            <div className="stat-title">Équipes</div>
+                                            <div className="stat-title">Unités</div>
                                             <div className="stat-value flex items-center gap-2">
                                                 <Shield size={18} />
-                                                {p.totalEquipes}
+                                                {p.totalUnites}
                                             </div>
                                         </div>
 
