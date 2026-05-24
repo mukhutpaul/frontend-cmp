@@ -115,7 +115,7 @@ export default function StatProvincePage() {
 
                             <label className="label">
                                 <span className="label-text font-semibold">
-                                    Filtrer par zone
+                                    Filtrer par province
                                 </span>
                             </label>
 
