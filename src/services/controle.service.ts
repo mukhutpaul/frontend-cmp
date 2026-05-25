@@ -131,6 +131,11 @@ export const getControleById = async (id: string) => {
     return res.data;
 };
 
+export const invalidateControle = async (id: string) => {
+    const res = await api.patch(`/controles/${id}/invalidate`);
+    return res.data;
+};
+
 /* ========================= CREATE ========================= */
 
 export const createControle = async (data: Partial<Controle>) => {

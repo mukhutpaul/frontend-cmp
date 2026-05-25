@@ -3,16 +3,17 @@
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { useEffect, useMemo, useState } from "react";
 import Select from "react-select";
-import { Search, Printer, Box, User } from "lucide-react";
+import { Search, Printer, Box, User, Ban } from "lucide-react";
 import { toast } from "react-toastify";
 import { QRCodeCanvas } from "qrcode.react";
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
-import { Controle, getControles } from "@/services/controle.service";
+import { Controle, getControles, invalidateControle } from "@/services/controle.service";
 import { getMissions } from "@/services/mission.service";
 import Image from "next/image";
 import { FileText } from "lucide-react";
+import Swal from "sweetalert2";
 
 /* ========================= STYLE SELECT ========================= */
 
@@ -231,6 +232,50 @@ export default function ControlePage() {
     /* ========================= PAGINATION ========================= */
 
     const totalPages = Math.ceil(filteredControles.length / ITEMS_PER_PAGE);
+
+    /* ========================= INVALIDER CONTROLE ========================= */
+
+    const handleInvalidateControle = async (controle: Controle) => {
+
+        const result = await Swal.fire({
+            title: "Invalider ce contrôle ?",
+            text: `Le contrôle de ${controle.noms} sera annulé.`,
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#dc2626",
+            cancelButtonColor: "#6b7280",
+            confirmButtonText: "Oui, invalider",
+            cancelButtonText: "Annuler",
+            reverseButtons: true,
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+
+            await invalidateControle(controle.id);
+
+            Swal.fire({
+                title: "Succès",
+                text: "Le contrôle a été invalidé.",
+                icon: "success",
+                timer: 1800,
+                showConfirmButton: false,
+            });
+
+            loadData();
+
+        } catch (error) {
+
+            console.error(error);
+
+            Swal.fire({
+                title: "Erreur",
+                text: "Impossible d'invalider le contrôle.",
+                icon: "error",
+            });
+        }
+    };
 
     const paginatedControles = useMemo(() => {
         return filteredControles.slice(
@@ -508,7 +553,7 @@ export default function ControlePage() {
                                                     <div className="w-12 h-12 rounded-full overflow-hidden border bg-base-200 flex items-center justify-center cursor-pointer">
 
                                                         <Image
-                                                            src={`http://localhost:8090/`+c.photoUrl}
+                                                            src={`http://localhost:8090/` + c.photoUrl}
                                                             alt="photo"
                                                             width={48}
                                                             height={48}
@@ -549,6 +594,25 @@ export default function ControlePage() {
                                                     <FileText size={16} />
                                                 </button>
                                             )}
+
+                                            {(localStorage.getItem("profile") === "ADMIN" ||
+                                                localStorage.getItem("profile") === "MANAGER") && (
+
+                                                    <button
+                                                        className="
+                                                            btn
+                                                            btn-sm
+                                                            btn-error
+                                                            btn-outline
+                                                            hover:scale-105
+                                                            transition-all
+                                                            duration-200"
+                                                        onClick={() => handleInvalidateControle(c)}
+                                                        title="Invalider le contrôle"
+                                                    >
+                                                        <Ban size={16} />
+                                                    </button>
+                                                )}
 
                                         </td>
 
@@ -708,7 +772,7 @@ export default function ControlePage() {
                             onMouseLeave={handleMouseUp}
                         >
                             <img
-                                src={`http://localhost:8090/`+zoomPhoto}
+                                src={`http://localhost:8090/` + zoomPhoto}
                                 alt="zoom"
                                 className="select-none max-w-none"
                                 style={{
