@@ -508,7 +508,7 @@ export default function ControlePage() {
                                                     <div className="w-12 h-12 rounded-full overflow-hidden border bg-base-200 flex items-center justify-center cursor-pointer">
 
                                                         <Image
-                                                            src={c.photoUrl}
+                                                            src={`http://localhost:8090/`+c.photoUrl}
                                                             alt="photo"
                                                             width={48}
                                                             height={48}
@@ -708,7 +708,7 @@ export default function ControlePage() {
                             onMouseLeave={handleMouseUp}
                         >
                             <img
-                                src={zoomPhoto}
+                                src={`http://localhost:8090/`+zoomPhoto}
                                 alt="zoom"
                                 className="select-none max-w-none"
                                 style={{
