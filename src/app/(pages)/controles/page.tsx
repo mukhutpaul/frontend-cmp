@@ -52,6 +52,7 @@ export default function ControlePage() {
 
     const [selectedControle, setSelectedControle] = useState<Controle | null>(null);
 
+
     const [missions, setMissions] = useState<any[]>([]);
     const [filterPresent, setFilterPresent] = useState<string | null>(null);
     const [filterJustifie, setFilterJustifie] = useState<string | null>(null);
@@ -792,10 +793,10 @@ export default function ControlePage() {
 
                                     {/* IMAGE */}
                                     <img
-                                        src={doc.imageUrl}
+                                        src={`http://localhost:8090/documents/${doc.imageUrl}`}
                                         className="w-full h-40 object-cover rounded mt-2 cursor-zoom-in"
                                         onClick={() => {
-                                            setDocZoom(doc.imageUrl);
+                                            setDocZoom(`http://localhost:8090/documents/${doc.imageUrl}`);
                                             setDocScale(1);
                                         }}
                                     />
