@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 const themes = [
     "light",
     "dim",
+    "retro",
     "cupcake",
     "corporate",
     "nord",
@@ -19,7 +20,6 @@ const themes = [
     "pastel",
     "wireframe",
     "synthwave",
-    "retro",
     "cyberpunk",
     "dracula",
     "night",
