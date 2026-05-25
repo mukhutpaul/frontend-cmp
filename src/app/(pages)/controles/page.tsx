@@ -596,7 +596,8 @@ export default function ControlePage() {
                                             )}
 
                                             {(localStorage.getItem("profile") === "ADMIN" ||
-                                                localStorage.getItem("profile") === "MANAGER") && (
+                                                localStorage.getItem("profile") === "MANAGER") &&
+                                                (c.present === true || c.justifie === true) && (
 
                                                     <button
                                                         className="
