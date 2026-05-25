@@ -249,18 +249,125 @@ function ReportExporter({ data }: { data: any }) {
       {(profile === "ADMIN" || profile === "MANAGER") && (
         <button
           onClick={() => setOpenPreview(true)}
-          className="btn btn-primary btn-sm gap-2 shadow-lg"
+          className="
+      group
+      relative
+      overflow-hidden
+      rounded-xl
+      bg-gradient-to-r
+      from-slate-800
+      via-blue-800
+      to-indigo-900
+      px-5
+      py-3
+      text-white
+      shadow-lg
+      transition-all
+      duration-300
+      hover:scale-105
+      hover:shadow-2xl
+      cursor-pointer
+      active:scale-95
+      flex
+      items-center
+      gap-3
+      border
+      border-white/10
+    "
         >
-          🖨️ Imprimer rapport national
+          {/* Glow Effect */}
+          <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition duration-300" />
+
+          {/* Icon */}
+          <div
+            className="
+        relative
+        z-10
+        w-10
+        h-10
+        rounded-lg
+        bg-white/15
+        flex
+        items-center
+        justify-center
+        backdrop-blur-sm
+      "
+          >
+            🖨️
+          </div>
+
+          {/* Text */}
+          <div className="relative z-10 text-left leading-tight">
+            <p className="text-sm font-bold uppercase tracking-wide">
+              Rapport National
+            </p>
+
+            <p className="text-[11px] opacity-80">
+              Télécharger et imprimer le rapport
+            </p>
+          </div>
         </button>
       )}
 
-      {(profile === "CHEF_EQUIPE") && (
+      {profile === "CHEF_EQUIPE" && (
         <button
           onClick={() => setOpenPreview(true)}
-          className="btn btn-primary btn-sm gap-2 shadow-lg"
+          className="
+      group
+      relative
+      overflow-hidden
+      rounded-xl
+      bg-gradient-to-r
+      from-emerald-700
+      via-teal-700
+      to-cyan-800
+      px-5
+      py-3
+      text-white
+      shadow-lg
+      transition-all
+      duration-300
+      hover:scale-105
+      hover:shadow-2xl
+      active:scale-95
+      flex
+      items-center
+      gap-3
+      border
+      border-white/10
+    "
         >
-          🖨️ Imprimer rapport de l'équipe {user}
+          {/* Glow Effect */}
+          <span className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition duration-300" />
+
+          {/* Icon */}
+          <div
+            className="
+        relative
+        z-10
+        w-10
+        h-10
+        rounded-lg
+        bg-white/15
+        flex
+        items-center
+        justify-center
+        backdrop-blur-sm
+      "
+          >
+            📋
+          </div>
+
+          {/* Text */}
+          <div className="relative z-10 text-left leading-tight">
+            <p className="text-sm font-bold uppercase tracking-wide">
+              Rapport Équipe
+            </p>
+
+            <p className="text-[11px] opacity-80">
+              Équipe de {user}
+            </p>
+          </div>
         </button>
       )}
 

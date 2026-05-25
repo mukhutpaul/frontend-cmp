@@ -64,6 +64,7 @@ export default function StatProvincePage() {
         acc[zone].presents += curr.presents;
         acc[zone].justifies += curr.justifies;
         acc[zone].nonJustifies += curr.nonJustifies;
+        acc[zone].totalUnites += curr.totalUnites;
 
         return acc;
 
@@ -222,7 +223,8 @@ export default function StatProvincePage() {
 
                                         <div className="stat bg-base-200 rounded-xl">
                                             <div className="stat-title">Justifiés</div>
-                                            <div className="stat-value text-success flex items-center gap-2">
+
+                                            <div className="stat-value text-blue-700 flex items-center gap-2">
                                                 <CheckCircle size={18} />
                                                 {p.justifies}
                                             </div>
@@ -461,7 +463,7 @@ export default function StatProvincePage() {
                                                 <div className="p-5 space-y-0">
                                                     <Row label="Policiers" value={selectedMission?.totalPoliciers ?? 0} />
                                                     <Row label="Équipes" value={selectedMission?.totalEquipes ?? 0} />
-                                                    <Row label="Contrôles" value={selectedMission?.totalControles ?? 0} />
+                                                    <Row label="Unités" value={selectedMission?.totalUnites ?? 0} />
                                                     <Row label="Missions" value={1} />
                                                 </div>
 
