@@ -214,6 +214,16 @@ function ReportExporter({ data }: { data: any }) {
     return `PNC-ABA-RAP-${Date.now().toString().slice(-6)}`;
   }, []);
 
+  const printDate = useMemo(() => {
+    return new Date().toLocaleString("fr-FR", {
+      day: "2-digit",
+      month: "long",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }, []);
+
   const generatePDF = async () => {
     if (!reportRef.current) return;
 
@@ -459,6 +469,9 @@ function ReportExporter({ data }: { data: any }) {
                       <p className="text-xs mt-2 font-bold text-primary tracking-widest">
                         N° {reportNumber}
                       </p>
+                      <p className="text-[11px] text-gray-500 mt-2">
+                        Date d’impression : {printDate}
+                      </p>
 
                     </div>
 
@@ -660,17 +673,13 @@ function ReportExporter({ data }: { data: any }) {
 
                 </div>
 
-                {/* FOOTER */}
-                <div className="flex flex-col items-center mt-14">
-                  <p className="text-[10px] text-center text-blue-900/60 italic tracking-wide">
-                    Document officiel généré automatiquement par le Système National de Gestion des Effectifs ABA-PNC
-                  </p>
 
-                  <img
-                    src="/aba.png"
-                    alt="Logo ABA"
-                    className="w-12 h-12 mt-2 object-contain"
-                  />
+                {/* ================= FOOTER OFFICIEL ================= */}
+                <div className="mt-10 border-t pt-6 flex justify-center items-center">
+                  <div className="text-center">
+                    <p className="text-xs font-semibold">Document officiel généré automatiquement par le Système National de Gestion des Effectifs ABA-PNC</p>
+                    <img src="/aba.png" className="h-10 mt-2 mx-auto" />
+                  </div>
                 </div>
 
               </div>

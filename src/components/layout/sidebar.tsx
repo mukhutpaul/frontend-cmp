@@ -1,11 +1,16 @@
 import Link from "next/link";
 import {
-  LayoutDashboard,
-  Shield,
   Users,
+  LayoutDashboard,
   ClipboardCheck,
-  FileBarChart,
-  Settings,
+  ShieldCheck,
+  Building2,
+  Briefcase,
+  CalendarDays,
+  UsersRound,
+  Search,
+  MapPinned,
+  BarChart3,
   GlobeLock,
 } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -34,17 +39,27 @@ export default function Sidebar({
   const [profile, setProfile] = useState<Role | null>(null)
 
   const navLinks: NavLink[] = [
-    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", roles: ["ADMIN", "CHEF_EQUIPE","MANAGER"] },
-    { href: "/policiers", icon: Users, label: "Policiers", auth: true, roles: ["ADMIN", "CHEF_EQUIPE","MANAGER"] },
-    { href: "/controles", icon: ClipboardCheck, label: "Contrôles", auth: true, roles: ["ADMIN","MANAGER","CHEF_EQUIPE"] },
-    { href: "/users", icon: Shield, label: "Utilisateurs", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
-    { href: "/unites", icon: Shield, label: "Unités", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
-    { href: "/missions", icon: Shield, label: "Missions", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
-    { href: "/seances", icon: Shield, label: "Séances", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
-    { href: "/equipes", icon: Shield, label: "Equipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
-    { href: "/recherches", icon: Shield, label: "Recherches", auth: true, roles: ["CHEF_EQUIPE", "ADMIN","MANAGER"] },
-    { href: "/statProvince", icon: Shield, label: "Stats Provinces", auth: true, roles: ["MANAGER", "ADMIN","MANAGER"] },
-    { href: "/statEquipe", icon: Shield, label: "Stats Equipes", auth: true, roles: ["MANAGER", "ADMIN","MANAGER"] }
+    { href: "/dashboard", icon: LayoutDashboard, label: "Dashboard", roles: ["ADMIN", "CHEF_EQUIPE", "MANAGER"] },
+    { href: "/policiers", icon: Users, label: "Policiers", auth: true, roles: ["ADMIN", "CHEF_EQUIPE", "MANAGER"] },
+
+    { href: "/controles", icon: ClipboardCheck, label: "Contrôles", auth: true, roles: ["ADMIN", "MANAGER", "CHEF_EQUIPE"] },
+
+    { href: "/users", icon: ShieldCheck, label: "Utilisateurs", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+
+    { href: "/unites", icon: Building2, label: "Unités", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+
+    { href: "/missions", icon: Briefcase, label: "Missions", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+
+    { href: "/seances", icon: CalendarDays, label: "Séances", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+
+    { href: "/equipes", icon: UsersRound, label: "Équipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+
+    { href: "/recherches", icon: Search, label: "Recherches", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+
+    { href: "/statProvince", icon: MapPinned, label: "Stats Provinces", auth: true, roles: ["MANAGER", "ADMIN"] },
+
+    { href: "/statEquipe", icon: BarChart3, label: "Stats Équipes", auth: true, roles: ["MANAGER", "ADMIN"] },
+
 
   ]
 

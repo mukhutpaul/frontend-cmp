@@ -1,9 +1,9 @@
 "use client";
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { toast } from "react-toastify";
-import { BarChart3, Users, Shield, CheckCircle, XCircle, Activity } from "lucide-react";
+import { BarChart3, Users, Shield, CheckCircle, XCircle, Activity, Building2 } from "lucide-react";
 import { getStatMissions, StatMission } from "@/services/stats.service";
 import html2canvas from "html2canvas-pro";
 import jsPDF from "jspdf";
@@ -19,6 +19,20 @@ export default function StatProvincePage() {
     const [selectedZone, setSelectedZone] = useState("ALL");
 
     const zones = [...new Set(data.map((m) => m.zone))];
+
+    const reportNumber = useMemo(() => {
+        return `PNC-ABA-RAP-${Date.now().toString().slice(-6)}`;
+    }, []);
+
+    const printDate = useMemo(() => {
+        return new Date().toLocaleString("fr-FR", {
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+        });
+    }, []);
 
     const fetchStats = async () => {
         try {
@@ -127,7 +141,7 @@ export default function StatProvincePage() {
                             >
 
                                 <option value="ALL">
-                                    Toutes les zones
+                                    Toutes les provinces
                                 </option>
 
                                 {zones.map((zone) => (
@@ -192,7 +206,7 @@ export default function StatProvincePage() {
                                         <div className="stat bg-base-200 rounded-xl">
                                             <div className="stat-title">Unités</div>
                                             <div className="stat-value flex items-center gap-2">
-                                                <Shield size={18} />
+                                                <Building2 size={18} />
                                                 {p.totalUnites}
                                             </div>
                                         </div>
@@ -206,7 +220,7 @@ export default function StatProvincePage() {
                                         </div>
 
                                         <div className="stat bg-base-200 rounded-xl">
-                                            <div className="stat-title">Contrôles</div>
+                                            <div className="stat-title">Total Contrôles</div>
                                             <div className="stat-value text-info flex items-center gap-2">
                                                 <Activity size={18} />
                                                 {p.totalControles}
@@ -376,6 +390,7 @@ export default function StatProvincePage() {
                                 <p className="text-xs opacity-60">
                                     Zone : {selectedMission?.zone}
                                 </p>
+
                             </div>
 
                             <div className="flex gap-2">
@@ -429,7 +444,13 @@ export default function StatProvincePage() {
                                         </p>
 
                                         <p className="text-xs text-gray-500">
-                                            {selectedMission?.numero} — {selectedMission?.zone}
+                                             PROVINCE — {selectedMission?.zone}  
+                                        </p>
+                                        <p className="text-xs mt-2 font-bold text-primary tracking-widest">
+                                            N° {reportNumber}
+                                        </p>
+                                        <p className="text-[11px] text-gray-500 mt-2">
+                                            Date d’impression : {printDate}
                                         </p>
                                     </div>
 
@@ -632,7 +653,7 @@ export default function StatProvincePage() {
                                 {/* ================= FOOTER OFFICIEL ================= */}
                                 <div className="mt-10 border-t pt-6 flex justify-center items-center">
                                     <div className="text-center">
-                                        <p className="text-xs font-semibold">ABA</p>
+                                        <p className="text-xs font-semibold">Document officiel généré automatiquement par le Système National de Gestion des Effectifs ABA-PNC</p>
                                         <img src="/aba.png" className="h-10 mt-2 mx-auto" />
                                     </div>
                                 </div>

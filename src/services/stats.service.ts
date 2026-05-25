@@ -4,8 +4,8 @@ import { api } from "@/lib/axios";
 
 export interface StatMission {
     id: number;
-    numero: string;
     mission: string;
+    numero: string;
     zone: string;
 
     totalPoliciers: number;
