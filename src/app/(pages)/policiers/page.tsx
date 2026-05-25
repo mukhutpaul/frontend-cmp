@@ -481,7 +481,7 @@ export default function PolicierPage() {
                         <div className="flex justify-center items-center py-4">
 
                             <Image
-                                src={selectedPhoto}
+                                src={`http://localhost:8090/`+selectedPhoto}
                                 alt="Grande photo"
                                 width={900}
                                 height={900}
