@@ -371,7 +371,7 @@ export default function PolicierPage() {
                                                             <div className="w-14 h-14 rounded-full overflow-hidden border flex items-center justify-center bg-base-200 hover:scale-105 transition">
 
                                                                 <Image
-                                                                    src={p.photoUrl}
+                                                                    src={`http://localhost:8090/`+p.photoUrl}
                                                                     alt="photo"
                                                                     width={56}
                                                                     height={56}

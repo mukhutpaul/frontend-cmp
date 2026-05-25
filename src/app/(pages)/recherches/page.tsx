@@ -105,7 +105,7 @@ export default function RecherchePage() {
 
                         {imageSrc && !imageError ? (
                             <img
-                                src={imageSrc}
+                                src={`http://localhost:8090/`+imageSrc}
                                 alt="Photo policier"
                                 className="w-full h-full object-cover hover:scale-105 transition"
                                 onError={() => setImageError(true)}
@@ -136,7 +136,7 @@ export default function RecherchePage() {
 
                             {/* IMAGE ZOOM */}
                             <img
-                                src={imageSrc || ""}
+                                src={`http://localhost:8090/`+imageSrc || ""}
                                 alt="Zoom photo policier"
                                 className="w-full max-h-[70vh] object-contain rounded-lg"
                             />
