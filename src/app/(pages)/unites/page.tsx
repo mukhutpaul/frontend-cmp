@@ -2,19 +2,18 @@
 
 import DashboardLayout from "@/components/layout/dashboard-layout";
 import { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Search, X, Pencil, Trash2 } from "lucide-react";
-import { chargerUnite } from "@/services/unite-charge.service";
+import { Search, Send } from "lucide-react";
+import Select from "react-select";
 
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
 import confetti from "canvas-confetti";
 
-type UniteWithExists = Unite & {
-    exists?: boolean;
-};
+import { chargerUnite } from "@/services/unite-charge.service";
+import { getUnites, deleteUnite } from "@/services/unite.service";
+import { getMissions } from "@/services/mission.service";
+import { getUsers } from "@/services/auth.service";
+import { getEquipes } from "@/services/equipe.service";
 
 export const selectStyles = {
     control: () =>
@@ -52,71 +51,29 @@ export const selectStyles = {
         "hidden",
 };
 
-import {
-    getUnites,
-    createUnite,
-    updateUnite,
-    deleteUnite,
-    checkUniteExists,
-} from "@/services/unite.service";
-import Select from "react-select";
-import { getMissions } from "@/services/mission.service";
-import { getUsers } from "@/services/auth.service";
-import equipeService, { getEquipes } from "@/services/equipe.service";
-
-
-
-/* ========================= TYPES ========================= */
-
-type Person = {
-    uuid: string;
-    name: string;
-};
-
 type Unite = {
     id: number;
     name: string;
-    signature?: string;
-    commandant?: Person;
     equipeaf?: string;
 };
-
-/* ========================= VALIDATION ========================= */
-
-const schema = z.object({
-    name: z.string().min(2),
-    signature: z.string().optional(),
-    commandantId: z.string().optional().or(z.literal("")),
-});
-
-type FormData = z.infer<typeof schema>;
-
-/* ========================= COMPONENT ========================= */
 
 export default function UnitePage() {
 
     const [unites, setUnites] = useState<Unite[]>([]);
-    const [persons, setPersons] = useState<Person[]>([]);
-
     const [loading, setLoading] = useState(true);
 
     const [search, setSearch] = useState("");
+    const [page, setPage] = useState(1);
 
-    const [openModal, setOpenModal] = useState(false);
-    const [editModal, setEditModal] = useState(false);
-    const [editingId, setEditingId] = useState<number | null>(null);
-    const [existsMap, setExistsMap] = useState<Record<number, boolean>>({});
     const [loadModal, setLoadModal] = useState(false);
-    
 
     const [provinces, setProvinces] = useState<any[]>([]);
     const [controleurs, setControleurs] = useState<any[]>([]);
-    const [saving, setSaving] = useState(false);
     const [equipes, setEquipes] = useState<any[]>([]);
-    const [selectedUniteId, setSelectedUniteId] = useState<number | null>(null);
 
-    const [page, setPage] = useState(1);
-    const limit = 20;
+    const [saving, setSaving] = useState(false);
+
+    const [selectedUniteId, setSelectedUniteId] = useState<number | null>(null);
 
     const [loadForm, setLoadForm] = useState({
         provinceId: "",
@@ -124,46 +81,28 @@ export default function UnitePage() {
         equipeId: "",
     });
 
-    /* ========================= FORM ========================= */
-
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors },
-    } = useForm<FormData>({
-        resolver: zodResolver(schema),
-    });
-
-    const {
-        register: registerEdit,
-        handleSubmit: handleSubmitEdit,
-        reset: resetEdit,
-    } = useForm<FormData>({
-        resolver: zodResolver(schema),
-    });
-
-    /* ========================= LOAD DATA ========================= */
+    const limit = 20;
 
     useEffect(() => {
+
         fetchData();
 
-
-
         const loadData = async () => {
+
             try {
 
                 const [prov, users, eq] = await Promise.all([
                     getMissions(),
                     getUsers(),
-                    getEquipes()
+                    getEquipes(),
                 ]);
 
                 setProvinces(prov);
 
-                // filtre contrôleurs côté front
                 setControleurs(
-                    users.filter((u: any) => u.profile?.name === "CONTROLEUR")
+                    users.filter(
+                        (u: any) => u.profile?.name === "CONTROLEUR"
+                    )
                 );
 
                 setEquipes(eq);
@@ -175,18 +114,20 @@ export default function UnitePage() {
         };
 
         loadData();
+
     }, []);
 
     const fetchData = async () => {
+
         setLoading(true);
 
         try {
+
             const data = await getUnites();
 
             setUnites(
                 data.map((u: any) => ({
                     ...u,
-                    signature: u.signature ?? undefined, // ✅ FIX IMPORTANT
                     equipeaf: u.equipeaf ?? undefined,
                 }))
             );
@@ -196,18 +137,16 @@ export default function UnitePage() {
         }
     };
 
-    
+    const filtered = unites.filter((u) => {
 
-    useEffect(() => {
-        fetchData();
+        const keyword = search.toLowerCase();
 
-    }, []);
-
-    /* ========================= FILTER ========================= */
-
-    const filtered = unites.filter((u) =>
-        u.name.toLowerCase().includes(search.toLowerCase())
-    );
+        return (
+            String(u.id).toLowerCase().includes(keyword) ||
+            (u.name || "").toLowerCase().includes(keyword) ||
+            (u.equipeaf || "").toLowerCase().includes(keyword)
+        );
+    });
 
     const totalPages = Math.ceil(filtered.length / limit);
 
@@ -216,23 +155,8 @@ export default function UnitePage() {
         page * limit
     );
 
-   
-
-
-    const openEdit = (u: Unite) => {
-        setEditingId(u.id);
-        setEditModal(true);
-
-        resetEdit({
-            name: u.name,
-            signature: u.signature || "",
-            commandantId: u.commandant?.uuid || "",
-        });
-    };
-
-
-
     const onDelete = async (id: number) => {
+
         const res = await Swal.fire({
             title: "Supprimer ?",
             icon: "warning",
@@ -240,13 +164,14 @@ export default function UnitePage() {
         });
 
         if (res.isConfirmed) {
+
             await deleteUnite(id);
+
             toast.success("Supprimé");
+
             fetchData();
         }
     };
-
-    /* ========================= UI ========================= */
 
     return (
         <DashboardLayout>
@@ -260,17 +185,11 @@ export default function UnitePage() {
                         <h1 className="text-2xl font-bold">
                             Unités
                         </h1>
+
                         <p className="text-sm opacity-70">
                             Gestion des unités
                         </p>
                     </div>
-
-                    {/* <button
-                        className="btn btn-primary"
-                        onClick={() => setOpenModal(true)}
-                    >
-                        + Ajouter unité
-                    </button> */}
 
                 </div>
 
@@ -305,7 +224,7 @@ export default function UnitePage() {
                                     <tr>
                                         <th>ID</th>
                                         <th>Nom</th>
-                                        <th>Commandant</th>
+                                        <th>Affectation</th>
                                         <th>Actions</th>
                                     </tr>
                                 </thead>
@@ -314,7 +233,10 @@ export default function UnitePage() {
 
                                     {loading && (
                                         <tr>
-                                            <td colSpan={4} className="text-center py-10">
+                                            <td
+                                                colSpan={4}
+                                                className="text-center py-10"
+                                            >
                                                 <span className="loading loading-spinner"></span>
                                             </td>
                                         </tr>
@@ -322,7 +244,10 @@ export default function UnitePage() {
 
                                     {!loading && paginated.length === 0 && (
                                         <tr>
-                                            <td colSpan={4} className="text-center py-10">
+                                            <td
+                                                colSpan={4}
+                                                className="text-center py-10"
+                                            >
                                                 <Search className="mx-auto opacity-50" />
                                                 <p>Aucune unité</p>
                                             </td>
@@ -330,27 +255,41 @@ export default function UnitePage() {
                                     )}
 
                                     {!loading && paginated.map((u) => (
+
                                         <tr key={u.id}>
+
                                             <td>{u.id}</td>
+
                                             <td>{u.name}</td>
-                                            <td>{u.commandant?.name || "-"}</td>
-                                       
+
+                                            <td>{u.equipeaf || "-"}</td>
 
                                             <td className="flex gap-2">
-                                              
-                                                    <button
-                                                        className="btn btn-xs btn-info btn-outline"
-                                                        onClick={() => {
-                                                            setSelectedUniteId(u.id);
-                                                            setLoadModal(true);
-                                                        }}
+
+                                                {!u.equipeaf && (
+
+                                                    <div
+                                                        className="tooltip tooltip-left"
+                                                        data-tip="Charger l’unité"
                                                     >
-                                                        Charger l’unité
-                                                    </button>
-                                                
+
+                                                        <button
+                                                            className="btn btn-xs btn-info btn-outline"
+                                                            onClick={() => {
+                                                                setSelectedUniteId(u.id);
+                                                                setLoadModal(true);
+                                                            }}
+                                                        >
+                                                            <Send size={16} />
+                                                        </button>
+
+                                                    </div>
+                                                )}
+
                                             </td>
 
                                         </tr>
+
                                     ))}
 
                                 </tbody>
@@ -364,16 +303,15 @@ export default function UnitePage() {
                 </div>
 
                 {/* PAGINATION */}
-                {/* 📄 PAGINATION SIMPLE (PREV / NEXT ONLY) */}
                 <div className="flex justify-between items-center">
 
                     <p className="text-sm opacity-70">
-                        Page {page} / {totalPages || 1} — Total : {filtered.length} unités
+                        Page {page} / {totalPages || 1}
+                        — Total : {filtered.length} unités
                     </p>
 
                     <div className="join">
 
-                        {/* PREVIOUS */}
                         <button
                             className="join-item btn btn-sm"
                             disabled={page === 1}
@@ -382,7 +320,6 @@ export default function UnitePage() {
                             « Précédent
                         </button>
 
-                        {/* NEXT */}
                         <button
                             className="join-item btn btn-sm"
                             disabled={page === totalPages || totalPages === 0}
@@ -397,88 +334,9 @@ export default function UnitePage() {
 
             </div>
 
-            {/* CREATE MODAL */}
-            {openModal && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-
-                    <div className="bg-base-100 p-5 rounded-xl w-96">
-
-                        <h2 className="text-lg font-bold mb-3">
-                            Ajouter unité
-                        </h2>
-
-                        <form className="space-y-2">
-
-                            <input
-                                className="input w-full"
-                                placeholder="Nom"
-                                {...register("name")}
-                            />
-
-                            <select
-                                className="select w-full"
-                                {...register("commandantId")}
-                            >
-                                <option value="">Commandant</option>
-                                {persons.map(p => (
-                                    <option key={p.uuid} value={p.uuid}>
-                                        {p.name}
-                                    </option>
-                                ))}
-                            </select>
-
-                            <button className="btn btn-primary w-full">
-                                Créer
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </div>
-            )}
-
-            {/* EDIT MODAL */}
-            {editModal && (
-                <div className="fixed inset-0 bg-black/40 flex items-center justify-center">
-
-                    <div className="bg-base-100 p-5 rounded-xl w-96">
-
-                        <h2 className="text-lg font-bold mb-3">
-                            Modifier unité
-                        </h2>
-
-                        <form className="space-y-2">
-
-                            <input
-                                className="input w-full"
-                                {...registerEdit("name")}
-                            />
-
-                            <select
-                                className="select w-full"
-                                {...registerEdit("commandantId")}
-                            >
-                                <option value="">Commandant</option>
-                                {persons.map(p => (
-                                    <option key={p.uuid} value={p.uuid}>
-                                        {p.name}
-                                    </option>
-                                ))}
-                            </select>
-
-                            <button className="btn btn-primary w-full">
-                                Modifier
-                            </button>
-
-                        </form>
-
-                    </div>
-
-                </div>
-            )}
-
+            {/* MODAL */}
             {loadModal && (
+
                 <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
 
                     <div className="bg-base-100 p-10 rounded-2xl w-full max-w-5xl space-y-7 shadow-2xl">
@@ -487,7 +345,6 @@ export default function UnitePage() {
                             Charger l’unité
                         </h2>
 
-                        {/* GRID FORM */}
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
 
                             {/* PROVINCE */}
@@ -501,20 +358,23 @@ export default function UnitePage() {
 
                                 <Select
                                     placeholder="Choisir une province"
+                                    unstyled
+                                    isSearchable
+                                    classNames={selectStyles}
                                     value={
                                         provinces
                                             .map((p: any) => ({
                                                 value: p.id,
-                                                label: p.zone,
+                                                label: `${p.zone} - ${p.chargeMission?.username || ""}`,
                                             }))
-                                            .find((opt: any) => opt.value == loadForm.provinceId)
+                                            .find(
+                                                (opt: any) =>
+                                                    opt.value == loadForm.provinceId
+                                            )
                                     }
-                                    unstyled
-                                    isSearchable
-                                    classNames={selectStyles}
                                     options={provinces.map((p: any) => ({
                                         value: p.id,
-                                        label: p.zone,
+                                        label: `${p.zone} - ${p.chargeMission?.username || ""}`,
                                     }))}
                                     onChange={(opt: any) =>
                                         setLoadForm({
@@ -526,7 +386,7 @@ export default function UnitePage() {
 
                             </div>
 
-                            {/* CONTRÔLEUR */}
+                            {/* CONTROLEUR */}
                             <div className="form-control space-y-3">
 
                                 <label className="label">
@@ -542,7 +402,7 @@ export default function UnitePage() {
                                     classNames={selectStyles}
                                     options={controleurs.map((u: any) => ({
                                         value: u.id,
-                                        label: u.noms || u.username,
+                                        label: `${u.noms || u.username}`,
                                     }))}
                                     onChange={(opt: any) =>
                                         setLoadForm({
@@ -554,7 +414,7 @@ export default function UnitePage() {
 
                             </div>
 
-                            {/* ÉQUIPE */}
+                            {/* EQUIPE */}
                             <div className="form-control space-y-3">
 
                                 <label className="label">
@@ -570,7 +430,7 @@ export default function UnitePage() {
                                     classNames={selectStyles}
                                     options={equipes.map((e: any) => ({
                                         value: e.id,
-                                        label: 'EQUIPE-' + e.user?.noms || e.user?.username,
+                                        label: `EQUIPE-${e.user?.noms || e.user?.username}`,
                                     }))}
                                     onChange={(opt: any) =>
                                         setLoadForm({
@@ -598,6 +458,7 @@ export default function UnitePage() {
                                 className="btn btn-primary"
                                 disabled={saving}
                                 onClick={async () => {
+
                                     setSaving(true);
 
                                     try {
@@ -607,8 +468,66 @@ export default function UnitePage() {
                                             return;
                                         }
 
-                                        if (!loadForm.provinceId || !loadForm.controleurId || !loadForm.equipeId) {
-                                            toast.error("Tous les champs sont obligatoires");
+                                        if (
+                                            !loadForm.provinceId ||
+                                            !loadForm.controleurId ||
+                                            !loadForm.equipeId
+                                        ) {
+                                            toast.error(
+                                                "Tous les champs sont obligatoires"
+                                            );
+                                            return;
+                                        }
+
+                                        const selectedProvince = provinces.find(
+                                            (p: any) =>
+                                                p.id == loadForm.provinceId
+                                        );
+
+                                        const selectedControleur = controleurs.find(
+                                            (u: any) =>
+                                                u.id == loadForm.controleurId
+                                        );
+
+                                        const selectedEquipe = equipes.find(
+                                            (e: any) =>
+                                                e.id == loadForm.equipeId
+                                        );
+
+                                        const provinceText =
+                                            `${selectedProvince?.zone}-${selectedProvince?.chargeMission?.username}`;
+
+                                        const controleurText =
+                                            `${selectedControleur?.noms || selectedControleur?.username}`;
+
+                                        const equipeText =
+                                            `${selectedEquipe?.user?.noms || selectedEquipe?.user?.username}`;
+
+                                        const provinceLast =
+                                            provinceText.trim().slice(-1);
+
+                                        const controleurLast =
+                                            controleurText.trim().slice(-1);
+
+                                        const equipeLast =
+                                            equipeText.trim().slice(-1);
+
+                                        console.log({
+                                            provinceText,
+                                            controleurText,
+                                            equipeText,
+                                            provinceLast,
+                                            controleurLast,
+                                            equipeLast,
+                                        });
+
+                                        if (
+                                            provinceLast !== controleurLast ||
+                                            provinceLast !== equipeLast
+                                        ) {
+                                            toast.error(
+                                                "Les 3 sélections ne correspondent pas au même groupe"
+                                            );
                                             return;
                                         }
 
@@ -619,16 +538,18 @@ export default function UnitePage() {
                                             userId: Number(loadForm.controleurId),
                                         });
 
-                                     
-
                                         confetti({
                                             particleCount: 120,
                                             spread: 80,
                                             origin: { y: 0.6 },
                                         });
-                                        toast.success("Unité chargée avec succès");
+
+                                        toast.success(
+                                            "Unité chargée avec succès"
+                                        );
 
                                         setLoadModal(false);
+
                                         setLoadForm({
                                             provinceId: "",
                                             controleurId: "",
@@ -638,6 +559,7 @@ export default function UnitePage() {
                                         fetchData();
 
                                     } catch (err: any) {
+
                                         console.error(err);
 
                                         let message = "Erreur serveur";
@@ -655,7 +577,8 @@ export default function UnitePage() {
                                         toast.error(message);
 
                                     } finally {
-                                        setSaving(false); // 🔥 TOUJOURS exécuté
+
+                                        setSaving(false);
                                     }
                                 }}
                             >
@@ -667,9 +590,8 @@ export default function UnitePage() {
                     </div>
 
                 </div>
-            )
-            }
+            )}
 
-        </DashboardLayout >
+        </DashboardLayout>
     );
 }
