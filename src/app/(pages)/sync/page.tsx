@@ -64,6 +64,9 @@ export default function SyncPage() {
 
     useEffect(() => {
         loadSeance();
+         const interval = setInterval(() => {
+            loadSeance();
+    }, 5000);
     }, []);
 
     useEffect(() => {
