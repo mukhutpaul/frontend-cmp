@@ -9,6 +9,7 @@ import { getSyncStats, runSyncBatch, SyncStats } from "@/services/synchro.servic
 import { getSeances, Seance } from "@/services/seance.service";
 
 import Swal from "sweetalert2";
+import { getControles } from "@/services/controle.service";
 
 export default function SyncPage() {
 
@@ -41,6 +42,45 @@ export default function SyncPage() {
     };
 
     /* ================= STATS ================= */
+    const handleSync = async () => {
+
+        if (!seance) return;
+
+        const seances = await getSeances();
+        const controlesResponse = await getControles();
+
+        const controles = controlesResponse.content ?? controlesResponse;
+
+        const currentSeance = seances.find(s => s.id === seance.id);
+
+        const isActive = currentSeance?.isActive === true;
+
+        const filteredControles = isActive
+            ? controles.filter(c => c.present === true)
+            : controles;
+
+        const data = {
+            serverAddress: "http://10.159.151.164:8090",
+            deviceId: localStorage.getItem("username") || "",
+            seanceId: seance.id,
+
+            sessions: [],
+            seances: seances ?? [],
+            controles: filteredControles ?? [],
+            documents: [],
+        };
+
+        const formData = new FormData();
+
+        formData.append(
+            "data",
+            new Blob([JSON.stringify(data)], {
+                type: "application/json"
+            })
+        );
+
+        await runSyncBatch(data); // ❌ encore faux
+    };
 
     const fetchStats = async (currentSeance: Seance) => {
         try {
@@ -62,52 +102,7 @@ export default function SyncPage() {
         }
     };
 
-    const handleSync = async () => {
 
-        if (!seance) return;
-
-        try {
-            setSyncing(true);
-            setShowProgress(true);
-            setProgress(0);
-
-            toast.info("Synchronisation en cours...");
-
-            const payload = {
-                serverAddress: "http://10.159.151.164:8090",
-                deviceId: localStorage.getItem("username") || "",
-                seanceId: seance.id,
-
-                sessions: [],
-                seances: [],
-                controles: [],
-                documents: [],
-            };
-
-            // start animation AVANT request
-            runProgressAnimation();
-
-            const result = await runSyncBatch(payload);
-
-            setProgress(100);
-
-            toast.success("Synchronisation réussie");
-
-            console.log("SYNC RESULT :", result);
-
-        } catch (error) {
-
-            console.error("SYNC ERROR:", error);
-
-            toast.error("Erreur synchronisation");
-
-            setShowProgress(false);
-            setProgress(0);
-
-        } finally {
-            setSyncing(false);
-        }
-    };
 
     useEffect(() => {
         loadSeance();
