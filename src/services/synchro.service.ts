@@ -33,7 +33,6 @@ export const getSyncStats = async (seanceId: string, active: boolean): Promise<S
 };
 
 
-
 export const runSyncBatch = async (
     payload: any,
     files: File[] = []
@@ -43,19 +42,23 @@ export const runSyncBatch = async (
 
     formData.append(
         "data",
-        new Blob(
-            [JSON.stringify(payload)],
-            { type: "application/json" }
-        )
+        new Blob([JSON.stringify(payload)], {
+            type: "application/json"
+        })
     );
 
     files.forEach((file) => {
-        formData.append("files", file, file.name);
+        formData.append("files", file);
     });
 
     const res = await api.post(
         "api_pc_central/sync/batch",
-        formData
+        formData,
+        {
+            headers: {
+                "Content-Type": "multipart/form-data"
+            }
+        }
     );
 
     return res.data;

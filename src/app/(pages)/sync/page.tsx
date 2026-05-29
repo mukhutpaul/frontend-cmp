@@ -63,7 +63,9 @@ export default function SyncPage() {
     };
 
     const handleSync = async () => {
+
         if (!seance) return;
+
         try {
             setSyncing(true);
             setShowProgress(true);
@@ -82,9 +84,12 @@ export default function SyncPage() {
                 documents: [],
             };
 
+            // start animation AVANT request
+            runProgressAnimation();
+
             const result = await runSyncBatch(payload);
 
-            runProgressAnimation();
+            setProgress(100);
 
             toast.success("Synchronisation réussie");
 
@@ -92,7 +97,7 @@ export default function SyncPage() {
 
         } catch (error) {
 
-            console.error(error);
+            console.error("SYNC ERROR:", error);
 
             toast.error("Erreur synchronisation");
 
