@@ -50,7 +50,7 @@ export const runSyncBatch = async (
     );
 
     files.forEach((file) => {
-        formData.append("files", file);
+        formData.append("files", file, file.name);
     });
 
     const res = await api.post(
