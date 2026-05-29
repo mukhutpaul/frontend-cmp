@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import { Activity, RefreshCw, Database } from "lucide-react";
 
-import { getSyncStats, SyncStats } from "@/services/synchro.service";
+import { getSyncStats, runSyncBatch, SyncStats } from "@/services/synchro.service";
 import { getSeances, Seance } from "@/services/seance.service";
 
 import Swal from "sweetalert2";
@@ -62,11 +62,56 @@ export default function SyncPage() {
         }
     };
 
+    const handleSync = async () => {
+        if (!seance) return;
+        try {
+            setSyncing(true);
+            setShowProgress(true);
+            setProgress(0);
+
+            toast.info("Synchronisation en cours...");
+
+            const payload = {
+                serverAddress: "http://10.159.151.164:8090",
+                deviceId: localStorage.getItem("username") || "",
+                seanceId: seance.id,
+
+                sessions: [],
+                seances: [],
+                controles: [],
+                documents: [],
+            };
+
+            const result = await runSyncBatch(payload);
+
+            runProgressAnimation();
+
+            toast.success("Synchronisation réussie");
+
+            console.log("SYNC RESULT :", result);
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error("Erreur synchronisation");
+
+            setShowProgress(false);
+            setProgress(0);
+
+        } finally {
+            setSyncing(false);
+        }
+    };
+
     useEffect(() => {
         loadSeance();
-         const interval = setInterval(() => {
+
+        const interval = setInterval(() => {
             loadSeance();
-    }, 5000);
+        }, 5000);
+
+        return () => clearInterval(interval);
     }, []);
 
     useEffect(() => {
@@ -111,28 +156,6 @@ export default function SyncPage() {
         }, 250);
     };
 
-    const handleSync = async () => {
-
-        if (!seance) return;
-
-        try {
-            setSyncing(true);
-
-            toast.info("Synchronisation en cours...");
-
-            // 👉 API réelle ici
-            // await api.post(`/sync/run/${seance.id}`);
-
-            runProgressAnimation();
-
-        } catch (error) {
-            console.error(error);
-            toast.error("Erreur synchronisation");
-
-        } finally {
-            setSyncing(false);
-        }
-    };
 
     return (
         <DashboardLayout>
@@ -154,6 +177,7 @@ export default function SyncPage() {
                 {/* BUTTON SYNC */}
                 <button
                     onClick={handleSync}
+
                     disabled={syncing}
                     className="btn btn-primary flex items-center gap-2"
                 >

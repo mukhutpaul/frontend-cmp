@@ -31,3 +31,32 @@ export const getSyncStats = async (seanceId: string, active: boolean): Promise<S
 
     return res.data;
 };
+
+
+
+export const runSyncBatch = async (
+    payload: any,
+    files: File[] = []
+) => {
+
+    const formData = new FormData();
+
+    formData.append(
+        "data",
+        new Blob(
+            [JSON.stringify(payload)],
+            { type: "application/json" }
+        )
+    );
+
+    files.forEach((file) => {
+        formData.append("files", file);
+    });
+
+    const res = await api.post(
+        "api_pc_central/sync/batch",
+        formData
+    );
+
+    return res.data;
+};
