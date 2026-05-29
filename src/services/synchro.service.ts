@@ -21,7 +21,7 @@ export interface SyncStats {
 
 export const getSyncStats = async (seanceId: string, active: boolean): Promise<SyncStats> => {
     const res = await api.get<SyncStats>(
-        `/api_pc_central/sync/stats/${seanceId}`,
+        `/api/sync/stats/${seanceId}`,
         {
             params: {
                 active
