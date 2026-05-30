@@ -9,7 +9,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
-import { Controle, getControles, invalidateControle } from "@/services/controle.service";
+import { Controle, ControlesStatsToday, getControles, getControlesStatsToday, invalidateControle } from "@/services/controle.service";
 import { getMissions } from "@/services/mission.service";
 import Image from "next/image";
 import { FileText } from "lucide-react";
@@ -67,6 +67,10 @@ export default function ControlePage() {
     const [docZoom, setDocZoom] = useState<string | null>(null);
     const [docScale, setDocScale] = useState(1);
 
+    const [stats, setStats] = useState<ControlesStatsToday | null>(null);
+    const [openStats, setOpenStats] = useState(false);
+    const [loadingStats, setLoadingStats] = useState(false);
+
     /* ========================= PHOTO ZOOM ========================= */
     useEffect(() => {
         if (zoomPhoto) {
@@ -81,6 +85,19 @@ export default function ControlePage() {
         return () => window.removeEventListener("mouseup", stop);
     }, []);
 
+    const loadStats = async () => {
+        try {
+            setLoadingStats(true);
+            const res = await getControlesStatsToday();
+            setStats(res);
+            setOpenStats(true);
+        } catch (e) {
+            console.error(e);
+            toast.error("Erreur chargement statistiques");
+        } finally {
+            setLoadingStats(false);
+        }
+    };
     const handleWheel = (e: React.WheelEvent) => {
         e.preventDefault();
 
@@ -368,6 +385,16 @@ export default function ControlePage() {
                     <p className="text-sm opacity-70">
                         {filteredControles.length} élément(s) trouvé(s)
                     </p>
+                    <div className="mt-3 flex justify-center">
+                        <button
+                            onClick={loadStats}
+                            className="btn btn-primary btn-sm"
+                            disabled={loadingStats}
+                        >
+                            <Box size={16} />
+                            Statistiques du jour
+                        </button>
+                    </div>
                 </div>
 
                 {/* SEARCH */}
@@ -947,6 +974,176 @@ export default function ControlePage() {
                     </div>
                 </div>
             )}
+
+            {openStats && stats && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+
+                    <div className="bg-base-100 w-full max-w-4xl rounded-2xl shadow-2xl overflow-hidden">
+
+                        {/* HEADER */}
+                        <div className="bg-primary text-primary-content p-4 flex justify-between items-center">
+                            <h2 className="text-lg font-bold">
+                                Statistiques des contrôles (Aujourd’hui)
+                            </h2>
+
+                            <button
+                                className="btn btn-sm btn-circle btn-ghost"
+                                onClick={() => setOpenStats(false)}
+                            >
+                                ✕
+                            </button>
+                        </div>
+
+                        {/* CONTENT */}
+                        <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                            <StatBox label="Total contrôles" value={stats.totalControles} />
+                            <StatBox label="Présents" value={stats.totalPresent} color="text-success" />
+                            <StatBox label="Justifiés" value={stats.totalJustifie} color="text-info" />
+
+                            <StatBox label="Hommes présents" value={stats.totalHommesPresent} />
+                            <StatBox label="Femmes présentes" value={stats.totalFemmesPresent} />
+
+                            <StatBox label="Hommes justifiés" value={stats.totalHommesJustifies} />
+                            <StatBox label="Femmes justifiées" value={stats.totalFemmesJustifies} />
+
+                            <StatBox
+                                label="Total présent + justifié"
+                                value={stats.totalGlobalPresentEtJustifie}
+                                highlight
+                            />
+
+                            <StatBox label="Unités" value={stats.totalUnites} />
+
+                        </div>
+
+                        {/* UNITS BREAKDOWN */}
+                        {/* ===================== REPARTITION PAR UNITE ===================== */}
+                        <div className="p-5 border-t bg-base-200">
+
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-bold">
+                                    Répartition par unité
+                                </h3>
+
+                                <div className="badge badge-primary badge-lg">
+                                    {stats.totalUnites} unité(s)
+                                </div>
+                            </div>
+
+                            <div className="space-y-3 max-h-[350px] overflow-y-auto pr-2">
+
+                                {Object.entries(
+                                    stats.statsParUnite as Record<string, number>
+                                )
+                                    .sort(([, a], [, b]) => b - a)
+                                    .map(([unite, total], index) => {
+
+                                        const percentage =
+                                            stats.totalControles > 0
+                                                ? (total / stats.totalControles) * 100
+                                                : 0;
+
+                                        const badgeClass =
+                                            total >= 5
+                                                ? "badge-success"
+                                                : total >= 3
+                                                    ? "badge-warning"
+                                                    : "badge-primary";
+
+                                        return (
+                                            <div
+                                                key={unite}
+                                                className="
+                            bg-base-100
+                            border
+                            border-base-300
+                            rounded-xl
+                            p-4
+                            shadow-sm
+                            hover:shadow-md
+                            transition-all
+                        "
+                                            >
+
+                                                {/* HEADER */}
+                                                <div className="flex justify-between items-start gap-3 mb-2">
+
+                                                    <div className="flex items-center gap-2">
+
+                                                        <div className="
+                                    w-8 h-8
+                                    rounded-full
+                                    bg-primary
+                                    text-primary-content
+                                    flex items-center justify-center
+                                    text-xs font-bold
+                                ">
+                                                            #{index + 1}
+                                                        </div>
+
+                                                        <div>
+                                                            <p className="font-semibold text-sm leading-tight">
+                                                                {unite}
+                                                            </p>
+
+                                                            <p className="text-xs opacity-60">
+                                                                {percentage.toFixed(1)}% des contrôles
+                                                            </p>
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div className={`badge badge-lg ${badgeClass}`}>
+                                                        {total}
+                                                    </div>
+
+                                                </div>
+
+                                                {/* PROGRESS */}
+                                                <progress
+                                                    className="progress progress-primary w-full"
+                                                    value={total}
+                                                    max={stats.totalControles}
+                                                />
+
+                                            </div>
+                                        );
+                                    })}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+            )}
         </DashboardLayout>
     );
+
 }
+
+function StatBox({
+    label,
+    value,
+    color = "",
+    highlight = false,
+}: {
+    label: string;
+    value: number;
+    color?: string;
+    highlight?: boolean;
+}) {
+    return (
+        <div className={`
+            p-3 rounded-xl border bg-base-100 shadow-sm
+            ${highlight ? "border-primary" : "border-base-300"}
+        `}>
+            <p className="text-xs opacity-60">{label}</p>
+            <p className={`text-xl font-bold ${color}`}>
+                {value}
+            </p>
+        </div>
+    );
+}
+

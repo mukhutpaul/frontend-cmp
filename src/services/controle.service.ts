@@ -161,3 +161,35 @@ export const deleteControle = async (id: string) => {
     const res = await api.delete(`/controles/${id}`);
     return res.data;
 };
+
+
+
+/* ========================= TYPES ========================= */
+
+export interface ControlesStatsToday {
+    totalControles: number;
+    totalPresent: number;
+    totalJustifie: number;
+
+    totalHommesPresent: number;
+    totalFemmesPresent: number;
+
+    totalHommesJustifies: number;
+    totalFemmesJustifies: number;
+
+    totalGlobalPresentEtJustifie: number;
+
+    totalUnites: number;
+
+    statsParUnite: Record<string, number>; // IMPORTANT
+}
+
+/* ========================= GET STATS TODAY ========================= */
+
+export const getControlesStatsToday = async (): Promise<ControlesStatsToday> => {
+    const res = await api.get<ControlesStatsToday>(
+        "/controles/stats/today"
+    );
+
+    return res.data;
+};
