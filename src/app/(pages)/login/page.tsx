@@ -170,30 +170,82 @@ export default function LoginPage() {
                     return;
 
                 } catch (remoteError: any) {
+
                     console.error("REMOTE FAILED:", remoteError);
 
+                    const status = remoteError?.response?.status;
+
+                    if (status === 401 || status === 403) {
+
+                        await Swal.fire({
+                            icon: "error",
+                            title: "Connexion refusée",
+                            html: `
+                <div style="text-align:left">
+                    <p><b>Identifiants invalides.</b></p>
+                    <p>Le nom d'utilisateur ou le mot de passe est incorrect.</p>
+                </div>
+            `,
+                            confirmButtonText: "Réessayer",
+                            confirmButtonColor: "#dc2626",
+                            allowOutsideClick: false
+                        });
+
+                        return;
+                    }
+
                     await Swal.fire({
-                        icon: "error",
-                        title: "Erreur de connexion distante",
-                        text:
-                            remoteError?.response?.status === 401
-                                ? "Identifiants invalides"
-                                : "Impossible de charger les données"
+                        icon: "warning",
+                        title: "Serveur inaccessible",
+                        html: `
+            <div style="text-align:left">
+                <p>Impossible de joindre le serveur distant.</p>
+                <p>Vérifiez :</p>
+                <ul style="text-align:left">
+                    <li>L'adresse IP</li>
+                    <li>Le port configuré</li>
+                    <li>La connexion réseau</li>
+                </ul>
+            </div>
+        `,
+                        confirmButtonText: "Fermer",
+                        confirmButtonColor: "#f59e0b"
                     });
-
-                    toast.error("Erreur connexion distante");
-
-                    return;
                 }
             }
         } catch (error: any) {
             console.error(error);
 
-            toast.error(
-                error?.response?.data?.message ||
-                error?.message ||
-                "Erreur de connexion"
-            );
+            const status = error?.response?.status;
+
+            if (status === 401 || status === 403) {
+
+                await Swal.fire({
+                    icon: "error",
+                    title: "Échec de connexion",
+                    html: `
+                <div style="text-align:left">
+                    <p><b>Nom d'utilisateur ou mot de passe incorrect.</b></p>
+                    <p>Veuillez vérifier vos identifiants puis réessayer.</p>
+                </div>
+            `,
+                    confirmButtonText: "Fermer",
+                    confirmButtonColor: "#dc2626",
+                    allowOutsideClick: false
+                });
+
+                return;
+            }
+
+            await Swal.fire({
+                icon: "error",
+                title: "Erreur",
+                text:
+                    error?.response?.data?.message ||
+                    error?.message ||
+                    "Une erreur est survenue lors de la connexion.",
+                confirmButtonText: "Fermer"
+            });
         } finally {
             setLoading(false);
         }
