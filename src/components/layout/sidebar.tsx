@@ -60,7 +60,7 @@ export default function Sidebar({
     { href: "/statProvince", icon: MapPinned, label: "Stats Provinces", auth: true, roles: ["MANAGER", "ADMIN"] },
 
     { href: "/statEquipe", icon: BarChart3, label: "Stats Équipes", auth: true, roles: ["MANAGER", "ADMIN"] },
-    { href: "/sync", icon: RefreshCw, label: "Synchronisation", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+    { href: "/sync", icon: RefreshCw, label: "Synchronisation", auth: true, roles: ["CHEF_EQUIPE"] },
 
 
   ]
