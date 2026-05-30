@@ -1055,16 +1055,15 @@ export default function ControlePage() {
                                             <div
                                                 key={unite}
                                                 className="
-                            bg-base-100
-                            border
-                            border-base-300
-                            rounded-xl
-                            p-4
-                            shadow-sm
-                            hover:shadow-md
-                            transition-all
-                        "
-                                            >
+                                                    bg-base-100
+                                                    border
+                                                    border-base-300
+                                                    rounded-xl
+                                                    p-4
+                                                    shadow-sm
+                                                    hover:shadow-md
+                                                    transition-all"
+                                                                    >
 
                                                 {/* HEADER */}
                                                 <div className="flex justify-between items-start gap-3 mb-2">
@@ -1072,13 +1071,13 @@ export default function ControlePage() {
                                                     <div className="flex items-center gap-2">
 
                                                         <div className="
-                                    w-8 h-8
-                                    rounded-full
-                                    bg-primary
-                                    text-primary-content
-                                    flex items-center justify-center
-                                    text-xs font-bold
-                                ">
+                                                            w-8 h-8
+                                                            rounded-full
+                                                            bg-primary
+                                                            text-primary-content
+                                                            flex items-center justify-center
+                                                            text-xs font-bold
+                                                        ">
                                                             #{index + 1}
                                                         </div>
 
