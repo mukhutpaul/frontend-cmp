@@ -18,8 +18,6 @@ export default function SyncPage() {
     const [loading, setLoading] = useState(false);
     const [syncing, setSyncing] = useState(false);
 
-    const [progress, setProgress] = useState(0);
-    const [showProgress, setShowProgress] = useState(false);
 
     /* ================= SEANCE ================= */
 
@@ -63,18 +61,13 @@ export default function SyncPage() {
 
         try {
             setSyncing(true);
-            setShowProgress(true);
-            setProgress(0);
 
             toast.info("Synchronisation en cours...");
             const result = await runSyncBatch();
 
-            setProgress(100);
 
             toast.success("Synchronisation réussie");
              setTimeout(async () => {
-
-                    setShowProgress(false);
 
                     await fetchStats();
 
@@ -95,8 +88,6 @@ export default function SyncPage() {
 
             toast.error("Erreur synchronisation");
 
-            setShowProgress(false);
-            setProgress(0);
 
         } finally {
             setSyncing(false);
@@ -153,7 +144,7 @@ export default function SyncPage() {
                     Synchroniser
                 </button>
 
-                {/* PROGRESS BAR (UNIQUEMENT PENDANT SYNC) */}
+                {/* PROGRESS BAR (UNIQUEMENT PENDANT SYNC)
                 {showProgress && (
                     <div className="space-y-2">
                         <div className="flex justify-between text-sm">
@@ -167,7 +158,7 @@ export default function SyncPage() {
                             max="100"
                         />
                     </div>
-                )}
+                )} */}
 
                 {/* DATA */}
                 {!loading && data && (
