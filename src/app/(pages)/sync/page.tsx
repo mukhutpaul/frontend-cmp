@@ -202,7 +202,7 @@ export default function SyncPage() {
                         <StatCard label="Justifiés" value={data.controlesJustifies} />
                         <StatCard label="Absences" value={data.controlesAbsence} />
                         <StatCard label="Documents" value={data.documents} />
-                        <StatCard label="Fichiers" value={data.fichiers} />
+                        {/* <StatCard label="Fichiers" value={data.fichiers} /> */}
                         <StatCard label="Total" value={data.total} highlight />
 
                     </div>
