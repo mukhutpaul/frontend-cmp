@@ -67,16 +67,27 @@ export default function SyncPage() {
             setProgress(0);
 
             toast.info("Synchronisation en cours...");
-
-            runProgressAnimation();
-
             const result = await runSyncBatch();
 
             setProgress(100);
 
             toast.success("Synchronisation réussie");
+             setTimeout(async () => {
 
-            console.log("SYNC RESULT :", result);
+                    setShowProgress(false);
+
+                    await fetchStats();
+
+                    Swal.fire({
+                        icon: "success",
+                        title: "Synchronisation terminée",
+                        text: "Toutes les données ont été mises à jour avec succès",
+                        confirmButtonColor: "#2563eb"
+                    });
+
+                }, 500);
+
+           // console.log("SYNC RESULT :", result);
 
         } catch (error) {
 
@@ -109,40 +120,6 @@ export default function SyncPage() {
 
     /* ================= SYNC ANIMATION ================= */
 
-    const runProgressAnimation = () => {
-        setShowProgress(true);
-        setProgress(0);
-
-        let value = 0;
-
-        const interval = setInterval(() => {
-
-            value += Math.floor(Math.random() * 12) + 5; // progression réaliste
-
-            if (value >= 100) {
-                value = 100;
-                clearInterval(interval);
-
-                setTimeout(async () => {
-
-                    setShowProgress(false);
-
-                    await fetchStats();
-
-                    Swal.fire({
-                        icon: "success",
-                        title: "Synchronisation terminée",
-                        text: "Toutes les données ont été mises à jour avec succès",
-                        confirmButtonColor: "#2563eb"
-                    });
-
-                }, 500);
-            }
-
-            setProgress(value);
-
-        }, 250);
-    };
 
 
     return (
