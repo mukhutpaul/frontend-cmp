@@ -42,14 +42,11 @@ export default function SyncPage() {
 
     /* ================= STATS ================= */
 
-    const fetchStats = async (currentSeance: Seance) => {
+    const fetchStats = async () => {
         try {
             setLoading(true);
 
-            const res = await getSyncStats(
-                currentSeance.id,
-                currentSeance.isActive
-            );
+            const res = await getSyncStats();
 
             setData(res);
 
@@ -62,52 +59,38 @@ export default function SyncPage() {
         }
     };
 
-  const handleSync = async () => {
+    const handleSync = async () => {
 
-    if (!seance) return;
+        try {
+            setSyncing(true);
+            setShowProgress(true);
+            setProgress(0);
 
-    try {
-        setSyncing(true);
-        setShowProgress(true);
-        setProgress(0);
+            toast.info("Synchronisation en cours...");
 
-        toast.info("Synchronisation en cours...");
+            runProgressAnimation();
 
-        const payload = {
-            serverAddress: "http://10.159.151.164:8090",
-            deviceId: localStorage.getItem("username") || "",
-            seanceId: seance.id,
+            const result = await runSyncBatch();
 
-            sessions: [],
-            seances: [],
-            controles: [],
-            documents: [],
-        };
+            setProgress(100);
 
-        // start animation AVANT request
-        runProgressAnimation();
+            toast.success("Synchronisation réussie");
 
-        const result = await runSyncBatch(payload);
+            console.log("SYNC RESULT :", result);
 
-        setProgress(100);
+        } catch (error) {
 
-        toast.success("Synchronisation réussie");
+            console.error("SYNC ERROR:", error);
 
-        console.log("SYNC RESULT :", result);
+            toast.error("Erreur synchronisation");
 
-    } catch (error) {
+            setShowProgress(false);
+            setProgress(0);
 
-        console.error("SYNC ERROR:", error);
-
-        toast.error("Erreur synchronisation");
-
-        setShowProgress(false);
-        setProgress(0);
-
-    } finally {
-        setSyncing(false);
-    }
-};
+        } finally {
+            setSyncing(false);
+        }
+    };
 
     useEffect(() => {
         loadSeance();
@@ -121,7 +104,7 @@ export default function SyncPage() {
 
     useEffect(() => {
         if (!seance) return;
-        fetchStats(seance);
+        fetchStats();
     }, [seance]);
 
     /* ================= SYNC ANIMATION ================= */
@@ -144,7 +127,7 @@ export default function SyncPage() {
 
                     setShowProgress(false);
 
-                    await fetchStats(seance!);
+                    await fetchStats();
 
                     Swal.fire({
                         icon: "success",
@@ -213,7 +196,7 @@ export default function SyncPage() {
                 {!loading && data && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
 
-                        <StatCard label="Sessions" value={data.sessions} />
+                        {/* <StatCard label="Sessions" value={data.sessions} /> */}
                         <StatCard label="Séances" value={data.seances} />
                         <StatCard label="Présences" value={data.controlesPresence} />
                         <StatCard label="Justifiés" value={data.controlesJustifies} />
