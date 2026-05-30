@@ -9,7 +9,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
-import { Controle, ControlesStatsToday, getControles, getControlesStatsToday, invalidateControle } from "@/services/controle.service";
+import { Controle, ControlesStatsToday, getControles, getControlesStats, getControlesStatsToday, invalidateControle } from "@/services/controle.service";
 import { getMissions } from "@/services/mission.service";
 import Image from "next/image";
 import { FileText } from "lucide-react";
@@ -70,6 +70,29 @@ export default function ControlePage() {
     const [stats, setStats] = useState<ControlesStatsToday | null>(null);
     const [openStats, setOpenStats] = useState(false);
     const [loadingStats, setLoadingStats] = useState(false);
+
+    const [globalStats, setGlobalStats] = useState<ControlesStatsToday | null>(null);
+    const [openGlobalStats, setOpenGlobalStats] = useState(false);
+    const [loadingGlobalStats, setLoadingGlobalStats] = useState(false);
+
+    const loadGlobalStats = async () => {
+        try {
+            setLoadingGlobalStats(true);
+
+            const res = await getControlesStats();
+
+            setGlobalStats(res);
+            setOpenGlobalStats(true);
+
+        } catch (error) {
+
+            console.error(error);
+            toast.error("Erreur chargement statistiques générales");
+
+        } finally {
+            setLoadingGlobalStats(false);
+        }
+    };
 
     /* ========================= PHOTO ZOOM ========================= */
     useEffect(() => {
@@ -385,7 +408,8 @@ export default function ControlePage() {
                     <p className="text-sm opacity-70">
                         {filteredControles.length} élément(s) trouvé(s)
                     </p>
-                    <div className="mt-3 flex justify-center">
+                    <div className="mt-3 flex justify-center gap-3">
+
                         <button
                             onClick={loadStats}
                             className="btn btn-primary btn-sm"
@@ -394,6 +418,16 @@ export default function ControlePage() {
                             <Box size={16} />
                             Statistiques du jour
                         </button>
+
+                        <button
+                            onClick={loadGlobalStats}
+                            className="btn btn-secondary btn-sm"
+                            disabled={loadingGlobalStats}
+                        >
+                            <Box size={16} />
+                            Statistiques générales
+                        </button>
+
                     </div>
                 </div>
 
@@ -1063,7 +1097,7 @@ export default function ControlePage() {
                                                     shadow-sm
                                                     hover:shadow-md
                                                     transition-all"
-                                                                    >
+                                            >
 
                                                 {/* HEADER */}
                                                 <div className="flex justify-between items-start gap-3 mb-2">
@@ -1115,6 +1149,184 @@ export default function ControlePage() {
                         </div>
 
                     </div>
+                </div>
+            )}
+
+            {openGlobalStats && globalStats && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 p-4">
+
+                    <div className="bg-base-100 w-full max-w-5xl rounded-2xl shadow-2xl overflow-hidden">
+
+                        {/* HEADER */}
+                        <div className="bg-secondary text-secondary-content p-4 flex justify-between items-center">
+
+                            <div>
+                                <h2 className="text-xl font-bold">
+                                    Statistiques Générales
+                                </h2>
+
+                                <p className="text-sm opacity-80">
+                                    Toutes les données enregistrées
+                                </p>
+                            </div>
+
+                            <button
+                                className="btn btn-sm btn-circle btn-ghost"
+                                onClick={() => setOpenGlobalStats(false)}
+                            >
+                                ✕
+                            </button>
+
+                        </div>
+
+                        {/* STATS */}
+                        <div className="p-5 grid grid-cols-2 md:grid-cols-4 gap-4">
+
+                            <StatBox
+                                label="Total contrôles"
+                                value={globalStats.totalControles}
+                            />
+
+                            <StatBox
+                                label="Présents"
+                                value={globalStats.totalPresent}
+                                color="text-success"
+                            />
+
+                            <StatBox
+                                label="Justifiés"
+                                value={globalStats.totalJustifie}
+                                color="text-info"
+                            />
+
+                            <StatBox
+                                label="Hommes présents"
+                                value={globalStats.totalHommesPresent}
+                            />
+
+                            <StatBox
+                                label="Femmes présentes"
+                                value={globalStats.totalFemmesPresent}
+                            />
+
+                            <StatBox
+                                label="Hommes justifiés"
+                                value={globalStats.totalHommesJustifies}
+                            />
+
+                            <StatBox
+                                label="Femmes justifiées"
+                                value={globalStats.totalFemmesJustifies}
+                            />
+
+                            <StatBox
+                                label="Présents + Justifiés"
+                                value={globalStats.totalGlobalPresentEtJustifie}
+                                highlight
+                            />
+
+                            <StatBox
+                                label="Total unités"
+                                value={globalStats.totalUnites}
+                            />
+
+                        </div>
+
+                        {/* REPARTITION */}
+                        <div className="p-5 border-t bg-base-200">
+
+                            <div className="flex items-center justify-between mb-4">
+
+                                <h3 className="text-lg font-bold">
+                                    Répartition par unité
+                                </h3>
+
+                                <div className="badge badge-secondary badge-lg">
+                                    {globalStats.totalUnites} unité(s)
+                                </div>
+
+                            </div>
+
+                            <div className="space-y-3 max-h-[400px] overflow-y-auto">
+
+                                {Object.entries(
+                                    globalStats.statsParUnite as Record<string, number>
+                                )
+                                    .sort(([, a], [, b]) => b - a)
+                                    .map(([unite, total], index) => {
+
+                                        const percentage =
+                                            globalStats.totalControles > 0
+                                                ? (total / globalStats.totalControles) * 100
+                                                : 0;
+
+                                        return (
+                                            <div
+                                                key={unite}
+                                                className="
+                                        bg-base-100
+                                        rounded-xl
+                                        border
+                                        border-base-300
+                                        p-4
+                                        shadow-sm
+                                    "
+                                            >
+
+                                                <div className="flex justify-between mb-2">
+
+                                                    <div className="flex gap-3 items-center">
+
+                                                        <div
+                                                            className="
+                                                    w-8 h-8
+                                                    rounded-full
+                                                    bg-secondary
+                                                    text-secondary-content
+                                                    flex items-center justify-center
+                                                    text-xs font-bold
+                                                "
+                                                        >
+                                                            #{index + 1}
+                                                        </div>
+
+                                                        <div>
+
+                                                            <p className="font-semibold">
+                                                                {unite}
+                                                            </p>
+
+                                                            <p className="text-xs opacity-60">
+                                                                {percentage.toFixed(1)}%
+                                                                du total
+                                                            </p>
+
+                                                        </div>
+
+                                                    </div>
+
+                                                    <div className="badge badge-secondary badge-lg">
+                                                        {total}
+                                                    </div>
+
+                                                </div>
+
+                                                <progress
+                                                    className="progress progress-secondary w-full"
+                                                    value={total}
+                                                    max={globalStats.totalControles}
+                                                />
+
+                                            </div>
+                                        );
+                                    })}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
                 </div>
             )}
         </DashboardLayout>

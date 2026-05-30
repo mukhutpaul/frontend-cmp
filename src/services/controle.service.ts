@@ -193,3 +193,11 @@ export const getControlesStatsToday = async (): Promise<ControlesStatsToday> => 
 
     return res.data;
 };
+
+export const getControlesStats = async (): Promise<ControlesStatsToday> => {
+    const res = await api.get<ControlesStatsToday>(
+        "/controles/stats"
+    );
+
+    return res.data;
+};
