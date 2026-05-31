@@ -10,6 +10,16 @@ export const metadata = {
     apple: "/aba.png",
   },
 };
+
+export function registerBanner() {
+  console.log(`
+========================================
+        ABA CM PNC SYSTEM
+        VERSION : 1.0.0
+        STATUS   : RUNNING
+========================================
+  `);
+}
 export default function RootLayout({
   children,
 }: Readonly<{
