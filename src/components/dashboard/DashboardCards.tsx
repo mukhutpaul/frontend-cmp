@@ -320,6 +320,8 @@ function ReportExporter({ data }: { data: any }) {
       )}
 
       {profile === "CHEF_EQUIPE" && (
+
+
         <button
           onClick={() => setOpenPreview(true)}
           className="
@@ -328,9 +330,9 @@ function ReportExporter({ data }: { data: any }) {
       overflow-hidden
       rounded-xl
       bg-gradient-to-r
-      from-emerald-700
-      via-teal-700
-      to-cyan-800
+      from-slate-800
+      via-blue-800
+      to-indigo-900
       px-5
       py-3
       text-white
@@ -339,6 +341,7 @@ function ReportExporter({ data }: { data: any }) {
       duration-300
       hover:scale-105
       hover:shadow-2xl
+      cursor-pointer
       active:scale-95
       flex
       items-center
@@ -365,20 +368,21 @@ function ReportExporter({ data }: { data: any }) {
         backdrop-blur-sm
       "
           >
-            📋
+            🖨️
           </div>
 
           {/* Text */}
           <div className="relative z-10 text-left leading-tight">
             <p className="text-sm font-bold uppercase tracking-wide">
-              Rapport Équipe
+              Rapport Equipe
             </p>
 
             <p className="text-[11px] opacity-80">
-              Équipe de {user}
+              Télécharger et imprimer le rapport
             </p>
           </div>
         </button>
+
       )}
 
       {/* MODAL */}
