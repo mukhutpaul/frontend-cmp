@@ -357,7 +357,7 @@ export default function SeancesPage() {
 
                                         <td>
 
-                                            {s.dateFin && canAdmin ?(
+                                            {s.dateFin ?(
                                          
                                                 <span className="badge badge-neutral">
                                                     Terminée
@@ -416,7 +416,7 @@ export default function SeancesPage() {
 
                                             )}
 
-                                            {!s.dateFin && s.isActive && canManage && (
+                                            {!s.dateFin && s.isActive && canAdmin && (
                                                 <button
                                                     className="btn btn-xs btn-warning"
                                                     onClick={async () => {
