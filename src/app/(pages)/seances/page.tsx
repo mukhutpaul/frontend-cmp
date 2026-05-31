@@ -357,8 +357,8 @@ export default function SeancesPage() {
 
                                         <td>
 
-                                            {s.dateFin ? (
-
+                                            {s.dateFin && canAdmin ?(
+                                         
                                                 <span className="badge badge-neutral">
                                                     Terminée
                                                 </span>
