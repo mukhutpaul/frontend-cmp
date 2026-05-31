@@ -657,7 +657,7 @@ export default function ControlePage() {
                                             )}
 
                                            
-                                                (c.present === true || c.justifie === true) && (
+                                               {(c.present === true || c.justifie === true) && (
 
                                                     <button
                                                         className="
@@ -673,7 +673,7 @@ export default function ControlePage() {
                                                     >
                                                         <Ban size={16} />
                                                     </button>
-                                            
+                                                )}
 
                                         </td>
 
