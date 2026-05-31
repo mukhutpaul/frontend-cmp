@@ -773,7 +773,7 @@ export default function UsersPage() {
                                         </p>
 
                                     </div>
-
+                                    
                                     <button
                                         className="btn btn-sm btn-circle btn-ghost"
                                         onClick={() => setOpenViewUser(false)}
@@ -932,12 +932,14 @@ export default function UsersPage() {
 
                                                 </div>
                                                 {/* DELETE BUTTON */}
+                                                {canAdmin && (
                                                 <button
                                                     className="btn btn-xs btn-error btn-outline"
                                                     onClick={() => handleRemoveUniteFromUser(u.id)}
                                                 >
                                                     <Trash2 className="w-4 h-4" />
                                                 </button>
+                                                )}
 
                                                 <div className="badge badge-success badge-sm">
                                                     Active
