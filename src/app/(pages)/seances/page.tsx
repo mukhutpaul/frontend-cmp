@@ -57,6 +57,15 @@ export default function SeancesPage() {
         missionId: 0,
     });
 
+    const profile =
+        typeof window !== "undefined"
+            ? localStorage.getItem("profile")
+            : null;
+
+    const canManage =
+        profile === "CHEF_EQUIPE"
+
+    const canAdmin = profile === "ADMIN" || "MANAGER"
     /**
      * FETCH DATA
      */
@@ -141,21 +150,15 @@ export default function SeancesPage() {
                 return;
             }
 
-            // ✅ REFUSER si mission inactive
+            // ✅ refuser si mission inactive
             if (!mission.isActive) {
                 toast.error("Impossible de créer une séance : mission inactive");
                 return;
             }
 
-            // ✅ vérifier séance déjà ouverte
-            const existingSeance = seances.find(
-                (s) =>
-                    s.mission?.id === form.missionId &&
-                    !s.dateFin
-            );
-
-            if (existingSeance) {
-                toast.error("Une séance existe déjà pour cette mission");
+            // ✅ refuser si une séance existe déjà dans la base
+            if (seances.length > 0) {
+                toast.error("Une séance existe déjà. Impossible d'en créer une autre.");
                 return;
             }
 
@@ -239,13 +242,14 @@ export default function SeancesPage() {
                             Gestion des séances opérationnelles
                         </p>
                     </div>
-
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => setOpenModal(true)}
-                    >
-                        + Nouvelle séance
-                    </button>
+                    {canManage && (
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => setOpenModal(true)}
+                        >
+                            + Nouvelle séance
+                        </button>
+                    )}
                 </div>
 
                 {/* FILTERS */}
@@ -371,7 +375,8 @@ export default function SeancesPage() {
 
                                         <td className="flex gap-2">
 
-                                            {!s.dateFin && !s.isActive && (
+                                            {!s.dateFin && !s.isActive && canManage && (
+
                                                 <button
                                                     className="btn btn-xs btn-success"
                                                     onClick={async () => {
@@ -402,9 +407,10 @@ export default function SeancesPage() {
                                                 >
                                                     Démarrer
                                                 </button>
+
                                             )}
 
-                                            {!s.dateFin && s.isActive && (
+                                            {!s.dateFin && s.isActive && canManage && (
                                                 <button
                                                     className="btn btn-xs btn-warning"
                                                     onClick={async () => {
@@ -438,7 +444,7 @@ export default function SeancesPage() {
                                             )}
 
                                             {/* SUPPRESSION uniquement si pas terminée */}
-                                            {!s.dateFin && (
+                                            {!s.dateFin && canAdmin && (
                                                 <button
                                                     className="btn btn-xs btn-error btn-outline"
                                                     onClick={() => handleDelete(s.id)}

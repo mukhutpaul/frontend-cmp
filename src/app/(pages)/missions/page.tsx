@@ -104,6 +104,14 @@ export default function MissionsPage() {
         }
     };
 
+    const profile =
+        typeof window !== "undefined"
+            ? localStorage.getItem("profile")
+            : null;
+
+    const canAdmin =
+        profile === "ADMIN" ||
+        profile === "MANAGER";
     const fetchUnitesMission = async (missionId: number) => {
 
         setLoadingUnites(true);
@@ -263,12 +271,14 @@ export default function MissionsPage() {
                             Gestion nationale des missions
                         </p>
                     </div>
+                    {canAdmin && (
                     <button
                         className="btn btn-primary"
                         onClick={() => setOpenModal(true)}
                     >
                         + Nouvelle mission
                     </button>
+                    )}
                 </div>
 
                 {/* 🔎 FILTERS */}
@@ -407,11 +417,11 @@ export default function MissionsPage() {
                                                     })
                                                     : "-"}
                                             </td>
-
+                                            
                                             <td className="flex gap-2">
 
                                                 {/* EN ATTENTE */}
-                                                {!m.dateDebut && !m.dateFin && (
+                                                {!m.dateDebut && !m.dateFin && canAdmin && (
                                                     <button
                                                         className="btn btn-xs btn-success"
                                                         onClick={() => handleStart(m.id)}
@@ -421,7 +431,7 @@ export default function MissionsPage() {
                                                 )}
 
                                                 {/* ACTIVE */}
-                                                {m.dateDebut && !m.dateFin && (
+                                                {m.dateDebut && !m.dateFin && canAdmin && (
                                                     <button
                                                         className="btn btn-xs btn-warning"
                                                         onClick={() => handleClose(m.id)}
@@ -429,7 +439,7 @@ export default function MissionsPage() {
                                                         Clôturer
                                                     </button>
                                                 )}
-
+                                                {canAdmin && (
                                                 <div className="tooltip" data-tip="Supprimer la mission">
 
                                                     <button
@@ -440,6 +450,8 @@ export default function MissionsPage() {
                                                     </button>
 
                                                 </div>
+                                                )}
+                                                
 
                                                 <div className="tooltip" data-tip="Voir unités de la mission">
 

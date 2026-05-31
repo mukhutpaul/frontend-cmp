@@ -298,6 +298,18 @@ export default function UsersPage() {
             setLoading(false);
         }
     };
+
+     const profile =
+        typeof window !== "undefined"
+            ? localStorage.getItem("profile")
+            : null;
+
+    const canManage =
+        profile === "CHEF_EQUIPE"
+
+    const canAdmin =
+    profile === "ADMIN" ||
+    profile === "MANAGER";
     const handleViewUser = async (user: User) => {
 
         setSelectedUser(user);
@@ -505,7 +517,7 @@ export default function UsersPage() {
                         </p>
 
                     </div>
-
+                    {canAdmin && (
                     <button
                         className="btn btn-primary"
                         onClick={() =>
@@ -514,7 +526,7 @@ export default function UsersPage() {
                     >
                         + Ajouter utilisateur
                     </button>
-
+                )}
                 </div>
 
                 {/* 🔎 FILTERS */}
@@ -655,8 +667,9 @@ export default function UsersPage() {
 
                                                         </div>
                                                     )}
-
+                                                   
                                                     {/* EDIT */}
+                                                    {canAdmin && (
                                                     <div className="tooltip" data-tip="Modifier">
 
                                                         <button
@@ -667,8 +680,10 @@ export default function UsersPage() {
                                                         </button>
 
                                                     </div>
+                                                    )}
 
                                                     {/* DELETE */}
+                                                    {canAdmin && (
                                                     <div className="tooltip" data-tip="Supprimer">
 
                                                         <button
@@ -679,7 +694,7 @@ export default function UsersPage() {
                                                         </button>
 
                                                     </div>
-
+                                                    )}
                                                 </div>
 
                                             </td>
@@ -1126,7 +1141,7 @@ export default function UsersPage() {
                                     >
                                         Annuler
                                     </button>
-
+                                    
                                     <button
                                         type="submit"
                                         className="btn btn-primary"

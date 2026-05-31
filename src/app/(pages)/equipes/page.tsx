@@ -154,6 +154,15 @@ export default function EquipesPage() {
 
     const limit = 10;
 
+    const profile =
+        typeof window !== "undefined"
+            ? localStorage.getItem("profile")
+            : null;
+
+    const canManage =
+        profile === "ADMIN" ||
+        profile === "MANAGER";
+
     /**
      * FETCH EQUIPES
      */
@@ -420,234 +429,240 @@ export default function EquipesPage() {
     };
 
 
-return (
-    <DashboardLayout>
-        <div className="p-6 space-y-6">
+    return (
+        <DashboardLayout>
+            <div className="p-6 space-y-6">
 
-            {/* HEADER */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h1 className="text-2xl font-bold">Équipes</h1>
+                {/* HEADER */}
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h1 className="text-2xl font-bold">Équipes</h1>
 
-                    <p className="text-sm opacity-70">
-                        Gestion des équipes opérationnelles
-                    </p>
+                        <p className="text-sm opacity-70">
+                            Gestion des équipes opérationnelles
+                        </p>
+                    </div>
+                {canManage && (
+                    <button
+                        className="btn btn-primary"
+                        onClick={() => setOpenModal(true)}
+                    >
+                        + Nouvelle équipe
+                    </button>
+                )}
                 </div>
 
-                <button
-                    className="btn btn-primary"
-                    onClick={() => setOpenModal(true)}
-                >
-                    + Nouvelle équipe
-                </button>
-            </div>
+                {/* FILTERS */}
+                <div className="card bg-base-200 shadow-sm">
+                    <div className="card-body">
 
-            {/* FILTERS */}
-            <div className="card bg-base-200 shadow-sm">
-                <div className="card-body">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                            {/* SEARCH */}
+                            <label className="input input-bordered flex items-center gap-2">
 
-                        {/* SEARCH */}
-                        <label className="input input-bordered flex items-center gap-2">
+                                <Search size={16} />
 
-                            <Search size={16} />
+                                <input
+                                    type="text"
+                                    className="grow"
+                                    placeholder="Rechercher équipe..."
+                                    value={filters.search}
+                                    onChange={(e) =>
+                                        setFilters({
+                                            ...filters,
+                                            search: e.target.value,
+                                        })
+                                    }
+                                />
+                            </label>
 
-                            <input
-                                type="text"
-                                className="grow"
-                                placeholder="Rechercher équipe..."
-                                value={filters.search}
+                            {/* STATUS */}
+                            <select
+                                className="select select-bordered"
+                                value={filters.status}
                                 onChange={(e) =>
                                     setFilters({
                                         ...filters,
-                                        search: e.target.value,
+                                        status: e.target.value,
                                     })
                                 }
-                            />
-                        </label>
+                            >
+                                <option value="">Tous statuts</option>
+                                <option value="ACTIVE">Actives</option>
+                                <option value="INACTIVE">Inactives</option>
+                            </select>
 
-                        {/* STATUS */}
-                        <select
-                            className="select select-bordered"
-                            value={filters.status}
-                            onChange={(e) =>
-                                setFilters({
-                                    ...filters,
-                                    status: e.target.value,
-                                })
-                            }
-                        >
-                            <option value="">Tous statuts</option>
-                            <option value="ACTIVE">Actives</option>
-                            <option value="INACTIVE">Inactives</option>
-                        </select>
+                        </div>
 
                     </div>
-
                 </div>
-            </div>
 
-            {/* TABLE */}
-            <div className="card bg-base-100 shadow-md">
+                {/* TABLE */}
+                <div className="card bg-base-100 shadow-md">
 
-                <div className="card-body p-0">
+                    <div className="card-body p-0">
 
-                    <div className="overflow-x-auto">
+                        <div className="overflow-x-auto">
 
-                        <table className="table">
+                            <table className="table">
 
-                            <thead className="bg-base-200">
-                                <tr>
-                                    <th>ID</th>
-                                    <th>Equipe</th>
-                                    <th>Mission</th>
-                                    <th>Zone</th>
-                                     <th>Site</th>
-                                    <th>Date création</th>
-                                    <th>Actions</th>
-                                </tr>
-                            </thead>
-
-                            <tbody>
-
-                                {loading && (
+                                <thead className="bg-base-200">
                                     <tr>
-                                        <td colSpan={7} className="text-center py-10">
-                                            <span className="loading loading-spinner"></span>
-                                        </td>
+                                        <th>ID</th>
+                                        <th>Equipe</th>
+                                        <th>Mission</th>
+                                        <th>Zone</th>
+                                        <th>Site</th>
+                                        <th>Date création</th>
+                                        <th>Actions</th>
                                     </tr>
-                                )}
+                                </thead>
 
-                                {!loading && paginatedEquipes.length === 0 && (
-                                    <tr>
-                                        <td colSpan={7} className="text-center py-10">
+                                <tbody>
 
-                                            <div className="flex flex-col items-center gap-2 opacity-70">
-
-                                                <Inbox className="w-8 h-8" />
-
-                                                <p className="font-semibold">
-                                                    Aucune équipe trouvée
-                                                </p>
-
-                                            </div>
-
-                                        </td>
-                                    </tr>
-                                )}
-
-                                {!loading &&
-                                    paginatedEquipes.map((e: any) => (
-                                        <tr key={e.id} className="hover">
-
-                                            <td>{e.id}</td>
-
-                                            <td>
-                                                Equipe-{e.user?.username}
+                                    {loading && (
+                                        <tr>
+                                            <td colSpan={7} className="text-center py-10">
+                                                <span className="loading loading-spinner"></span>
                                             </td>
-
-                                            <td>{e.mission?.numero}</td>
-
-                                            <td>{e?.mission?.zone}</td>
-
-                                            <td>
-                                               {e.site}
-                                            </td>
-
-                                            <td>
-                                                {e.createdAt
-                                                    ? new Date(e.createdAt).toLocaleString()
-                                                    : "-"}
-                                            </td>
-
-                                            <td className="flex gap-2">
-
-                                                {/* EDIT */}
-                                                <div className="tooltip" data-tip="Modifier l'équipe">
-                                                    <button
-                                                        className="btn btn-xs btn-info btn-outline"
-                                                        onClick={() => handleEditOpen(e)}
-                                                    >
-                                                        <Pencil size={14} />
-                                                    </button>
-                                                </div>
-
-                                                {/* DELETE */}
-                                                <div className="tooltip" data-tip="Supprimer l'équipe">
-                                                    <button
-                                                        className="btn btn-xs btn-error btn-outline"
-                                                        onClick={() => handleDelete(e.id)}
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
-                                                </div>
-
-                                                {/* VIEW */}
-                                                <div className="tooltip" data-tip="Voir les unités de l'équipe">
-                                                    <button
-                                                        className="btn btn-xs btn-success btn-outline"
-                                                        onClick={async () => {
-                                                            setSelectedEquipe(e);
-                                                            await fetchUnitesEquipe(e.id);
-                                                            setOpenViewUnits(true);
-                                                        }}
-                                                    >
-                                                        <Eye size={14} />
-                                                    </button>
-                                                </div>
-
-                                                <div className="tooltip" data-tip="Ajouter contrôleur">
-                                                    <button
-                                                        className="btn btn-xs btn-warning btn-outline"
-                                                        onClick={async () => {
-
-                                                            setSelectedEquipeControleur(e);
-
-                                                            await fetchDetailEquipe(e.id);
-
-                                                            setOpenControleurModal(true);
-                                                        }}
-                                                    >
-                                                        <UserPlus size={14} />
-                                                    </button>
-                                                </div>
-
-                                            </td>
-
                                         </tr>
-                                    ))}
+                                    )}
 
-                            </tbody>
+                                    {!loading && paginatedEquipes.length === 0 && (
+                                        <tr>
+                                            <td colSpan={7} className="text-center py-10">
 
-                        </table>
+                                                <div className="flex flex-col items-center gap-2 opacity-70">
 
-                    </div>
+                                                    <Inbox className="w-8 h-8" />
 
-                    {/* PAGINATION */}
-                    <div className="flex justify-between items-center px-4 py-3 border-t">
+                                                    <p className="font-semibold">
+                                                        Aucune équipe trouvée
+                                                    </p>
 
-                        <p className="text-sm opacity-70">
-                            Page {page} / {totalPages || 1}
-                        </p>
+                                                </div>
 
-                        <div className="join">
+                                            </td>
+                                        </tr>
+                                    )}
 
-                            <button
-                                className="join-item btn btn-sm"
-                                disabled={page === 1}
-                                onClick={() => setPage((p) => p - 1)}
-                            >
-                                « Précédent
-                            </button>
+                                    {!loading &&
+                                        paginatedEquipes.map((e: any) => (
+                                            <tr key={e.id} className="hover">
 
-                            <button
-                                className="join-item btn btn-sm"
-                                disabled={page === totalPages || totalPages === 0}
-                                onClick={() => setPage((p) => p + 1)}
-                            >
-                                Suivant »
-                            </button>
+                                                <td>{e.id}</td>
+
+                                                <td>
+                                                    Equipe-{e.user?.username}
+                                                </td>
+
+                                                <td>{e.mission?.numero}</td>
+
+                                                <td>{e?.mission?.zone}</td>
+
+                                                <td>
+                                                    {e.site}
+                                                </td>
+
+                                                <td>
+                                                    {e.createdAt
+                                                        ? new Date(e.createdAt).toLocaleString()
+                                                        : "-"}
+                                                </td>
+
+                                                <td className="flex gap-2">
+                                                    
+
+                                                    {/* EDIT */}
+                                                    {canManage && (
+                                                    <div className="tooltip" data-tip="Modifier l'équipe">
+                                                        <button
+                                                            className="btn btn-xs btn-info btn-outline"
+                                                            onClick={() => handleEditOpen(e)}
+                                                        >
+                                                            <Pencil size={14} />
+                                                        </button>
+                                                    </div>
+                                                    )}
+                                                    {/* DELETE */}
+                                                    {canManage && (
+                                                    <div className="tooltip" data-tip="Supprimer l'équipe">
+                                                        <button
+                                                            className="btn btn-xs btn-error btn-outline"
+                                                            onClick={() => handleDelete(e.id)}
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
+                                                    </div>
+                                                    )}
+                                                    {/* VIEW */}
+                                                    <div className="tooltip" data-tip="Voir les unités de l'équipe">
+                                                        <button
+                                                            className="btn btn-xs btn-success btn-outline"
+                                                            onClick={async () => {
+                                                                setSelectedEquipe(e);
+                                                                await fetchUnitesEquipe(e.id);
+                                                                setOpenViewUnits(true);
+                                                            }}
+                                                        >
+                                                            <Eye size={14} />
+                                                        </button>
+                                                    </div>
+                                                    
+                                                    <div className="tooltip" data-tip="Ajouter contrôleur">
+                                                        <button
+                                                            className="btn btn-xs btn-warning btn-outline"
+                                                            onClick={async () => {
+
+                                                                setSelectedEquipeControleur(e);
+
+                                                                await fetchDetailEquipe(e.id);
+
+                                                                setOpenControleurModal(true);
+                                                            }}
+                                                        >
+                                                            <UserPlus size={14} />
+                                                        </button>
+                                                    </div>
+
+                                                </td>
+
+                                            </tr>
+                                        ))}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                        {/* PAGINATION */}
+                        <div className="flex justify-between items-center px-4 py-3 border-t">
+
+                            <p className="text-sm opacity-70">
+                                Page {page} / {totalPages || 1}
+                            </p>
+
+                            <div className="join">
+
+                                <button
+                                    className="join-item btn btn-sm"
+                                    disabled={page === 1}
+                                    onClick={() => setPage((p) => p - 1)}
+                                >
+                                    « Précédent
+                                </button>
+
+                                <button
+                                    className="join-item btn btn-sm"
+                                    disabled={page === totalPages || totalPages === 0}
+                                    onClick={() => setPage((p) => p + 1)}
+                                >
+                                    Suivant »
+                                </button>
+
+                            </div>
 
                         </div>
 
@@ -655,171 +670,169 @@ return (
 
                 </div>
 
+                {/* CREATE MODAL */}
+                {openModal && (
+                    <EquipeModal
+                        title="Nouvelle équipe"
+                        form={form}
+                        setForm={setForm}
+                        users={users}
+                        missions={missions}
+                        equipes={equipes}   // 👈 AJOUT OBLIGATOIRE
+                        onClose={() => {
+                            setOpenModal(false);
+                            resetForm();
+                        }}
+                        onSubmit={handleCreate}
+                    />
+                )}
+
+                {/* EDIT MODAL */}
+                {editModal && (
+                    <EquipeModal
+                        title="Modifier équipe"
+                        form={form}
+                        setForm={setForm}
+                        users={users}
+                        missions={missions}
+                        equipes={equipes}   // 👈 AJOUT OBLIGATOIRE
+                        onClose={() => {
+                            setEditModal(false);
+                            resetForm();
+                        }}
+                        onSubmit={handleUpdate}
+                    />
+                )}
+
             </div>
 
-            {/* CREATE MODAL */}
-            {openModal && (
-                <EquipeModal
-                    title="Nouvelle équipe"
-                    form={form}
-                    setForm={setForm}
-                    users={users}
-                    missions={missions}
-                    equipes={equipes}   // 👈 AJOUT OBLIGATOIRE
-                    onClose={() => {
-                        setOpenModal(false);
-                        resetForm();
-                    }}
-                    onSubmit={handleCreate}
-                />
-            )}
+            {openViewUnits && selectedEquipe && (
 
-            {/* EDIT MODAL */}
-            {editModal && (
-                <EquipeModal
-                    title="Modifier équipe"
-                    form={form}
-                    setForm={setForm}
-                    users={users}
-                    missions={missions}
-                    equipes={equipes}   // 👈 AJOUT OBLIGATOIRE
-                    onClose={() => {
-                        setEditModal(false);
-                        resetForm();
-                    }}
-                    onSubmit={handleUpdate}
-                />
-            )}
+                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
 
-        </div>
+                    <div className="bg-base-100 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-base-300">
 
-        {openViewUnits && selectedEquipe && (
+                        {/* HEADER */}
+                        <div className="bg-base-200 border-b border-base-300 px-5 py-4">
 
-            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+                            <div className="flex items-center justify-between">
 
-                <div className="bg-base-100 w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden border border-base-300">
+                                <div>
 
-                    {/* HEADER */}
-                    <div className="bg-base-200 border-b border-base-300 px-5 py-4">
+                                    <h2 className="text-xl font-bold text-base-content">
+                                        Unités affectées
+                                    </h2>
 
-                        <div className="flex items-center justify-between">
+                                    <p className="text-xs opacity-60 mt-1">
+                                        Équipe #{selectedEquipe.id}
+                                    </p>
 
-                            <div>
+                                </div>
 
-                                <h2 className="text-xl font-bold text-base-content">
-                                    Unités affectées
-                                </h2>
-
-                                <p className="text-xs opacity-60 mt-1">
-                                    Équipe #{selectedEquipe.id}
-                                </p>
-
-                            </div>
-
-                            <button
-                                className="btn btn-sm btn-circle btn-ghost"
-                                onClick={() => setOpenViewUnits(false)}
-                            >
-                                ✕
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    {/* View unité équipe */}
-                    <div className="p-5 space-y-4">
-
-                        {/* INFOS */}
-                        <div className="grid grid-cols-2 gap-3">
-
-                            <div className="bg-base-200 rounded-xl px-4 py-3 border border-base-300">
-
-                                <p className="text-[11px] uppercase opacity-50 mb-1">
-                                    Équipe
-                                </p>
-
-                                <p className="font-semibold text-sm">
-                                    Equipe-{selectedEquipe.user?.username}
-                                </p>
-
-                            </div>
-
-                            <div className="bg-base-200 rounded-xl px-4 py-3 border border-base-300">
-
-                                <p className="text-[11px] uppercase opacity-50 mb-1">
-                                    Mission
-                                </p>
-
-                                <p className="font-semibold text-sm">
-                                    {selectedEquipe.mission?.numero}
-                                </p>
+                                <button
+                                    className="btn btn-sm btn-circle btn-ghost"
+                                    onClick={() => setOpenViewUnits(false)}
+                                >
+                                    ✕
+                                </button>
 
                             </div>
 
                         </div>
 
-                        {/* TITLE */}
-                        <div className="flex items-center justify-between">
+                        {/* View unité équipe */}
+                        <div className="p-5 space-y-4">
 
-                            <div>
+                            {/* INFOS */}
+                            <div className="grid grid-cols-2 gap-3">
 
-                                <h3 className="font-semibold text-sm">
-                                    Liste des unités
-                                </h3>
+                                <div className="bg-base-200 rounded-xl px-4 py-3 border border-base-300">
 
-                                <p className="text-xs opacity-60">
-                                    {unitesEquipe.length} unité(s)
-                                </p>
+                                    <p className="text-[11px] uppercase opacity-50 mb-1">
+                                        Équipe
+                                    </p>
 
-                            </div>
+                                    <p className="font-semibold text-sm">
+                                        Equipe-{selectedEquipe.user?.username}
+                                    </p>
 
-                            <div className="badge badge-primary badge-sm">
-                                Active
-                            </div>
+                                </div>
 
-                        </div>
+                                <div className="bg-base-200 rounded-xl px-4 py-3 border border-base-300">
 
-                        {/* LOADING */}
-                        {loadingUnites ? (
+                                    <p className="text-[11px] uppercase opacity-50 mb-1">
+                                        Mission
+                                    </p>
 
-                            <div className="flex flex-col items-center justify-center py-10">
+                                    <p className="font-semibold text-sm">
+                                        {selectedEquipe.mission?.numero}
+                                    </p>
 
-                                <span className="loading loading-spinner loading-md text-primary"></span>
-
-                                <p className="mt-3 text-xs opacity-70">
-                                    Chargement...
-                                </p>
+                                </div>
 
                             </div>
 
-                        ) : unitesEquipe.length === 0 ? (
+                            {/* TITLE */}
+                            <div className="flex items-center justify-between">
 
-                            /* EMPTY */
-                            <div className="border border-dashed border-base-300 rounded-xl py-10 flex flex-col items-center justify-center text-center">
+                                <div>
 
-                                <Inbox className="w-7 h-7 opacity-40 mb-2" />
+                                    <h3 className="font-semibold text-sm">
+                                        Liste des unités
+                                    </h3>
 
-                                <p className="font-medium text-sm">
-                                    Aucune unité affectée
-                                </p>
+                                    <p className="text-xs opacity-60">
+                                        {unitesEquipe.length} unité(s)
+                                    </p>
 
-                                <p className="text-xs opacity-60 mt-1">
-                                    Cette équipe ne contient aucune unité.
-                                </p>
+                                </div>
+
+                                <div className="badge badge-primary badge-sm">
+                                    Active
+                                </div>
 
                             </div>
 
-                        ) : (
+                            {/* LOADING */}
+                            {loadingUnites ? (
 
-                            /* LIST */
-                            <div className="max-h-[300px] overflow-y-auto pr-1 space-y-2">
+                                <div className="flex flex-col items-center justify-center py-10">
 
-                                {unitesEquipe.map((u: any) => (
+                                    <span className="loading loading-spinner loading-md text-primary"></span>
 
-                                    <div
-                                        key={u.id}
-                                        className="
+                                    <p className="mt-3 text-xs opacity-70">
+                                        Chargement...
+                                    </p>
+
+                                </div>
+
+                            ) : unitesEquipe.length === 0 ? (
+
+                                /* EMPTY */
+                                <div className="border border-dashed border-base-300 rounded-xl py-10 flex flex-col items-center justify-center text-center">
+
+                                    <Inbox className="w-7 h-7 opacity-40 mb-2" />
+
+                                    <p className="font-medium text-sm">
+                                        Aucune unité affectée
+                                    </p>
+
+                                    <p className="text-xs opacity-60 mt-1">
+                                        Cette équipe ne contient aucune unité.
+                                    </p>
+
+                                </div>
+
+                            ) : (
+
+                                /* LIST */
+                                <div className="max-h-[300px] overflow-y-auto pr-1 space-y-2">
+
+                                    {unitesEquipe.map((u: any) => (
+
+                                        <div
+                                            key={u.id}
+                                            className="
                                     bg-base-200
                                     hover:bg-base-300
                                     transition-all
@@ -832,223 +845,50 @@ return (
                                     items-center
                                     justify-between
                                 "
-                                    >
+                                        >
 
-                                        <div className="flex items-center gap-3">
+                                            <div className="flex items-center gap-3">
 
-                                            {/* ICON */}
-                                            <div className="
+                                                {/* ICON */}
+                                                <div className="
                                         w-10 h-10 rounded-xl
                                         bg-primary/10
                                         text-primary
                                         flex items-center justify-center
                                         font-bold text-sm
                                     ">
-                                                {u.name?.charAt(0)}
-                                            </div>
+                                                    {u.name?.charAt(0)}
+                                                </div>
 
-                                            {/* INFOS */}
-                                            <div>
+                                                {/* INFOS */}
+                                                <div>
 
-                                                <p className="font-semibold text-sm">
-                                                    {u.name}
-                                                </p>
-
-                                                {u.commandant ? (
-
-                                                    <p className="text-xs opacity-70">
-                                                        Cmdt: {u.commandant.name}
+                                                    <p className="font-semibold text-sm">
+                                                        {u.name}
                                                     </p>
 
-                                                ) : (
+                                                    {u.commandant ? (
 
-                                                    <p className="text-xs opacity-50">
-                                                        Aucun commandant
-                                                    </p>
+                                                        <p className="text-xs opacity-70">
+                                                            Cmdt: {u.commandant.name}
+                                                        </p>
 
-                                                )}
+                                                    ) : (
 
-                                            </div>
+                                                        <p className="text-xs opacity-50">
+                                                            Aucun commandant
+                                                        </p>
 
-                                        </div>
+                                                    )}
 
-                                        {/* BADGE */}
-                                        <div className="badge badge-success badge-sm">
-                                            Active
-                                        </div>
-
-                                    </div>
-
-                                ))}
-
-                            </div>
-
-                        )}
-
-                    </div>
-
-                    {/* FOOTER */}
-                    <div className="border-t border-base-300 bg-base-200 px-5 py-3 flex justify-end">
-
-                        <button
-                            className="btn btn-sm btn-primary px-6"
-                            onClick={() => setOpenViewUnits(false)}
-                        >
-                            Fermer
-                        </button>
-
-                    </div>
-
-                </div>
-
-            </div>
-
-        )}
-
-        {openControleurModal && selectedEquipeControleur && (
-
-            <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
-
-                <div className="bg-base-100 w-full max-w-xl rounded-2xl shadow-2xl border border-base-300 overflow-hidden">
-
-                    {/* HEADER */}
-                    <div className="px-5 py-4 border-b border-base-300 bg-base-200">
-
-                        <div className="flex justify-between items-center">
-
-                            <div>
-                                <h2 className="text-xl font-bold">
-                                    Contrôleurs de l'équipe
-                                </h2>
-
-                                <p className="text-xs opacity-70 mt-1">
-                                    Equipe-{selectedEquipeControleur.user?.username}
-                                </p>
-                            </div>
-
-                            <button
-                                className="btn btn-sm btn-circle btn-ghost"
-                                onClick={() => setOpenControleurModal(false)}
-                            >
-                                ✕
-                            </button>
-
-                        </div>
-
-                    </div>
-
-                    {/* BODY */}
-                    <div className="p-5 space-y-5">
-
-                        {/* SELECT */}
-                        <div>
-
-                            <label className="label">
-                                <span className="label-text">
-                                    Ajouter un contrôleur
-                                </span>
-                            </label>
-
-                            <Select
-                                options={controleurs
-                                    .filter(
-                                        (u: any) =>
-                                            !detailEquipeList.some(
-                                                (d: any) => d.user?.id === u.id
-                                            )
-                                    )
-                                    .map((u: any) => ({
-                                        value: u.id,
-                                        label: u.username,
-                                    }))
-                                }
-
-                                value={selectedControleur}
-
-                                onChange={(val: any) =>
-                                    setSelectedControleur(val)
-                                }
-
-                                placeholder="Choisir un contrôleur..."
-                                isSearchable
-                                unstyled
-                                classNames={selectStyles}
-                            />
-
-                        </div>
-
-                        {/* BTN */}
-                        <button
-                            className="btn btn-primary w-full"
-                            onClick={handleAddControleur}
-                        >
-                            Ajouter contrôleur
-                        </button>
-
-                        {/* LISTE */}
-                        <div className="space-y-3">
-
-                            <div className="flex justify-between items-center">
-
-                                <h3 className="font-semibold">
-                                    Contrôleurs affectés
-                                </h3>
-
-                                <div className="badge badge-primary">
-                                    {detailEquipeList.length}
-                                </div>
-
-                            </div>
-
-                            {detailEquipeList.length === 0 ? (
-
-                                <div className="border border-dashed border-base-300 rounded-xl p-8 text-center">
-
-                                    <Users className="mx-auto mb-2 opacity-40" />
-
-                                    <p className="text-sm opacity-70">
-                                        Aucun contrôleur affecté
-                                    </p>
-
-                                </div>
-
-                            ) : (
-
-                                <div className="space-y-2 max-h-[300px] overflow-y-auto">
-
-                                    {detailEquipeList.map((d: any) => (
-
-                                        <div
-                                            key={d.id}
-                                            className="
-                                        bg-base-200
-                                        border border-base-300
-                                        rounded-xl
-                                        p-4
-                                        flex items-center justify-between
-                                    "
-                                        >
-
-                                            <div>
-
-                                                <p className="font-semibold">
-                                                    {d.user?.username}
-                                                </p>
-
-                                                <p className="text-xs opacity-60">
-                                                    Contrôleur
-                                                </p>
+                                                </div>
 
                                             </div>
 
-                                            <button
-                                                className="btn btn-sm btn-error btn-outline"
-                                                onClick={() =>
-                                                    handleDeleteControleur(d.id)
-                                                }
-                                            >
-                                                <ShieldX size={16} />
-                                            </button>
+                                            {/* BADGE */}
+                                            <div className="badge badge-success badge-sm">
+                                                Active
+                                            </div>
 
                                         </div>
 
@@ -1060,15 +900,193 @@ return (
 
                         </div>
 
+                        {/* FOOTER */}
+                        <div className="border-t border-base-300 bg-base-200 px-5 py-3 flex justify-end">
+
+                            <button
+                                className="btn btn-sm btn-primary px-6"
+                                onClick={() => setOpenViewUnits(false)}
+                            >
+                                Fermer
+                            </button>
+
+                        </div>
+
                     </div>
 
                 </div>
 
-            </div>
+            )}
 
-        )}
-    </DashboardLayout>
-);
+            {openControleurModal && selectedEquipeControleur && (
+
+                <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4">
+
+                    <div className="bg-base-100 w-full max-w-xl rounded-2xl shadow-2xl border border-base-300 overflow-hidden">
+
+                        {/* HEADER */}
+                        <div className="px-5 py-4 border-b border-base-300 bg-base-200">
+
+                            <div className="flex justify-between items-center">
+
+                                <div>
+                                    <h2 className="text-xl font-bold">
+                                        Contrôleurs de l'équipe
+                                    </h2>
+
+                                    <p className="text-xs opacity-70 mt-1">
+                                        Equipe-{selectedEquipeControleur.user?.username}
+                                    </p>
+                                </div>
+
+                                <button
+                                    className="btn btn-sm btn-circle btn-ghost"
+                                    onClick={() => setOpenControleurModal(false)}
+                                >
+                                    ✕
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                        {/* BODY */}
+                        <div className="p-5 space-y-5">
+
+                            {/* SELECT */}
+                             {canManage && (
+                            <div>
+
+                                <label className="label">
+                                   
+                                    <span className="label-text">
+                                    
+                                        Ajouter un contrôleur
+                                    </span>
+                                
+                                </label>
+
+                                <Select
+                                    options={controleurs
+                                        .filter(
+                                            (u: any) =>
+                                                !detailEquipeList.some(
+                                                    (d: any) => d.user?.id === u.id
+                                                )
+                                        )
+                                        .map((u: any) => ({
+                                            value: u.id,
+                                            label: u.username,
+                                        }))
+                                    }
+
+                                    value={selectedControleur}
+
+                                    onChange={(val: any) =>
+                                        setSelectedControleur(val)
+                                    }
+
+                                    placeholder="Choisir un contrôleur..."
+                                    isSearchable
+                                    unstyled
+                                    classNames={selectStyles}
+                                />
+
+                            </div>
+                             )}
+                            {/* BTN */}
+                             {canManage && (
+                            <button
+                                className="btn btn-primary w-full"
+                                onClick={handleAddControleur}
+                            >
+                                Ajouter contrôleur
+                            </button>
+                             )}
+                            {/* LISTE */}
+                            <div className="space-y-3">
+
+                                <div className="flex justify-between items-center">
+
+                                    <h3 className="font-semibold">
+                                        Contrôleurs affectés
+                                    </h3>
+
+                                    <div className="badge badge-primary">
+                                        {detailEquipeList.length}
+                                    </div>
+
+                                </div>
+
+                                {detailEquipeList.length === 0 ? (
+
+                                    <div className="border border-dashed border-base-300 rounded-xl p-8 text-center">
+
+                                        <Users className="mx-auto mb-2 opacity-40" />
+
+                                        <p className="text-sm opacity-70">
+                                            Aucun contrôleur affecté
+                                        </p>
+
+                                    </div>
+
+                                ) : (
+
+                                    <div className="space-y-2 max-h-[300px] overflow-y-auto">
+
+                                        {detailEquipeList.map((d: any) => (
+
+                                            <div
+                                                key={d.id}
+                                                className="
+                                        bg-base-200
+                                        border border-base-300
+                                        rounded-xl
+                                        p-4
+                                        flex items-center justify-between
+                                    "
+                                            >
+
+                                                <div>
+
+                                                    <p className="font-semibold">
+                                                        {d.user?.username}
+                                                    </p>
+
+                                                    <p className="text-xs opacity-60">
+                                                        Contrôleur
+                                                    </p>
+
+                                                </div>
+                                             {canManage && (
+                                                <button
+                                                    className="btn btn-sm btn-error btn-outline"
+                                                    onClick={() =>
+                                                        handleDeleteControleur(d.id)
+                                                    }
+                                                >
+                                                    <ShieldX size={16} />
+                                                </button>
+                                             )}
+                                            </div>
+
+                                        ))}
+
+                                    </div>
+
+                                )}
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            )}
+        </DashboardLayout>
+    );
 }
 
 /**

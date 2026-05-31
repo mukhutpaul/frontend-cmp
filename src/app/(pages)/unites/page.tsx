@@ -81,6 +81,15 @@ export default function UnitePage() {
         equipeId: "",
     });
 
+    const profile =
+        typeof window !== "undefined"
+            ? localStorage.getItem("profile")
+            : null;
+
+    const canAdmin =
+        profile === "ADMIN" ||
+        profile === "MANAGER";
+
     const limit = 20;
 
     useEffect(() => {
@@ -272,7 +281,7 @@ export default function UnitePage() {
                                                         className="tooltip tooltip-left"
                                                         data-tip="Charger l’unité"
                                                     >
-
+                                                    {canAdmin && (
                                                         <button
                                                             className="btn btn-xs btn-info btn-outline"
                                                             onClick={() => {
@@ -282,7 +291,7 @@ export default function UnitePage() {
                                                         >
                                                             <Send size={16} />
                                                         </button>
-
+                                                    )}
                                                     </div>
                                                 )}
 

@@ -46,14 +46,12 @@ export default function Sidebar({
     { href: "/controles", icon: ClipboardCheck, label: "Contrôles", auth: true, roles: ["ADMIN", "MANAGER", "CHEF_EQUIPE"] },
 
     { href: "/users", icon: ShieldCheck, label: "Utilisateurs", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
-
-    { href: "/unites", icon: Building2, label: "Unités", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
-
     { href: "/missions", icon: Briefcase, label: "Missions", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+    { href: "/equipes", icon: UsersRound, label: "Équipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
+    { href: "/unites", icon: Building2, label: "Unités", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
 
     { href: "/seances", icon: CalendarDays, label: "Séances", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
 
-    { href: "/equipes", icon: UsersRound, label: "Équipes", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
 
     { href: "/recherches", icon: Search, label: "Recherches", auth: true, roles: ["CHEF_EQUIPE", "ADMIN", "MANAGER"] },
 
