@@ -656,8 +656,7 @@ export default function ControlePage() {
                                                 </button>
                                             )}
 
-                                            {(localStorage.getItem("profile") === "ADMIN" ||
-                                                localStorage.getItem("profile") === "MANAGER") &&
+                                           
                                                 (c.present === true || c.justifie === true) && (
 
                                                     <button
@@ -674,7 +673,7 @@ export default function ControlePage() {
                                                     >
                                                         <Ban size={16} />
                                                     </button>
-                                                )}
+                                            
 
                                         </td>
 
