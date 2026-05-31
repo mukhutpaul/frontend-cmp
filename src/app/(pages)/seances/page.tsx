@@ -62,10 +62,10 @@ export default function SeancesPage() {
             ? localStorage.getItem("profile")
             : null;
 
-    const canManage =
-        profile === "CHEF_EQUIPE"
+    const canManage = profile === "CHEF_EQUIPE";
 
-    const canAdmin = profile === "ADMIN" || "MANAGER"
+    const canAdmin =
+        profile === "ADMIN" || profile === "MANAGER";
     /**
      * FETCH DATA
      */
@@ -178,9 +178,15 @@ export default function SeancesPage() {
 
             fetchData();
 
-        } catch (e) {
-            console.error(e);
-            toast.error("Erreur création");
+        } catch (e: any) {
+            console.error("FULL ERROR:", e?.response?.data || e);
+
+            toast.error(
+                e?.response?.data?.message ||
+                e?.response?.data?.error ||
+                JSON.stringify(e?.response?.data) ||
+                "Erreur création"
+            );
         }
     };
 

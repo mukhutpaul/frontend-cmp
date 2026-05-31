@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Navbar from "./navbar";
 import Sidebar from "./sidebar";
+import { useRouter } from "next/navigation";
 
 
 export default function DashboardLayout({
@@ -15,7 +16,17 @@ export default function DashboardLayout({
   const toggleSidebar = () => {
     setIsOpen((prev) => !prev);
   };
+const router = useRouter();
 
+  useEffect(() => {
+
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      router.replace("/login");
+    }
+
+  }, [router]);
   return (
     <div className="h-screen overflow-hidden bg-base-100">
 
