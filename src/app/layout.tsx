@@ -1,6 +1,7 @@
 import { ToastContainer } from "react-toastify";
 import "./globals.css";
 import ThemeProvider from "@/components/providers/theme-provider";
+import AppLoader from "@/components/LoaderScreen";
 
 export const metadata = {
   title: "Control Manager",
@@ -11,15 +12,7 @@ export const metadata = {
   },
 };
 
-export function registerBanner() {
-  console.log(`
-========================================
-        ABA CM PNC SYSTEM
-        VERSION : 1.0.0
-        STATUS   : RUNNING
-========================================
-  `);
-}
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -29,7 +22,9 @@ export default function RootLayout({
     <html lang="fr">
       <body>
         <ThemeProvider>
+         <AppLoader>
           {children}
+          </AppLoader>
 
           <ToastContainer position="top-right" />
         </ThemeProvider>
