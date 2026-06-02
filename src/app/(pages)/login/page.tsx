@@ -341,6 +341,7 @@ export default function LoginPage() {
                     <form
                         onSubmit={handleSubmit(onSubmit)}
                         className="space-y-4"
+                        autoComplete="off"
                     >
                         {/* USERNAME */}
                         <div className="form-control">
@@ -356,6 +357,7 @@ export default function LoginPage() {
                                 {...register("username", { required: true })}
                                 className="input input-bordered w-full"
                                 placeholder="Entrer votre identifiant"
+                                autoComplete="off"
                             />
                         </div>
 
@@ -373,6 +375,7 @@ export default function LoginPage() {
                                 {...register("password", { required: true })}
                                 className="input input-bordered w-full"
                                 placeholder="••••••••"
+                                autoComplete="new-password"
                             />
                         </div>
 
