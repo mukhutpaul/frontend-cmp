@@ -433,7 +433,7 @@ export default function LoginPage() {
                             </div>
 
                             {/* FORM */}
-                            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5">
+                            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5"  autoComplete="off">
 
                                 <input
                                     type="text"
