@@ -433,7 +433,11 @@ export default function LoginPage() {
                             </div>
 
                             {/* FORM */}
-                            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5"  autoComplete="off">
+                            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5" autoComplete="off"
+                                autoCorrect="off"
+                                autoCapitalize="off"
+                                spellCheck="false"
+                            >
 
                                 <input
                                     type="text"
@@ -441,6 +445,7 @@ export default function LoginPage() {
                                     placeholder="Nom d'utilisateur"
                                     {...register("username", { required: true })}
                                     autoComplete="off"
+                                    spellCheck="false"
                                 />
 
                                 <input
@@ -449,6 +454,7 @@ export default function LoginPage() {
                                     placeholder="Mot de passe"
                                     {...register("password", { required: true })}
                                     autoCapitalize="new-password"
+                                    spellCheck="false"
                                 />
 
                                 <div className="text-xs opacity-60">
