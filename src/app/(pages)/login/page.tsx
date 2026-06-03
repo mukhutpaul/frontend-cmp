@@ -293,7 +293,7 @@ export default function LoginPage() {
                             </div>
 
                             <h1 className="mt-5 text-5xl font-black">
-                                ABA-CM
+                                ABA CONTROL MANAGER
                             </h1>
 
                             <h2 className="text-2xl font-bold opacity-90">
