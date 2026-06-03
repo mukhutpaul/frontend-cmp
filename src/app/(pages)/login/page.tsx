@@ -440,6 +440,7 @@ export default function LoginPage() {
                                     className="input input-bordered w-full"
                                     placeholder="Nom d'utilisateur"
                                     {...register("username", { required: true })}
+                                    autoComplete="off"
                                 />
 
                                 <input
@@ -447,6 +448,7 @@ export default function LoginPage() {
                                     className="input input-bordered w-full"
                                     placeholder="Mot de passe"
                                     {...register("password", { required: true })}
+                                    autoCapitalize="new-password"
                                 />
 
                                 <div className="text-xs opacity-60">
