@@ -159,17 +159,39 @@ export default function Sidebar({
         <div className="p-5 border-b border-base-300">
           {isOpen ? (
             <>
-              <h2 className="text-2xl font-bold text-primary whitespace-nowrap">
-                ABA-CM-PNC
-              </h2>
-              <p className="text-sm opacity-70 mt-1 whitespace-nowrap">
-                Controle des effectifs
-              </p>
+              <div className="flex items-center gap-3 cursor-pointer group">
+                <img
+                  src="/logo_pnc1.png"
+                  alt="PNC Logo"
+                  className="
+            w-12 h-12
+            object-contain
+            transition-transform
+            duration-300
+            group-hover:scale-110
+        "
+                />
+
+                <div className="flex flex-col leading-tight">
+                  <span className="text-sm font-semibold text-primary">
+                    ABA CM PNC
+                  </span>
+                  <span className="text-[11px] text-slate-500 uppercase tracking-wider">
+                    Système officiel
+                  </span>
+                </div>
+              </div>
             </>
+
           ) : (
-            <h2 className="text-2xl font-bold text-primary whitespace-nowrap">
-              CMP
-            </h2>
+            <img
+              src="/logo_pnc1.png"
+              className="
+              w-12 h-12
+              cursor-pointer
+              hover:scale-110
+              transition"
+            />
           )}
         </div>
 

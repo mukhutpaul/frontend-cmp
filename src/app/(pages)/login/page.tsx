@@ -11,6 +11,9 @@ import { logindistant } from "@/services/pc-sync.service";
 import { loginRequest } from "@/services/auth.service";
 import Swal from "sweetalert2";
 import confetti from "canvas-confetti";
+import Calendar from "react-calendar";
+import "react-calendar/dist/Calendar.css";
+
 
 type LoginForm = {
     username: string;
@@ -95,6 +98,7 @@ export default function LoginPage() {
 
     const router = useRouter();
     const { register, handleSubmit } = useForm<LoginForm>();
+    const [date, setDate] = useState(new Date());
 
 
 
@@ -252,162 +256,218 @@ export default function LoginPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-base-200 p-4">
-            <div className="card w-full max-w-md shadow-2xl bg-base-100">
-                <div className="card-body">
+        <div className="h-screen overflow-hidden bg-base-200">
 
-                    {/* HEADER */}
-                    {/* HEADER AVEC SYMBOLES OFFICIELS */}
-                    <div className="mb-6">
+            <div className="grid h-full lg:grid-cols-[1.25fr_0.75fr]">
 
-                        <div className="flex items-center justify-between">
+                {/* ================= LEFT PANEL ================= */}
+                <div className="hidden lg:flex relative overflow-hidden bg-primary text-primary-content">
 
-                            {/* ARMES RDC - GAUCHE */}
-                            <img
-                                src="/aba.png"
-                                alt="Armoiries RDC"
-                                onClick={() => {
+                    {/* glow background */}
+                    <div className="absolute inset-0 opacity-20">
+                        <div className="absolute -top-20 -left-20 w-96 h-96 rounded-full bg-secondary blur-3xl" />
+                        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-accent blur-3xl" />
+                    </div>
 
-                                    // 🧹 Nettoyage configuration serveur
-                                    localStorage.removeItem("server_ip");
-                                    localStorage.removeItem("server_port");
+                    <div className="relative z-10 flex flex-col items-center justify-center w-full px-10 py-8">
 
-                                    // ✅ Notification
-                                    toast.success("Configuration serveur supprimée");
+                        {/* LOGO ANIMÉ */}
+                        <img
+                            src="/logo_pnc1.png"
+                            alt="PNC"
+                            className="
+                            w-36
+                            animate-float
+                            drop-shadow-[0_0_25px_rgba(255,255,255,0.35)]
+                            hover:scale-105
+                            transition-transform
+                            duration-500
+                        "
+                        />
 
-                                    // 🔄 Refresh optionnel
-                                    window.location.reload();
-                                }}
-                                className="w-12 h-12 object-contain opacity-90 cursor-pointer hover:scale-110 transition-transform duration-200"
-                            />
+                        {/* TITLE */}
+                        <div className="mt-6 text-center">
 
-                            {/* CENTRE - LOGO PNC + TITRE */}
-                            <div className="text-center flex-1 space-y-2">
+                            <div className="badge badge-success badge-lg">
+                                ● Système opérationnel
+                            </div>
 
+                            <h1 className="mt-5 text-5xl font-black">
+                                ABA-CM
+                            </h1>
 
+                            <h2 className="text-2xl font-bold opacity-90">
+                                Contrôle des Effectifs Policiers
+                            </h2>
 
-                                <h1 className="text-2xl font-bold text-primary tracking-widest">
-                                    ABA-CM PNC
-                                </h1>
+                            <p className="mt-4 max-w-2xl opacity-80">
+                                Plateforme centralisée de gestion et de suivi
+                                des effectifs de la Police Nationale Congolaise.
+                            </p>
 
-                                <p className="text-xs opacity-60 uppercase tracking-wide">
-                                    Authentification sécurisée du système
-                                </p>
+                        </div>
+
+                        {/* CARDS */}
+                        <div className="grid grid-cols-2 gap-4 mt-10 w-full max-w-3xl">
+
+                            <div className="card bg-base-100/10 border border-base-100/20">
+                                <div className="card-body">
+                                    <h3 className="card-title text-sm">
+                                        Gestion des effectifs
+                                    </h3>
+                                    <p className="text-xs opacity-80">
+                                        Suivi des agents et affectations.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="card bg-base-100/10 border border-base-100/20">
+                                <div className="card-body">
+                                    <h3 className="card-title text-sm">
+                                        Contrôle administratif
+                                    </h3>
+                                    <p className="text-xs opacity-80">
+                                        Validation des données.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="card bg-base-100/10 border border-base-100/20">
+                                <div className="card-body">
+                                    <h3 className="card-title text-sm">
+                                        Synchronisation
+                                    </h3>
+                                    <p className="text-xs opacity-80">
+                                        Mise à jour nationale.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div className="card bg-base-100/10 border border-base-100/20">
+                                <div className="card-body">
+                                    <h3 className="card-title text-sm">
+                                        Sécurité
+                                    </h3>
+                                    <p className="text-xs opacity-80">
+                                        Accès protégé et sécurisé.
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                    </div>
+                </div>
+
+                {/* ================= RIGHT PANEL ================= */}
+                <div className="flex items-center justify-center h-full p-6 bg-base-200">
+
+                    <div className="card w-full max-w-xl bg-base-100 shadow-2xl border border-base-300">
+
+                        <div className="card-body p-10">
+
+                            {/* HEADER */}
+                            <div className="flex items-center justify-between">
+
+                                <img
+                                    src="/aba.png"
+                                    className="w-12 h-12 cursor-pointer hover:scale-110 transition"
+                                    onClick={() => {
+                                        localStorage.removeItem("server_ip");
+                                        localStorage.removeItem("server_port");
+                                        toast.success("Configuration supprimée");
+                                        window.location.reload();
+                                    }}
+                                />
+
+                                <div className="text-center">
+                                    <h1 className="text-3xl font-black text-primary">
+                                        ABA-CM
+                                    </h1>
+                                    <p className="text-xs opacity-60">
+                                        PNC Auth System
+                                    </p>
+                                </div>
+
+                                <img
+                                    src="/logo_pnc1.png"
+                                    className="
+                                    w-12 h-12
+                                    cursor-pointer
+                                    hover:scale-110
+                                    transition
+                                 
+                                "
+                                    onClick={openServerConfig}
+                                />
 
                             </div>
 
-                            {/* PNC - DROITE */}
-                            <img
-                                src="/pnc.png"
-                                alt="PNC"
-                                onClick={openServerConfig}
-                                className="w-12 h-12 object-contain opacity-90 cursor-pointer hover:scale-110 transition-transform duration-200"
-                            />
+                            {/* ALERT */}
+                            <div className="alert alert-info mt-6">
+                                <Lock size={18} />
+                                <span>Accès réservé aux agents autorisés</span>
+                            </div>
+
+                            {/* MODE */}
+                            <div className="flex gap-3 mt-6">
+
+                                <button
+                                    type="button"
+                                    className={`btn flex-1 ${mode === "local" ? "btn-primary" : "btn-outline"}`}
+                                    onClick={() => setMode("local")}
+                                >
+                                    <Server size={16} />
+                                    Local
+                                </button>
+
+                                <button
+                                    type="button"
+                                    className={`btn flex-1 ${mode === "remote" ? "btn-primary" : "btn-outline"}`}
+                                    onClick={() => setMode("remote")}
+                                >
+                                    <Wifi size={16} />
+                                    Distant
+                                </button>
+
+                            </div>
+
+                            {/* FORM */}
+                            <form onSubmit={handleSubmit(onSubmit)} className="mt-6 space-y-5">
+
+                                <input
+                                    type="text"
+                                    className="input input-bordered w-full"
+                                    placeholder="Nom d'utilisateur"
+                                    {...register("username", { required: true })}
+                                />
+
+                                <input
+                                    type="password"
+                                    className="input input-bordered w-full"
+                                    placeholder="Mot de passe"
+                                    {...register("password", { required: true })}
+                                />
+
+                                <div className="text-xs opacity-60">
+                                    Mode actif :
+                                    <span className="font-bold ml-1">
+                                        {mode === "local" ? "Local" : "Central"}
+                                    </span>
+                                </div>
+
+                                <button className="btn btn-primary w-full">
+                                    {loading ? "Connexion..." : "Se connecter"}
+                                </button>
+
+                            </form>
 
                         </div>
 
                     </div>
 
-                    {/* MODE */}
-                    <div className="flex gap-2 mb-5">
-                        <button
-                            type="button"
-                            disabled={loading}
-                            onClick={() => setMode("local")}
-                            className={`btn btn-sm flex-1 ${mode === "local"
-                                ? "btn-primary"
-                                : "btn-outline"
-                                }`}
-                        >
-                            <Server size={16} />
-                            Local
-                        </button>
-
-                        <button
-                            type="button"
-                            disabled={loading}
-                            onClick={() => setMode("remote")}
-                            className={`btn btn-sm flex-1 ${mode === "remote"
-                                ? "btn-primary"
-                                : "btn-outline"
-                                }`}
-                        >
-                            <Wifi size={16} />
-                            Distant
-                        </button>
-                    </div>
-
-                    {/* FORM */}
-                    <form
-                        onSubmit={handleSubmit(onSubmit)}
-                        className="space-y-4"
-                        autoComplete="off"
-                    >
-                        {/* USERNAME */}
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text">
-                                    Nom d'utilisateur
-                                </span>
-                            </label>
-
-                            <input
-                                type="text"
-                                disabled={loading}
-                                {...register("username", { required: true })}
-                                className="input input-bordered w-full"
-                                placeholder="Entrer votre identifiant"
-                                autoComplete="off"
-                            />
-                        </div>
-
-                        {/* PASSWORD */}
-                        <div className="form-control">
-                            <label className="label">
-                                <span className="label-text">
-                                    Mot de passe
-                                </span>
-                            </label>
-
-                            <input
-                                type="password"
-                                disabled={loading}
-                                {...register("password", { required: true })}
-                                className="input input-bordered w-full"
-                                placeholder="••••••••"
-                                autoComplete="new-password"
-                            />
-                        </div>
-
-                        {/* MODE INFO */}
-                        <div className="text-xs opacity-60 flex items-center gap-2 mt-2">
-                            <Lock size={14} />
-                            <span>Mode actif :</span>
-                            <span className="font-semibold">
-                                {mode === "local"
-                                    ? "Serveur local"
-                                    : "Serveur central"}
-                            </span>
-                        </div>
-
-                        {/* BUTTON */}
-                        <button
-                            type="submit"
-                            disabled={loading}
-                            className="btn btn-primary w-full mt-4"
-                        >
-                            {loading ? (
-                                <>
-                                    <span className="loading loading-spinner loading-sm"></span>
-                                    Connexion...
-                                </>
-                            ) : (
-                                "Se connecter"
-                            )}
-                        </button>
-
-                    </form>
                 </div>
+
             </div>
         </div>
     );
