@@ -47,6 +47,7 @@ export default function DashboardCards() {
   const total = data?.totalControles ?? 0;
   const present = data?.totalPresent ?? 0;
   const justifie = data?.totalJustifies ?? 0;
+  const profile = localStorage.getItem("profile") || "";
 
   const nonJustifies = Math.abs(total - (present + justifie));
 
@@ -116,10 +117,10 @@ export default function DashboardCards() {
         <Section title="🧾 Statistiques des contrôles" color="success">
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
 
-            <Card title="Total contrôles" value={total} icon={<ClipboardCheck />} color="primary" />
+            <Card title="Total à contrôler" value={total} icon={<ClipboardCheck />} color="primary" />
             <Card title="Présents" value={present} icon={<UserCheck />} color="success" />
             <Card title="Justifiés" value={justifie} icon={<ShieldCheck />} color="info" />
-            <Card title="Non justifiés" value={nonJustifies} icon={<UserX />} color="error" />
+            <Card title={profile === "CHEF_EQUIPE" ? "Reste à contrôler" : "Non justifiés"} value={nonJustifies} icon={<UserX />} color="error" />
 
           </div>
         </Section>
@@ -144,7 +145,7 @@ export default function DashboardCards() {
                   data={[
                     { name: "Présents", value: present },
                     { name: "Justifiés", value: justifie },
-                    { name: "Non justifiés", value: nonJustifies },
+                    { name: profile === "CHEF_EQUIPE" ? "Reste à contrôler" : "Non justifiés", value: nonJustifies },
                   ]}
                   dataKey="value"
                   nameKey="name"
@@ -535,10 +536,14 @@ function ReportExporter({ data }: { data: any }) {
                         </div>
 
                         <div className="p-5 space-y-0">
-                          <Row label="Total contrôles" value={data?.totalControles} />
+                          <Row label="Total à contrôler" value={data?.totalControles} />
                           <Row label="Présents" value={data?.totalPresent} highlight="success" />
                           <Row label="Justifiés" value={data?.totalJustifies} highlight="info" />
-                          <Row label="Non justifiés" value={data?.totalNonJustifies} highlight="error" />
+                          <Row
+                            label={profile === "CHEF_EQUIPE" ? "Reste à contrôler" : "Non justifiés"}
+                            value={data?.totalNonJustifies}
+                            highlight="error"
+                          />
                         </div>
 
                       </div>
@@ -574,7 +579,7 @@ function ReportExporter({ data }: { data: any }) {
                           </p>
 
                           <p>
-                            Total contrôles :
+                            Total à contrôler :
                             <span className="font-bold text-red-700 ml-2">
                               {data?.totalControles}
                             </span>
