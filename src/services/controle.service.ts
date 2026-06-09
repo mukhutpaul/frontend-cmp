@@ -182,6 +182,7 @@ export interface ControlesStatsToday {
     totalUnites: number;
 
     statsParUnite: Record<string, number>; // IMPORTANT
+    resteParUnite: Record<string, number>; // IMPORTANT
 }
 
 /* ========================= GET STATS TODAY ========================= */

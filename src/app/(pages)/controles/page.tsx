@@ -1305,7 +1305,7 @@ export default function ControlePage() {
                                                     </div>
 
                                                     <div className="badge badge-secondary badge-lg">
-                                                        {total}
+                                                         Reste à contrôler : {total}
                                                     </div>
 
                                                 </div>
