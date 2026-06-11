@@ -1141,7 +1141,7 @@ export default function ControlePage() {
                                                     </div>
 
                                                     <div className={`badge badge-lg ${badgeClass}`}>
-                                                        {total}
+                                                        Reste à Controler : {total}
                                                     </div>
 
                                                 </div>
