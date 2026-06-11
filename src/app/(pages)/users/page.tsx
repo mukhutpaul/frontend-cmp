@@ -645,9 +645,10 @@ export default function UsersPage() {
                                             <td>{u.email}</td>
 
                                             <td>
-                                                <span className="badge badge-info">
+                                                 {u.profile?.name}
+                                                {/* <span className="badge badge-info">
                                                     {u.profile?.name}
-                                                </span>
+                                                </span> */}
                                             </td>
 
                                             <td className="text-center">
