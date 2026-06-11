@@ -154,9 +154,10 @@ export default function LogsPage() {
                         </td>
 
                         <td>
-                          <span className="badge badge-info">
+                           {log.action}
+                          {/* <span className="badge badge-warning">
                             {log.action}
-                          </span>
+                          </span> */}
                         </td>
 
                         <td>
