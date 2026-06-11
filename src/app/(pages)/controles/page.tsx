@@ -45,6 +45,7 @@ export default function ControlePage() {
     const [controles, setControles] = useState<Controle[]>([]);
     const [search, setSearch] = useState("");
     const [selectedUnite, setSelectedUnite] = useState<string | null>(null);
+    const [docRotate, setDocRotate] = useState(0);
 
     const [page, setPage] = useState(1);
     const ITEMS_PER_PAGE = 20;
@@ -656,11 +657,11 @@ export default function ControlePage() {
                                                 </button>
                                             )}
 
-                                           
-                                               {(c.present === true || c.justifie === true) && (
 
-                                                    <button
-                                                        className="
+                                            {(c.present === true || c.justifie === true) && (
+
+                                                <button
+                                                    className="
                                                             btn
                                                             btn-sm
                                                             btn-error
@@ -668,12 +669,12 @@ export default function ControlePage() {
                                                             hover:scale-105
                                                             transition-all
                                                             duration-200"
-                                                        onClick={() => handleInvalidateControle(c)}
-                                                        title="Invalider le contrôle"
-                                                    >
-                                                        <Ban size={16} />
-                                                    </button>
-                                                )}
+                                                    onClick={() => handleInvalidateControle(c)}
+                                                    title="Invalider le contrôle"
+                                                >
+                                                    <Ban size={16} />
+                                                </button>
+                                            )}
 
                                         </td>
 
@@ -923,6 +924,7 @@ export default function ControlePage() {
                                         onClick={() => {
                                             setDocZoom(`http://localhost:8090/documents/${doc.imageUrl}`);
                                             setDocScale(1);
+                                            setDocRotate(0);
                                         }}
                                     />
                                 </div>
@@ -952,6 +954,7 @@ export default function ControlePage() {
                                 onClick={() => {
                                     setDocZoom(null);
                                     setDocScale(1);
+                                    setDocRotate(0);
                                 }}
                             >
                                 ✕
@@ -959,23 +962,20 @@ export default function ControlePage() {
                         </div>
 
                         {/* SCROLLABLE VIEWPORT */}
-                        <div className="flex-1 overflow-auto bg-black/10 p-6">
-
-                            {/* IMAGE ZOOM CONTAINER */}
-                            <div className="min-w-max min-h-max flex items-center justify-center">
-
+                        <div className="flex-1 overflow-auto bg-black/10">
+                            <div className="min-w-full min-h-full flex justify-center items-start p-4">
                                 <img
                                     src={docZoom}
                                     draggable={false}
-                                    className="select-none"
+                                    className="select-none block mx-auto"
                                     style={{
-                                        transform: `scale(${docScale})`,
-                                        transformOrigin: "center",
-                                        transition: "transform 0.2s ease",
+                                        transform: `scale(${docScale}) rotate(${docRotate}deg)`,
+                                        transformOrigin: "center top",
+                                        maxWidth: "100%",
+                                        maxHeight: "none",
                                     }}
                                 />
                             </div>
-
                         </div>
 
                         {/* CONTROLS */}
@@ -1000,6 +1000,20 @@ export default function ControlePage() {
                                 onClick={() => setDocScale(1)}
                             >
                                 Reset
+                            </button>
+
+                            <button
+                                className="btn btn-sm"
+                                onClick={() => setDocRotate((r) => r - 90)}
+                            >
+                                ↺ -90°
+                            </button>
+
+                            <button
+                                className="btn btn-sm"
+                                onClick={() => setDocRotate((r) => r + 90)}
+                            >
+                                ↻ +90°
                             </button>
 
                         </div>
@@ -1305,7 +1319,7 @@ export default function ControlePage() {
                                                     </div>
 
                                                     <div className="badge badge-secondary badge-lg">
-                                                         Reste à contrôler : {total}
+                                                        Reste à contrôler : {total}
                                                     </div>
 
                                                 </div>
