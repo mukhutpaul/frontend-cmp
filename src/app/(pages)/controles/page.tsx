@@ -14,6 +14,7 @@ import { getMissions } from "@/services/mission.service";
 import Image from "next/image";
 import { FileText } from "lucide-react";
 import Swal from "sweetalert2";
+import { getServerUrl } from "@/lib/axios";
 
 /* ========================= STYLE SELECT ========================= */
 
@@ -75,18 +76,8 @@ export default function ControlePage() {
     const [globalStats, setGlobalStats] = useState<ControlesStatsToday | null>(null);
     const [openGlobalStats, setOpenGlobalStats] = useState(false);
     const [loadingGlobalStats, setLoadingGlobalStats] = useState(false);
-    
-    var LOCAL="http://localhost:8090/"
 
-    if (typeof window !== "undefined") {
-
-    const serverIp = localStorage.getItem("server_ip");
-    const serverPort = localStorage.getItem("server_port");
-    if (serverIp && serverPort) {
-          LOCAL = `http://${serverIp}:${serverPort}/`
-        }
-    }
-    
+    const SERVER_URL = getServerUrl();
 
     const loadGlobalStats = async () => {
         try {
@@ -627,7 +618,7 @@ export default function ControlePage() {
                                                     <div className="w-12 h-12 rounded-full overflow-hidden border bg-base-200 flex items-center justify-center cursor-pointer">
 
                                                         <Image
-                                                            src={`http:` + c.photoUrl}
+                                                            src={`${SERVER_URL}/${c.photoUrl}`}
                                                             alt="photo"
                                                             width={48}
                                                             height={48}
@@ -846,7 +837,7 @@ export default function ControlePage() {
                             onMouseLeave={handleMouseUp}
                         >
                             <img
-                                src={LOCAL + zoomPhoto}
+                                src={`http://localhost:8090/` + zoomPhoto}
                                 alt="zoom"
                                 className="select-none max-w-none"
                                 style={{
@@ -931,10 +922,10 @@ export default function ControlePage() {
 
                                     {/* IMAGE */}
                                     <img
-                                        src={`LOCAL + documents/${doc.imageUrl}`}
+                                        src={`http://localhost:8090/documents/${doc.imageUrl}`}
                                         className="w-full h-40 object-cover rounded mt-2 cursor-zoom-in"
                                         onClick={() => {
-                                            setDocZoom(`LOCAL + documents/${doc.imageUrl}`);
+                                            setDocZoom(`http://localhost:8090/documents/${doc.imageUrl}`);
                                             setDocScale(1);
                                             setDocRotate(0);
                                         }}
