@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import Select from "react-select";
-import { getUnitesByMission } from "@/services/mission.service";
+import { deleteMissionUnite, getUnitesByMission } from "@/services/mission.service";
 
 import {
     getMissions,
@@ -245,6 +245,36 @@ export default function MissionsPage() {
             console.error(error);
             toast.error(
                 error.response?.data?.message || "Erreur activation"
+            );
+        }
+    };
+
+    const handleDeleteUnite = async (id: number) => {
+        const res = await Swal.fire({
+            title: "Supprimer cette unité ?",
+            text: "Cette action est irréversible",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Oui",
+            cancelButtonText: "Non",
+        });
+
+        if (!res.isConfirmed) return;
+
+        try {
+            await deleteMissionUnite(id);
+
+            toast.success("Unité supprimée");
+
+            // refresh liste après suppression
+            if (selectedMission) {
+                await fetchUnitesMission(selectedMission.id);
+            }
+
+        } catch (error: any) {
+            console.error(error);
+            toast.error(
+                error?.response?.data?.message || "Erreur suppression unité"
             );
         }
     };
@@ -657,8 +687,14 @@ export default function MissionsPage() {
 
                                 </div>
 
-                                <div className="badge badge-primary badge-sm">
-                                    Active
+                                <div className="flex items-center gap-2">
+
+                                    <div className="badge badge-success badge-sm">
+                                        Active
+                                    </div>
+
+
+
                                 </div>
 
                             </div>
@@ -756,8 +792,21 @@ export default function MissionsPage() {
                                             </div>
 
                                             {/* BADGE */}
-                                            <div className="badge badge-success badge-sm">
-                                                Active
+                                            <div className="flex items-center gap-2">
+
+                                                <div className="badge badge-success badge-sm">
+                                                    Active
+                                                </div>
+
+                                                {canAdmin && (
+                                                    <button
+                                                        className="btn btn-xs btn-error btn-outline"
+                                                        onClick={() => handleDeleteUnite(u.id)}
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
+
                                             </div>
 
                                         </div>

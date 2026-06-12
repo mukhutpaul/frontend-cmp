@@ -131,3 +131,20 @@ export const deleteMission = async (id: number) => {
 
     return res.data;
 };
+
+/**
+ * DELETE EQUIPE UNITE
+ */
+/**
+ * DELETE MISSION UNITE
+ */
+export const deleteMissionUnite = async (
+    id: number
+): Promise<string> => {
+
+    const res = await api.delete(
+        `/mission-unites/${id}`
+    );
+
+    return res.data;
+};
