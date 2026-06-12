@@ -89,3 +89,10 @@ export const getDetailEquipeByEquipe = async (equipeId: number) => {
     (d: any) => d.equipe?.id === equipeId
   );
 };
+
+export const deleteUniteEquipe = async (
+  id: number
+): Promise<string> => {
+  const response = await api.delete(`/equipe-unites/${id}`);
+  return response.data;
+};

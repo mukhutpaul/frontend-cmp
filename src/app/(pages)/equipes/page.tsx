@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import Select from "react-select";
 
-import equipeService, { addControleurToEquipe, Equipe, getDetailEquipeByEquipe, removeControleurFromEquipe } from "@/services/equipe.service";
+import equipeService, { addControleurToEquipe, deleteUniteEquipe, Equipe, getDetailEquipeByEquipe, removeControleurFromEquipe } from "@/services/equipe.service";
 import { getUsers } from "@/services/auth.service";
 import { getMissions } from "@/services/mission.service";
 import { Eye } from "lucide-react";
@@ -381,6 +381,37 @@ export default function EquipesPage() {
         } catch (error) {
             console.error(error);
             toast.error("Erreur modification");
+        }
+    };
+
+    const handleDeleteUniteEquipe = async (id: number) => {
+
+        const result = await Swal.fire({
+            title: "Retirer cette unité ?",
+            text: "L'unité sera retirée de l'équipe",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Oui",
+            cancelButtonText: "Annuler",
+        });
+
+        if (!result.isConfirmed) return;
+
+        try {
+
+            await deleteUniteEquipe(id);
+
+            toast.success("Unité retirée");
+
+            if (selectedEquipe) {
+                await fetchUnitesEquipe(selectedEquipe.id);
+            }
+
+        } catch (error) {
+
+            console.error(error);
+
+            toast.error("Erreur suppression unité");
         }
     };
 
@@ -881,8 +912,21 @@ export default function EquipesPage() {
                                             </div>
 
                                             {/* BADGE */}
-                                            <div className="badge badge-success badge-sm">
-                                                Active
+                                            <div className="flex items-center gap-2">
+
+                                                <div className="badge badge-success badge-sm">
+                                                    Active
+                                                </div>
+
+                                                {canManage && (
+                                                    <button
+                                                        className="btn btn-xs btn-error btn-outline"
+                                                        onClick={() => handleDeleteUniteEquipe(u.id)}
+                                                    >
+                                                        <Trash2 size={14} />
+                                                    </button>
+                                                )}
+
                                             </div>
 
                                         </div>
