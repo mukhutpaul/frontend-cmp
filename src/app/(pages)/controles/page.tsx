@@ -75,6 +75,18 @@ export default function ControlePage() {
     const [globalStats, setGlobalStats] = useState<ControlesStatsToday | null>(null);
     const [openGlobalStats, setOpenGlobalStats] = useState(false);
     const [loadingGlobalStats, setLoadingGlobalStats] = useState(false);
+    
+    var LOCAL="http://localhost:8090/"
+
+    if (typeof window !== "undefined") {
+
+    const serverIp = localStorage.getItem("server_ip");
+    const serverPort = localStorage.getItem("server_port");
+    if (serverIp && serverPort) {
+          LOCAL = `http://${serverIp}:${serverPort}/`
+        }
+    }
+    
 
     const loadGlobalStats = async () => {
         try {
@@ -615,7 +627,7 @@ export default function ControlePage() {
                                                     <div className="w-12 h-12 rounded-full overflow-hidden border bg-base-200 flex items-center justify-center cursor-pointer">
 
                                                         <Image
-                                                            src={`LOCAL` + c.photoUrl}
+                                                            src={`http:` + c.photoUrl}
                                                             alt="photo"
                                                             width={48}
                                                             height={48}
@@ -834,7 +846,7 @@ export default function ControlePage() {
                             onMouseLeave={handleMouseUp}
                         >
                             <img
-                                src={`http://localhost:8090/` + zoomPhoto}
+                                src={LOCAL + zoomPhoto}
                                 alt="zoom"
                                 className="select-none max-w-none"
                                 style={{
@@ -919,10 +931,10 @@ export default function ControlePage() {
 
                                     {/* IMAGE */}
                                     <img
-                                        src={`http://localhost:8090/documents/${doc.imageUrl}`}
+                                        src={`LOCAL + documents/${doc.imageUrl}`}
                                         className="w-full h-40 object-cover rounded mt-2 cursor-zoom-in"
                                         onClick={() => {
-                                            setDocZoom(`http://localhost:8090/documents/${doc.imageUrl}`);
+                                            setDocZoom(`LOCAL + documents/${doc.imageUrl}`);
                                             setDocScale(1);
                                             setDocRotate(0);
                                         }}
