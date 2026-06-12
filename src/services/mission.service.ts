@@ -90,7 +90,8 @@ export const updateMission = async (
     id: number,
     data: UpdateMissionPayload
 ) => {
-    const res = await api.put(
+
+    const res = await api.patch(
         `/missions/${id}`,
         data
     );

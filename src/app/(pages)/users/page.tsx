@@ -196,15 +196,16 @@ export default function UsersPage() {
     };
 
     const handleUpdateUser = async (data: UpdateUserForm) => {
-        if (editingUserId === null) return;
+        if (editingUserId == null) return;
 
         try {
             await updateUser(editingUserId, {
-                username: data.username,
-                email: data.email,
-                noms: data.noms,
-                profileId: Number(data.profileId), // ✅ CORRECT
+                username: data.username?.trim(),
+                email: data.email?.trim(),
+                noms: data.noms?.trim(),
+                profileId: data.profileId ? Number(data.profileId) : undefined,
             });
+
             toast.success("Utilisateur modifié");
 
             setEditModal(false);
@@ -212,10 +213,15 @@ export default function UsersPage() {
 
             resetEdit();
 
-            fetchUsers();
+            await fetchUsers();
+
         } catch (error: any) {
-            console.error(error);
-            toast.error(error.response?.data?.message || "Erreur modification");
+            console.error("Update user error:", error);
+
+            toast.error(
+                error?.response?.data?.message ??
+                "Erreur modification utilisateur"
+            );
         }
     };
 
@@ -299,7 +305,7 @@ export default function UsersPage() {
         }
     };
 
-     const profile =
+    const profile =
         typeof window !== "undefined"
             ? localStorage.getItem("profile")
             : null;
@@ -308,8 +314,8 @@ export default function UsersPage() {
         profile === "CHEF_EQUIPE"
 
     const canAdmin =
-    profile === "ADMIN" ||
-    profile === "MANAGER";
+        profile === "ADMIN" ||
+        profile === "MANAGER";
     const handleViewUser = async (user: User) => {
 
         setSelectedUser(user);
@@ -518,15 +524,15 @@ export default function UsersPage() {
 
                     </div>
                     {canAdmin && (
-                    <button
-                        className="btn btn-primary"
-                        onClick={() =>
-                            openCreateModal()
-                        }
-                    >
-                        + Ajouter utilisateur
-                    </button>
-                )}
+                        <button
+                            className="btn btn-primary"
+                            onClick={() =>
+                                openCreateModal()
+                            }
+                        >
+                            + Ajouter utilisateur
+                        </button>
+                    )}
                 </div>
 
                 {/* 🔎 FILTERS */}
@@ -645,7 +651,7 @@ export default function UsersPage() {
                                             <td>{u.email}</td>
 
                                             <td>
-                                                 {u.profile?.name}
+                                                {u.profile?.name}
                                                 {/* <span className="badge badge-info">
                                                     {u.profile?.name}
                                                 </span> */}
@@ -668,33 +674,33 @@ export default function UsersPage() {
 
                                                         </div>
                                                     )}
-                                                   
+
                                                     {/* EDIT */}
                                                     {canAdmin && (
-                                                    <div className="tooltip" data-tip="Modifier">
+                                                        <div className="tooltip" data-tip="Modifier">
 
-                                                        <button
-                                                            className="w-8 h-8 flex items-center justify-center rounded-full bg-base-200 hover:bg-warning hover:text-warning-content transition-all cursor-pointer"
-                                                            onClick={() => openEditModal(u)}
-                                                        >
-                                                            <Pencil className="w-4 h-4" />
-                                                        </button>
+                                                            <button
+                                                                className="w-8 h-8 flex items-center justify-center rounded-full bg-base-200 hover:bg-warning hover:text-warning-content transition-all cursor-pointer"
+                                                                onClick={() => openEditModal(u)}
+                                                            >
+                                                                <Pencil className="w-4 h-4" />
+                                                            </button>
 
-                                                    </div>
+                                                        </div>
                                                     )}
 
                                                     {/* DELETE */}
                                                     {canAdmin && (
-                                                    <div className="tooltip" data-tip="Supprimer">
+                                                        <div className="tooltip" data-tip="Supprimer">
 
-                                                        <button
-                                                            className="w-8 h-8 flex btn-error btn-outline items-center justify-center rounded-full bg-base-200 hover:bg-error hover:text-error-content transition-all cursor-pointer"
-                                                            onClick={() => handleDeleteUser(u.id)}
-                                                        >
-                                                            <Trash2 className="w-4 h-4" />
-                                                        </button>
+                                                            <button
+                                                                className="w-8 h-8 flex btn-error btn-outline items-center justify-center rounded-full bg-base-200 hover:bg-error hover:text-error-content transition-all cursor-pointer"
+                                                                onClick={() => handleDeleteUser(u.id)}
+                                                            >
+                                                                <Trash2 className="w-4 h-4" />
+                                                            </button>
 
-                                                    </div>
+                                                        </div>
                                                     )}
                                                 </div>
 
@@ -774,7 +780,7 @@ export default function UsersPage() {
                                         </p>
 
                                     </div>
-                                    
+
                                     <button
                                         className="btn btn-sm btn-circle btn-ghost"
                                         onClick={() => setOpenViewUser(false)}
@@ -933,17 +939,20 @@ export default function UsersPage() {
 
                                                 </div>
                                                 {/* DELETE BUTTON */}
-                                                {canAdmin && (
-                                                <button
-                                                    className="btn btn-xs btn-error btn-outline"
-                                                    onClick={() => handleRemoveUniteFromUser(u.id)}
-                                                >
-                                                    <Trash2 className="w-4 h-4" />
-                                                </button>
-                                                )}
+                                                <div className="flex gap-3">
 
-                                                <div className="badge badge-success badge-sm">
-                                                    Active
+
+                                                    <div className="badge badge-success badge-sm">
+                                                        Active
+                                                    </div>
+                                                    {canAdmin && (
+                                                        <button
+                                                            className="btn btn-xs btn-error btn-outline"
+                                                            onClick={() => handleRemoveUniteFromUser(u.id)}
+                                                        >
+                                                            <Trash2 className="w-4 h-4" />
+                                                        </button>
+                                                    )}
                                                 </div>
 
                                             </div>
@@ -1144,7 +1153,7 @@ export default function UsersPage() {
                                     >
                                         Annuler
                                     </button>
-                                    
+
                                     <button
                                         type="submit"
                                         className="btn btn-primary"

@@ -346,15 +346,14 @@ export default function EquipesPage() {
         setEditingId(equipe.id);
 
         setForm({
-            userId: equipe.user?.id,
-            missionId: equipe.mission?.id,
-            site: form.site, // 👈 AJOUT
+            userId: equipe.user?.id || 0,
+            missionId: equipe.mission?.id || 0,
+            site: equipe.site || "", // ✅ CORRECT
             isActive: equipe.isActive,
         });
 
         setEditModal(true);
     };
-
     /**
      * UPDATE
      */
@@ -364,14 +363,10 @@ export default function EquipesPage() {
 
         try {
             await equipeService.update(editingId, {
-                user: {
-                    id: form.userId,
-                },
-                mission: {
-                    id: form.missionId,
-                },
-                site: form.site, // 👈 AJOUT
-                isActive: true, // toujours actif
+                user: { id: form.userId },
+                mission: { id: form.missionId },
+                site: form.site,
+                isActive: form.isActive, // ✅ important
             });
 
             toast.success("Équipe modifiée");
@@ -442,14 +437,14 @@ export default function EquipesPage() {
                             Gestion des équipes opérationnelles
                         </p>
                     </div>
-                {canManage && (
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => setOpenModal(true)}
-                    >
-                        + Nouvelle équipe
-                    </button>
-                )}
+                    {canManage && (
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => setOpenModal(true)}
+                        >
+                            + Nouvelle équipe
+                        </button>
+                    )}
                 </div>
 
                 {/* FILTERS */}
@@ -572,29 +567,29 @@ export default function EquipesPage() {
                                                 </td>
 
                                                 <td className="flex gap-2">
-                                                    
+
 
                                                     {/* EDIT */}
                                                     {canManage && (
-                                                    <div className="tooltip" data-tip="Modifier l'équipe">
-                                                        <button
-                                                            className="btn btn-xs btn-info btn-outline"
-                                                            onClick={() => handleEditOpen(e)}
-                                                        >
-                                                            <Pencil size={14} />
-                                                        </button>
-                                                    </div>
+                                                        <div className="tooltip" data-tip="Modifier l'équipe">
+                                                            <button
+                                                                className="btn btn-xs btn-info btn-outline"
+                                                                onClick={() => handleEditOpen(e)}
+                                                            >
+                                                                <Pencil size={14} />
+                                                            </button>
+                                                        </div>
                                                     )}
                                                     {/* DELETE */}
                                                     {canManage && (
-                                                    <div className="tooltip" data-tip="Supprimer l'équipe">
-                                                        <button
-                                                            className="btn btn-xs btn-error btn-outline"
-                                                            onClick={() => handleDelete(e.id)}
-                                                        >
-                                                            <Trash2 size={14} />
-                                                        </button>
-                                                    </div>
+                                                        <div className="tooltip" data-tip="Supprimer l'équipe">
+                                                            <button
+                                                                className="btn btn-xs btn-error btn-outline"
+                                                                onClick={() => handleDelete(e.id)}
+                                                            >
+                                                                <Trash2 size={14} />
+                                                            </button>
+                                                        </div>
                                                     )}
                                                     {/* VIEW */}
                                                     <div className="tooltip" data-tip="Voir les unités de l'équipe">
@@ -609,7 +604,7 @@ export default function EquipesPage() {
                                                             <Eye size={14} />
                                                         </button>
                                                     </div>
-                                                    
+
                                                     <div className="tooltip" data-tip="Ajouter contrôleur">
                                                         <button
                                                             className="btn btn-xs btn-warning btn-outline"
@@ -765,7 +760,7 @@ export default function EquipesPage() {
                                     </p>
 
                                     <p className="font-semibold text-sm">
-                                        {selectedEquipe.mission?.numero}
+                                        {selectedEquipe.mission?.zone}-{selectedEquipe.mission?.numero}
                                     </p>
 
                                 </div>
@@ -954,55 +949,55 @@ export default function EquipesPage() {
                         <div className="p-5 space-y-5">
 
                             {/* SELECT */}
-                             {canManage && (
-                            <div>
+                            {canManage && (
+                                <div>
 
-                                <label className="label">
-                                   
-                                    <span className="label-text">
-                                    
-                                        Ajouter un contrôleur
-                                    </span>
-                                
-                                </label>
+                                    <label className="label">
 
-                                <Select
-                                    options={controleurs
-                                        .filter(
-                                            (u: any) =>
-                                                !detailEquipeList.some(
-                                                    (d: any) => d.user?.id === u.id
-                                                )
-                                        )
-                                        .map((u: any) => ({
-                                            value: u.id,
-                                            label: u.username,
-                                        }))
-                                    }
+                                        <span className="label-text">
 
-                                    value={selectedControleur}
+                                            Ajouter un contrôleur
+                                        </span>
 
-                                    onChange={(val: any) =>
-                                        setSelectedControleur(val)
-                                    }
+                                    </label>
 
-                                    placeholder="Choisir un contrôleur..."
-                                    isSearchable
-                                    unstyled
-                                    classNames={selectStyles}
-                                />
+                                    <Select
+                                        options={controleurs
+                                            .filter(
+                                                (u: any) =>
+                                                    !detailEquipeList.some(
+                                                        (d: any) => d.user?.id === u.id
+                                                    )
+                                            )
+                                            .map((u: any) => ({
+                                                value: u.id,
+                                                label: u.username,
+                                            }))
+                                        }
 
-                            </div>
-                             )}
+                                        value={selectedControleur}
+
+                                        onChange={(val: any) =>
+                                            setSelectedControleur(val)
+                                        }
+
+                                        placeholder="Choisir un contrôleur..."
+                                        isSearchable
+                                        unstyled
+                                        classNames={selectStyles}
+                                    />
+
+                                </div>
+                            )}
                             {/* BTN */}
-                             {canManage && (
-                            <button
-                                className="btn btn-primary w-full"
-                                onClick={handleAddControleur}
-                            >
-                                Ajouter contrôleur
-                            </button>
-                             )}
+                            {canManage && (
+                                <button
+                                    className="btn btn-primary w-full"
+                                    onClick={handleAddControleur}
+                                >
+                                    Ajouter contrôleur
+                                </button>
+                            )}
                             {/* LISTE */}
                             <div className="space-y-3">
 
@@ -1058,16 +1053,16 @@ export default function EquipesPage() {
                                                     </p>
 
                                                 </div>
-                                             {canManage && (
-                                                <button
-                                                    className="btn btn-sm btn-error btn-outline"
-                                                    onClick={() =>
-                                                        handleDeleteControleur(d.id)
-                                                    }
-                                                >
-                                                    <ShieldX size={16} />
-                                                </button>
-                                             )}
+                                                {canManage && (
+                                                    <button
+                                                        className="btn btn-sm btn-error btn-outline"
+                                                        onClick={() =>
+                                                            handleDeleteControleur(d.id)
+                                                        }
+                                                    >
+                                                        <ShieldX size={16} />
+                                                    </button>
+                                                )}
                                             </div>
 
                                         ))}
@@ -1200,13 +1195,13 @@ function EquipeModal({
                     <Select
                         options={missions.map((m: any) => ({
                             value: m.id,
-                            label: `${m.numero}`,
+                            label: `${m.numero}-${m.zone}`,
                         }))}
                         value={
                             missions
                                 .map((m: any) => ({
                                     value: m.id,
-                                    label: `${m.numero}`,
+                                    label: `${m.numero}-${m.zone}`,
                                 }))
                                 .find(
                                     (opt: any) => opt.value === form.missionId

@@ -34,7 +34,6 @@ export default function MissionsPage() {
     const [loading, setLoading] = useState(false);
 
     const [openModal, setOpenModal] = useState(false);
-    const [editModal, setEditModal] = useState(false);
     const [editingId, setEditingId] = useState<number | null>(null);
     const [openViewUnits, setOpenViewUnits] = useState(false);
 
@@ -56,6 +55,31 @@ export default function MissionsPage() {
             id: 0,
         },
     });
+
+    const [editModal, setEditModal] = useState(false);
+    const [editingMission, setEditingMission] = useState<Mission | null>(null);
+
+    const [editForm, setEditForm] = useState({
+        zone: "",
+        numero: "",
+        chargeMission: {
+            id: 0,
+        },
+    });
+
+    const openEditMission = (mission: Mission) => {
+        setEditingMission(mission);
+
+        setEditForm({
+            zone: mission.zone,
+            numero: mission.numero,
+            chargeMission: {
+                id: (mission as any).chargeMission?.id || 0,
+            },
+        });
+
+        setEditModal(true);
+    };
 
     const [page, setPage] = useState(1);
     const limit = 20;
@@ -101,6 +125,31 @@ export default function MissionsPage() {
         } finally {
 
             setLoading(false);
+        }
+    };
+
+    const handleUpdateMission = async () => {
+        if (!editingMission) return;
+
+        try {
+            await updateMission(editingMission.id, {
+                zone: editForm.zone,
+                numero: editForm.numero,
+                chargeMission: {
+                    id: editForm.chargeMission.id,
+                },
+            });
+
+            toast.success("Mission modifiée");
+
+            setEditModal(false);
+            setEditingMission(null);
+
+            fetchMissions();
+
+        } catch (error: any) {
+            console.error(error);
+            toast.error(error?.response?.data?.message || "Erreur modification");
         }
     };
 
@@ -272,12 +321,12 @@ export default function MissionsPage() {
                         </p>
                     </div>
                     {canAdmin && (
-                    <button
-                        className="btn btn-primary"
-                        onClick={() => setOpenModal(true)}
-                    >
-                        + Nouvelle mission
-                    </button>
+                        <button
+                            className="btn btn-primary"
+                            onClick={() => setOpenModal(true)}
+                        >
+                            + Nouvelle mission
+                        </button>
                     )}
                 </div>
 
@@ -345,6 +394,7 @@ export default function MissionsPage() {
                                         <th>ID</th>
                                         <th>Zone</th>
                                         <th>Numéro</th>
+                                        <th>Responsable</th>
                                         <th>Statut</th>
                                         <th>Debut</th>
                                         <th>Fin</th>
@@ -379,6 +429,7 @@ export default function MissionsPage() {
                                             <td>{m.id}</td>
                                             <td>{m.zone}</td>
                                             <td>{m.numero}</td>
+                                            <td>{m.chargeMission?.username}</td>
                                             <td>
                                                 {m.dateFin ? (
                                                     <span className="badge badge-neutral">
@@ -417,7 +468,7 @@ export default function MissionsPage() {
                                                     })
                                                     : "-"}
                                             </td>
-                                            
+
                                             <td className="flex gap-2">
 
                                                 {/* EN ATTENTE */}
@@ -440,18 +491,31 @@ export default function MissionsPage() {
                                                     </button>
                                                 )}
                                                 {canAdmin && (
-                                                <div className="tooltip" data-tip="Supprimer la mission">
+                                                    <div className="tooltip" data-tip="Supprimer la mission">
 
-                                                    <button
-                                                        className="btn btn-xs btn-error btn-outline"
-                                                        onClick={() => handleDelete(m.id)}
-                                                    >
-                                                        <Trash2 size={14} />
-                                                    </button>
+                                                        <button
+                                                            className="btn btn-xs btn-error btn-outline"
+                                                            onClick={() => handleDelete(m.id)}
+                                                        >
+                                                            <Trash2 size={14} />
+                                                        </button>
 
-                                                </div>
+                                                    </div>
+
+
                                                 )}
-                                                
+                                                {canAdmin && (
+                                                    <div className="tooltip" data-tip="Modifier mission">
+
+                                                        <button
+                                                            className="btn btn-xs btn-info btn-outline"
+                                                            onClick={() => openEditMission(m)}
+                                                        >
+                                                            <Pencil size={14} />
+                                                        </button>
+
+                                                    </div>
+                                                )}
 
                                                 <div className="tooltip" data-tip="Voir unités de la mission">
 
@@ -857,6 +921,85 @@ export default function MissionsPage() {
                                 onClick={handleCreate}
                             >
                                 Créer
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </div>
+            )}
+
+            {editModal && editingMission && (
+                <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+
+                    <div className="bg-base-100 p-6 rounded-xl w-full max-w-md">
+
+                        <h2 className="text-xl font-bold mb-4">
+                            Modifier mission
+                        </h2>
+
+                        {/* ZONE */}
+                        <input
+                            className="input input-bordered w-full mb-2"
+                            placeholder="Zone"
+                            value={editForm.zone}
+                            onChange={(e) =>
+                                setEditForm({ ...editForm, zone: e.target.value })
+                            }
+                        />
+
+                        {/* NUMERO */}
+                        <input
+                            className="input input-bordered w-full mb-2"
+                            placeholder="Numéro"
+                            value={editForm.numero}
+                            onChange={(e) =>
+                                setEditForm({ ...editForm, numero: e.target.value })
+                            }
+                        />
+
+                        {/* CHARGE MISSION */}
+                        <Select
+                            options={superviseurs.map((u: any) => ({
+                                value: u.id,
+                                label: u.noms || u.username,
+                            }))}
+                            value={superviseurs
+                                .map((u: any) => ({
+                                    value: u.id,
+                                    label: u.noms || u.username,
+                                }))
+                                .find(
+                                    (opt: any) =>
+                                        opt.value === editForm.chargeMission.id
+                                ) || null
+                            }
+                            onChange={(selected: any) =>
+                                setEditForm({
+                                    ...editForm,
+                                    chargeMission: {
+                                        id: selected?.value || 0,
+                                    },
+                                })
+                            }
+                        />
+
+                        {/* ACTIONS */}
+                        <div className="flex justify-end gap-2 mt-4">
+
+                            <button
+                                className="btn"
+                                onClick={() => setEditModal(false)}
+                            >
+                                Annuler
+                            </button>
+
+                            <button
+                                className="btn btn-primary"
+                                onClick={handleUpdateMission}
+                            >
+                                Modifier
                             </button>
 
                         </div>
