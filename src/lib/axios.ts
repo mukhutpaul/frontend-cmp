@@ -4,17 +4,22 @@ import axios from "axios";
  * 🌍 Base URLs (mode LOCAL / CENTRAL)
  * Tu peux changer dynamiquement selon login
  */
-export const getBaseURL = () => {
+export var LOCAL_API = "http://localhost:8090/api";
+// 👉 Déterminer automatiquement quelle API utiliser
+const getBaseURL = () => {
   if (typeof window !== "undefined") {
+
     const serverIp = localStorage.getItem("server_ip");
     const serverPort = localStorage.getItem("server_port");
 
+    // ✅ Si IP + PORT existent → REMOTE
     if (serverIp && serverPort) {
-      return `http://${serverIp}:${serverPort}/api`;
+      LOCAL_API = `http://${serverIp}:${serverPort}/api`
     }
   }
 
-  return "http://localhost:8090/api";
+  // ✅ Sinon → LOCAL
+  return LOCAL_API;
 };
 
 export const getServerUrl = () => {
