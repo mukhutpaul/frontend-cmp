@@ -276,7 +276,7 @@ export default function StatEquipePage() {
                                         <div className="stat bg-base-200 rounded-xl">
 
                                             <div className="stat-title">
-                                                Total Contrôles
+                                                Total à contrôler
                                             </div>
 
                                             <div className="
@@ -571,7 +571,7 @@ export default function StatEquipePage() {
                                                 </div>
 
                                                 <div className="p-5 space-y-0">
-                                                    <Row label="Total contrôles" value={selectedEquipe?.totalControles} />
+                                                    <Row label="Total à contrôler" value={selectedEquipe?.totalControles} />
                                                     <Row label="Présents" value={selectedEquipe?.presents} highlight="success" />
                                                     <Row label="Justifiés" value={selectedEquipe?.justifies} highlight="info" />
                                                     <Row label="Non justifiés" value={selectedEquipe?.nonJustifies} highlight="error" />
@@ -617,7 +617,7 @@ export default function StatEquipePage() {
                                             </p>
 
                                             <p>
-                                                Total contrôles :
+                                                Total à contrôler :
                                                 <span className="font-bold text-red-700 ml-2">
                                                     {selectedEquipe?.totalControles}
                                                 </span>

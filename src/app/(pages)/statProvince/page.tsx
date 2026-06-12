@@ -220,7 +220,7 @@ export default function StatProvincePage() {
                                         </div>
 
                                         <div className="stat bg-base-200 rounded-xl">
-                                            <div className="stat-title">Total Contrôles</div>
+                                            <div className="stat-title">Total à contrôler</div>
                                             <div className="stat-value text-info flex items-center gap-2">
                                                 <Activity size={18} />
                                                 {p.totalControles}
@@ -503,7 +503,7 @@ export default function StatProvincePage() {
                                                 </div>
 
                                                 <div className="p-5 space-y-0">
-                                                    <Row label="Total contrôles" value={selectedMission?.totalControles} />
+                                                    <Row label="Total à contrôler" value={selectedMission?.totalControles} />
                                                     <Row label="Présents" value={selectedMission?.presents} highlight="success" />
                                                     <Row label="Justifiés" value={selectedMission?.justifies} highlight="info" />
                                                     <Row label="Non justifiés" value={selectedMission?.nonJustifies} highlight="error" />
@@ -549,7 +549,7 @@ export default function StatProvincePage() {
                                             </p>
 
                                             <p>
-                                                Total contrôles :
+                                                Total à contrôler :
                                                 <span className="font-bold text-red-700 ml-2">
                                                     {selectedMission?.totalControles}
                                                 </span>
