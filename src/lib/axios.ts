@@ -15,7 +15,7 @@ const getBaseURL = () => {
 
     // ✅ Si IP + PORT existent → REMOTE
     if (serverIp && serverPort) {
-      const LOCAL_API = "http://${serverIp}:${serverPort}/api";
+      const LOCAL_API = `http://${serverIp}:${serverPort}/api`
     }
   }
 
