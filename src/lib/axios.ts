@@ -4,7 +4,7 @@ import axios from "axios";
  * 🌍 Base URLs (mode LOCAL / CENTRAL)
  * Tu peux changer dynamiquement selon login
  */
-const LOCAL_API = "http://localhost:8090/api";
+var LOCAL_API = "http://localhost:8090/api";
 
 // 👉 Déterminer automatiquement quelle API utiliser
 const getBaseURL = () => {
@@ -15,7 +15,7 @@ const getBaseURL = () => {
 
     // ✅ Si IP + PORT existent → REMOTE
     if (serverIp && serverPort) {
-      const LOCAL_API = `http://${serverIp}:${serverPort}/api`
+      return LOCAL_API = `http://${serverIp}:${serverPort}/api`
     }
   }
 
