@@ -615,7 +615,7 @@ export default function ControlePage() {
                                                     <div className="w-12 h-12 rounded-full overflow-hidden border bg-base-200 flex items-center justify-center cursor-pointer">
 
                                                         <Image
-                                                            src={`http://localhost:8090/` + c.photoUrl}
+                                                            src={`LOCAL` + c.photoUrl}
                                                             alt="photo"
                                                             width={48}
                                                             height={48}
