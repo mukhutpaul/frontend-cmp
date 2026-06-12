@@ -9,6 +9,7 @@ import { toast } from "react-toastify";
 import { getPoliciers } from "@/services/policier.service";
 import { getUnites } from "@/services/unite.service";
 import Image from "next/image";
+import { getServerUrl } from "@/lib/axios";
 
 /* ========================= TYPES ========================= */
 
@@ -67,6 +68,7 @@ export default function PolicierPage() {
     const [page, setPage] = useState(1);
 
     const [loading, setLoading] = useState(false);
+    const SERVER_URL = getServerUrl();
 
     /* ========================= MODAL PHOTO ========================= */
 
@@ -371,7 +373,7 @@ export default function PolicierPage() {
                                                             <div className="w-14 h-14 rounded-full overflow-hidden border flex items-center justify-center bg-base-200 hover:scale-105 transition">
 
                                                                 <Image
-                                                                    src={`http://localhost:8090/`+p.photoUrl}
+                                                                   src={`${SERVER_URL}/${p.photoUrl}`}
                                                                     alt="photo"
                                                                     width={56}
                                                                     height={56}
@@ -481,7 +483,7 @@ export default function PolicierPage() {
                         <div className="flex justify-center items-center py-4">
 
                             <Image
-                                src={`http://localhost:8090/`+selectedPhoto}
+                                src={`${SERVER_URL}/${selectedPhoto}`}
                                 alt="Grande photo"
                                 width={900}
                                 height={900}

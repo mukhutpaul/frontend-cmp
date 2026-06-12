@@ -8,7 +8,7 @@ import { QRCodeCanvas } from "qrcode.react";
 import jsPDF from "jspdf";
 import QRCode from "qrcode";
 
-import { api } from "@/lib/axios";
+import { api, getServerUrl } from "@/lib/axios";
 import { getPolicierByMatricule } from "@/services/policier.service";
 import {
     Controle,
@@ -72,6 +72,7 @@ export default function RecherchePage() {
 
     const [identiteLoading, setIdentiteLoading] = useState(false);
     const [identite, setIdentite] = useState<Policier | null>(null);
+    const SERVER_URL = getServerUrl();
 
     /* ========================= RESET ========================= */
 
@@ -91,7 +92,7 @@ export default function RecherchePage() {
             photoUrl
                 ? photoUrl
                 : pkPhoto
-                    ? `http://localhost:8090/photos/${pkPhoto}.jpg`
+                    ? `${SERVER_URL}/photos/${pkPhoto}.jpg`
                     : null;
 
         return (
@@ -105,7 +106,7 @@ export default function RecherchePage() {
 
                         {imageSrc && !imageError ? (
                             <img
-                                src={`http://localhost:8090/`+imageSrc}
+                                src={`${SERVER_URL}/${imageSrc}`}
                                 alt="Photo policier"
                                 className="w-full h-full object-cover hover:scale-105 transition"
                                 onError={() => setImageError(true)}
@@ -136,7 +137,7 @@ export default function RecherchePage() {
 
                             {/* IMAGE ZOOM */}
                             <img
-                                src={`http://localhost:8090/`+imageSrc || ""}
+                                src={imageSrc ? `${getServerUrl()}/${imageSrc}` : ""}
                                 alt="Zoom photo policier"
                                 className="w-full max-h-[70vh] object-contain rounded-lg"
                             />

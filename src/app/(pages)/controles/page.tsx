@@ -837,7 +837,7 @@ export default function ControlePage() {
                             onMouseLeave={handleMouseUp}
                         >
                             <img
-                                src={`http://localhost:8090/` + zoomPhoto}
+                                src={`${SERVER_URL}/${zoomPhoto}`}
                                 alt="zoom"
                                 className="select-none max-w-none"
                                 style={{
@@ -922,10 +922,10 @@ export default function ControlePage() {
 
                                     {/* IMAGE */}
                                     <img
-                                        src={`http://localhost:8090/documents/${doc.imageUrl}`}
+                                       src={`${SERVER_URL}/documents/${doc.imageUrl}`}
                                         className="w-full h-40 object-cover rounded mt-2 cursor-zoom-in"
                                         onClick={() => {
-                                            setDocZoom(`http://localhost:8090/documents/${doc.imageUrl}`);
+                                            setDocZoom(`${SERVER_URL}/documents/${doc.imageUrl}`);
                                             setDocScale(1);
                                             setDocRotate(0);
                                         }}
