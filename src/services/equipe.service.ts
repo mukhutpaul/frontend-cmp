@@ -96,3 +96,8 @@ export const deleteUniteEquipe = async (
   const response = await api.delete(`/equipe-unites/${id}`);
   return response.data;
 };
+
+export const getAllDetailEquipes = async () => {
+  const response = await api.get("/detail-equipes");
+  return response.data;
+};

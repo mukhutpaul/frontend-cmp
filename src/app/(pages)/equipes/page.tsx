@@ -8,7 +8,7 @@ import { toast } from "react-toastify";
 import Swal from "sweetalert2";
 import Select from "react-select";
 
-import equipeService, { addControleurToEquipe, deleteUniteEquipe, Equipe, getDetailEquipeByEquipe, removeControleurFromEquipe } from "@/services/equipe.service";
+import equipeService, { addControleurToEquipe, deleteUniteEquipe, Equipe, getAllDetailEquipes, getDetailEquipeByEquipe, removeControleurFromEquipe } from "@/services/equipe.service";
 import { getUsers } from "@/services/auth.service";
 import { getMissions } from "@/services/mission.service";
 import { Eye } from "lucide-react";
@@ -88,6 +88,7 @@ export default function EquipesPage() {
     const [selectedEquipe, setSelectedEquipe] = useState<any>(null);
     const [unitesEquipe, setUnitesEquipe] = useState<any[]>([]);
     const [loadingUnites, setLoadingUnites] = useState(false);
+    const [allDetailEquipes, setAllDetailEquipes] = useState<any[]>([]);
 
     const [openControleurModal, setOpenControleurModal] = useState(false);
 
@@ -128,6 +129,10 @@ export default function EquipesPage() {
             setLoadingUnites(false);
         }
     };
+
+    const assignedControleurIds = new Set(
+        allDetailEquipes.map((d: any) => Number(d.user?.id))
+    );
 
     const fetchControleurs = async () => {
         try {
@@ -184,6 +189,9 @@ export default function EquipesPage() {
     /**
      * FETCH USERS
      */
+    const assignedUserIds = new Set(
+        allDetailEquipes.map((d: any) => Number(d.user?.id))
+    );
     const fetchUsers = async () => {
         try {
             const data = await getUsers();
@@ -240,7 +248,7 @@ export default function EquipesPage() {
 
             toast.success("Contrôleur ajouté");
 
-            fetchDetailEquipe(selectedEquipeControleur.id);
+            await refreshControleurs(selectedEquipeControleur.id);
 
             setSelectedControleur(null);
 
@@ -258,7 +266,7 @@ export default function EquipesPage() {
 
             toast.success("Contrôleur supprimé");
 
-            fetchDetailEquipe(selectedEquipeControleur.id);
+            await refreshControleurs(selectedEquipeControleur.id);
 
         } catch (error) {
             console.error(error);
@@ -271,7 +279,24 @@ export default function EquipesPage() {
         fetchUsers();
         fetchMissions();
         fetchControleurs();
+        fetchAllDetailEquipes(); // 👈 AJOUT
     }, []);
+
+    const fetchAllDetailEquipes = async () => {
+        try {
+            const data = await getAllDetailEquipes();
+            console.log("🔥 ALL DETAIL EQUIPES RAW:", data);
+            setAllDetailEquipes(data);
+        } catch (error) {
+            console.error(error);
+            toast.error("Erreur chargement affectations");
+        }
+    };
+
+    const refreshControleurs = async (equipeId: number) => {
+        await fetchDetailEquipe(equipeId);
+        await fetchAllDetailEquipes(); // IMPORTANT
+    };
 
     /**
      * FILTERS
@@ -1004,27 +1029,24 @@ export default function EquipesPage() {
                                         </span>
 
                                     </label>
-
                                     <Select
                                         options={controleurs
-                                            .filter(
-                                                (u: any) =>
-                                                    !detailEquipeList.some(
-                                                        (d: any) => d.user?.id === u.id
-                                                    )
-                                            )
+                                            .filter((u: any) => {
+                                                const isControleur = u.profile?.name === "CONTROLEUR";
+
+                                                const alreadyAssigned = allDetailEquipes.some(
+                                                    (d: any) => Number(d.user?.id) === Number(u.id)
+                                                );
+
+                                                return isControleur && !alreadyAssigned;
+                                            })
                                             .map((u: any) => ({
                                                 value: u.id,
                                                 label: u.username,
                                             }))
                                         }
-
                                         value={selectedControleur}
-
-                                        onChange={(val: any) =>
-                                            setSelectedControleur(val)
-                                        }
-
+                                        onChange={(val: any) => setSelectedControleur(val)}
                                         placeholder="Choisir un contrôleur..."
                                         isSearchable
                                         unstyled
