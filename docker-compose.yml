@@ -8,7 +8,10 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
-
+    volumes:
+      - C:/bdd/document:/bdd/document
+      - C:/bdd/images_destination:/bdd/images_destination
+      - C:/bdd:/bdd
   frontend:
     build:
       context: .

@@ -531,11 +531,11 @@ export default function UnitePage() {
                                         });
 
                                         if (
-                                            provinceLast !== controleurLast ||
-                                            provinceLast !== equipeLast
+                    
+                                            controleurLast  !== equipeLast
                                         ) {
                                             toast.error(
-                                                "Les 3 sélections ne correspondent pas au même groupe"
+                                                "les caractères finaux de l'équité et du contrôleur sont différents"
                                             );
                                             return;
                                         }
