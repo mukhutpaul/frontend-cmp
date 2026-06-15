@@ -22,6 +22,8 @@ const getBaseURL = () => {
   return LOCAL_API;
 };
 
+console.log("BASE URL =", getBaseURL());
+
 export const getServerUrl = () => {
   return getBaseURL().replace("/api", "");
 };
