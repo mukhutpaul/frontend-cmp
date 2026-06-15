@@ -548,6 +548,7 @@ export default function MissionsPage() {
                                                     </div>
                                                 )}
 
+                                                 {canAdmin && (
                                                 <div className="tooltip" data-tip="Voir unités de la mission">
 
                                                     <button
@@ -562,6 +563,7 @@ export default function MissionsPage() {
                                                     </button>
 
                                                 </div>
+                                                 )}
 
                                             </td>
                                         </tr>
