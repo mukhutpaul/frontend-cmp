@@ -135,6 +135,7 @@ export default function MissionsPage() {
             await updateMission(editingMission.id, {
                 zone: editForm.zone,
                 numero: editForm.numero,
+                isActive:false,
                 chargeMission: {
                     id: editForm.chargeMission.id,
                 },

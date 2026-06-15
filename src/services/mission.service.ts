@@ -36,6 +36,7 @@ export type CreateMissionPayload = {
 export type UpdateMissionPayload = {
     zone?: string;
     numero?: string;
+    isActive : boolean;
 
     chargeMission?: {
         id: number;
