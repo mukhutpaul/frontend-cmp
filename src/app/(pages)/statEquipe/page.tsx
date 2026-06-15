@@ -35,6 +35,9 @@ export default function StatEquipePage() {
     const reportRef = useRef<HTMLDivElement>(null);
 
     const [selectedZone, setSelectedZone] = useState("ALL");
+    const ITEMS_PER_PAGE = 35;
+
+    const [currentPage, setCurrentPage] = useState(1);
 
     const zones = [...new Set(data.map((m) => m.zone))];
 
@@ -64,25 +67,34 @@ export default function StatEquipePage() {
         fetchStats();
     }, []);
 
-      // 🔢 NUMÉRO STABLE OFFICIEL
-      const reportNumber = useMemo(() => {
+    // 🔢 NUMÉRO STABLE OFFICIEL
+    const reportNumber = useMemo(() => {
         return `PNC-ABA-RAP-${Date.now().toString().slice(-6)}`;
-      }, []);
-    
-      const printDate = useMemo(() => {
+    }, []);
+
+    const printDate = useMemo(() => {
         return new Date().toLocaleString("fr-FR", {
-          day: "2-digit",
-          month: "long",
-          year: "numeric",
-          hour: "2-digit",
-          minute: "2-digit",
+            day: "2-digit",
+            month: "long",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
         });
-      }, []);
+    }, []);
 
     const equipes = data.filter((e) =>
         selectedZone === "ALL"
             ? true
             : e.zone === selectedZone
+    );
+
+    const totalPages = Math.ceil(
+        equipes.length / ITEMS_PER_PAGE
+    );
+
+    const paginatedEquipes = equipes.slice(
+        (currentPage - 1) * ITEMS_PER_PAGE,
+        currentPage * ITEMS_PER_PAGE
     );
 
     const policiersNonChargesAuControle =
@@ -143,9 +155,10 @@ export default function StatEquipePage() {
                             <select
                                 className="select select-bordered"
                                 value={selectedZone}
-                                onChange={(e) =>
-                                    setSelectedZone(e.target.value)
-                                }
+                                onChange={(e) => {
+                                    setSelectedZone(e.target.value);
+                                    setCurrentPage(1);
+                                }}
                             >
 
                                 <option value="ALL">
@@ -185,7 +198,7 @@ export default function StatEquipePage() {
 
                     <div className="space-y-6">
 
-                        {equipes.map((equipe) => (
+                        {paginatedEquipes.map((equipe) => (
 
                             <div
                                 key={equipe.equipeId}
@@ -438,6 +451,49 @@ export default function StatEquipePage() {
 
                     </div>
 
+
+                )}
+                {/* PAGINATION */}
+                {totalPages > 1 && (
+                    <div className="flex justify-center items-center gap-2 mt-8">
+
+                        <button
+                            className="btn btn-sm"
+                            disabled={currentPage === 1}
+                            onClick={() =>
+                                setCurrentPage((prev) => prev - 1)
+                            }
+                        >
+                            Précédent
+                        </button>
+
+                        {Array.from(
+                            { length: totalPages },
+                            (_, i) => i + 1
+                        ).map((page) => (
+                            <button
+                                key={page}
+                                className={`btn btn-sm ${currentPage === page
+                                        ? "btn-primary"
+                                        : "btn-ghost"
+                                    }`}
+                                onClick={() => setCurrentPage(page)}
+                            >
+                           
+                            </button>
+                        ))}
+
+                        <button
+                            className="btn btn-sm"
+                            disabled={currentPage === totalPages}
+                            onClick={() =>
+                                setCurrentPage((prev) => prev + 1)
+                            }
+                        >
+                            Suivant
+                        </button>
+
+                    </div>
                 )}
 
             </div>
@@ -551,9 +607,9 @@ export default function StatEquipePage() {
 
                                                 <div className="p-5 space-y-0">
                                                     <Row label="Policiers" value={selectedEquipe?.totalPoliciers ?? 0} />
-            
+
                                                     <Row label="Unités" value={selectedEquipe?.totalUnites ?? 0} />
-                    
+
                                                 </div>
 
                                             </div>
