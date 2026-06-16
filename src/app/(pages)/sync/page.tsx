@@ -164,7 +164,7 @@ export default function SyncPage() {
                 {!loading && data && (
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
 
-                        {/* <StatCard label="Sessions" value={data.sessions} /> */}
+                        <StatCard label="Sessions" value={data.sessions} />
                         <StatCard label="Séances" value={data.seances} />
                         <StatCard label="Présences" value={data.controlesPresence} />
                         <StatCard label="Justifiés" value={data.controlesJustifies} />
