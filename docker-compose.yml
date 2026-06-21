@@ -8,6 +8,8 @@ services:
     depends_on:
       - postgres
     restart: unless-stopped
+    environment:
+      JAVA_TOOL_OPTIONS: "-Xms1g -Xmx2g -XX:+UseG1GC"
     volumes:
       - C:/bdd/document:/bdd/document
       - C:/bdd/images_destination:/bdd/images_destination

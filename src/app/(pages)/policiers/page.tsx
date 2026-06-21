@@ -257,7 +257,7 @@ export default function PolicierPage() {
                         />
 
                         {/* MAIN UNIT */}
-
+{/* 
                         <Select
                             placeholder="Filtrer par mainUnit"
                             unstyled
@@ -270,7 +270,7 @@ export default function PolicierPage() {
                             onChange={(opt: any) => {
                                 setSelectedMainUnit(opt?.value || null);
                             }}
-                        />
+                        /> */}
 
                         {/* GENDER */}
 
@@ -309,9 +309,7 @@ export default function PolicierPage() {
                                         <th>Postnom</th>
                                         <th>Prénom</th>
                                         <th>Unité</th>
-                                        <th>Main Unit</th>
                                         <th>Sexe</th>
-                                        <th>Téléphone</th>
                                         <th>Photo</th>
                                     </tr>
                                 </thead>
@@ -352,9 +350,8 @@ export default function PolicierPage() {
                                                 <td>{p.postname}</td>
                                                 <td>{p.firstnames}</td>
                                                 <td>{p.unit}</td>
-                                                <td>{p.mainUnit || "-"}</td>
                                                 <td>{p.gender}</td>
-                                                <td>{p.telephone || "-"}</td>
+                                            
 
                                                 {/* PHOTO */}
 
