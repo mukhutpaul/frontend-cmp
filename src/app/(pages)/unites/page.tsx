@@ -15,7 +15,7 @@ import { getMissions } from "@/services/mission.service";
 import { getUsers } from "@/services/auth.service";
 import { getEquipes } from "@/services/equipe.service";
 
-export const selectStyles = {
+const selectStyles = {
     control: () =>
         "input input-bordered w-full min-h-[48px] flex flex-wrap px-2",
 

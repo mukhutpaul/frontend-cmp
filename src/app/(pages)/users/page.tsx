@@ -92,7 +92,7 @@ const updateUserSchema = z.object({
 
 type UpdateUserForm = z.infer<typeof updateUserSchema>;
 
-export const selectStyles = {
+const selectStyles = {
     control: () =>
         "input input-bordered w-full min-h-[48px] flex flex-wrap px-2",
 

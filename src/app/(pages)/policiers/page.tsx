@@ -38,7 +38,7 @@ const PAGE_SIZE = 40;
 
 /* ========================= SELECT STYLE ========================= */
 
-export const selectStyles = {
+const selectStyles = {
     control: () =>
         "input input-bordered w-full min-h-[48px] flex flex-wrap px-2",
 

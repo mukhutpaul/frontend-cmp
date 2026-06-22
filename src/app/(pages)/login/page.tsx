@@ -20,7 +20,7 @@ type LoginForm = {
     password: string;
 };
 
-export const launchConfetti = () => {
+const launchConfetti = () => {
 
     const duration = 3000;
     const animationEnd = Date.now() + duration;
