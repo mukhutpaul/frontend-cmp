@@ -135,7 +135,7 @@ export default function MissionsPage() {
             await updateMission(editingMission.id, {
                 zone: editForm.zone,
                 numero: editForm.numero,
-                isActive:false,
+                isActive: false,
                 chargeMission: {
                     id: editForm.chargeMission.id,
                 },
@@ -220,19 +220,46 @@ export default function MissionsPage() {
         fetchSuperviseurs();
     }, []);
 
-    /**
-     * CREATE
-     */
+    const resetForm = () => {
+        setForm({
+            zone: "",
+            numero: "",
+            chargeMission: {
+                id: 0,
+            },
+        });
+    };
+
     const handleCreate = async () => {
         try {
             await createMission(form);
+
             toast.success("Mission créée");
+
+            resetForm(); // <- nettoyage
+
             setOpenModal(false);
-            fetchMissions();
+
+            await fetchMissions();
+
         } catch {
             toast.error("Erreur création");
         }
     };
+
+    /**
+     * CREATE
+     */
+    // const handleCreate = async () => {
+    //     try {
+    //         await createMission(form);
+    //         toast.success("Mission créée");
+    //         setOpenModal(false);
+    //         fetchMissions();
+    //     } catch {
+    //         toast.error("Erreur création");
+    //     }
+    // };
 
     /**
      * START MISSION
@@ -548,22 +575,22 @@ export default function MissionsPage() {
                                                     </div>
                                                 )}
 
-                                                 {canAdmin && (
-                                                <div className="tooltip" data-tip="Voir unités de la mission">
+                                                {canAdmin && (
+                                                    <div className="tooltip" data-tip="Voir unités de la mission">
 
-                                                    <button
-                                                        className="btn btn-xs btn-info btn-outline"
-                                                        onClick={async () => {
-                                                            setSelectedMission(m);
-                                                            await fetchUnitesMission(m.id);
-                                                            setOpenViewUnits(true);
-                                                        }}
-                                                    >
-                                                        <Eye size={14} />
-                                                    </button>
+                                                        <button
+                                                            className="btn btn-xs btn-info btn-outline"
+                                                            onClick={async () => {
+                                                                setSelectedMission(m);
+                                                                await fetchUnitesMission(m.id);
+                                                                setOpenViewUnits(true);
+                                                            }}
+                                                        >
+                                                            <Eye size={14} />
+                                                        </button>
 
-                                                </div>
-                                                 )}
+                                                    </div>
+                                                )}
 
                                             </td>
                                         </tr>
