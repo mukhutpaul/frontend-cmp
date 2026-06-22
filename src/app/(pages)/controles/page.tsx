@@ -26,7 +26,7 @@ type Mission = {
     };
 };
 
-export const selectStyles = {
+const selectStyles = {
     control: () =>
         "input input-bordered w-full min-h-[48px] flex flex-wrap px-2",
     menu: () =>
