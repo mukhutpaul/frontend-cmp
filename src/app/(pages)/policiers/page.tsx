@@ -227,7 +227,7 @@ export default function PolicierPage() {
 
                 <div className="card bg-base-200">
 
-                    <div className="card-body grid grid-cols-1 md:grid-cols-4 gap-4">
+                    <div className="card-body grid grid-cols-1 md:grid-cols-3 gap-4">
 
                         {/* SEARCH */}
 
