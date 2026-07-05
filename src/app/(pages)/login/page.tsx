@@ -20,38 +20,38 @@ type LoginForm = {
     password: string;
 };
 
-const launchConfetti = () => {
+// const launchConfetti = () => {
 
-    const duration = 3000;
-    const animationEnd = Date.now() + duration;
+//     const duration = 3000;
+//     const animationEnd = Date.now() + duration;
 
-    const colors = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626"];
+//     const colors = ["#2563eb", "#16a34a", "#f59e0b", "#dc2626"];
 
-    const frame = () => {
+//     const frame = () => {
 
-        confetti({
-            particleCount: 4,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0 },
-            colors
-        });
+//         confetti({
+//             particleCount: 4,
+//             angle: 60,
+//             spread: 55,
+//             origin: { x: 0 },
+//             colors
+//         });
 
-        confetti({
-            particleCount: 4,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1 },
-            colors
-        });
+//         confetti({
+//             particleCount: 4,
+//             angle: 120,
+//             spread: 55,
+//             origin: { x: 1 },
+//             colors
+//         });
 
-        if (Date.now() < animationEnd) {
-            requestAnimationFrame(frame);
-        }
-    };
+//         if (Date.now() < animationEnd) {
+//             requestAnimationFrame(frame);
+//         }
+//     };
 
-    frame();
-};
+//     frame();
+// };
 
 const openServerConfig = async () => {
     const { value: formValues } = await Swal.fire({
@@ -136,7 +136,7 @@ export default function LoginPage() {
                 localStorage.setItem("user", JSON.stringify(response.user));
 
                 toast.success("Connexion locale réussie");
-                launchConfetti()
+                // launchConfetti()
                 router.push("/dashboard");
                 return;
             }
@@ -169,7 +169,7 @@ export default function LoginPage() {
                         showConfirmButton: false
                     });
 
-                    launchConfetti();
+                    //launchConfetti();
                     // router.push("/dashboard");
                     return;
 

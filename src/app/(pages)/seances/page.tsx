@@ -4,7 +4,7 @@ import DashboardLayout from "@/components/layout/dashboard-layout";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import Swal from "sweetalert2";
-import confetti from "canvas-confetti";
+// import confetti from "canvas-confetti";
 
 import {
     getSeances,
@@ -207,12 +207,12 @@ export default function SeancesPage() {
         try {
             await deleteSeance(id);
 
-            confetti({
-                particleCount: 150,
-                spread: 100,
-                origin: { y: 0.6 },
-                colors: ["#ef4444", "#f87171", "#fca5a5"],
-            });
+            // confetti({
+            //     particleCount: 150,
+            //     spread: 100,
+            //     origin: { y: 0.6 },
+            //     colors: ["#ef4444", "#f87171", "#fca5a5"],
+            // });
 
             toast.success("Séance supprimée");
 
@@ -397,11 +397,11 @@ export default function SeancesPage() {
                                                         try {
                                                             await startSeance(s.id);
 
-                                                            confetti({
-                                                                particleCount: 120,
-                                                                spread: 90,
-                                                                origin: { y: 0.6 },
-                                                            });
+                                                            // confetti({
+                                                            //     particleCount: 120,
+                                                            //     spread: 90,
+                                                            //     origin: { y: 0.6 },
+                                                            // });
 
                                                             toast.success("Séance démarrée");
                                                             fetchData();
@@ -431,11 +431,11 @@ export default function SeancesPage() {
                                                         try {
                                                             await finishSeance(s.id);
 
-                                                            confetti({
-                                                                particleCount: 80,
-                                                                spread: 70,
-                                                                origin: { y: 0.7 },
-                                                            });
+                                                            // confetti({
+                                                            //     particleCount: 80,
+                                                            //     spread: 70,
+                                                            //     origin: { y: 0.7 },
+                                                            // });
 
                                                             toast.success("Séance terminée");
                                                             fetchData();

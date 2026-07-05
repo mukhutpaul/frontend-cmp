@@ -7,7 +7,7 @@ import Select from "react-select";
 
 import Swal from "sweetalert2";
 import { toast } from "react-toastify";
-import confetti from "canvas-confetti";
+// import confetti from "canvas-confetti";
 
 import { chargerUnite } from "@/services/unite-charge.service";
 import { getUnites, deleteUnite } from "@/services/unite.service";
@@ -547,11 +547,11 @@ export default function UnitePage() {
                                             userId: Number(loadForm.controleurId),
                                         });
 
-                                        confetti({
-                                            particleCount: 120,
-                                            spread: 80,
-                                            origin: { y: 0.6 },
-                                        });
+                                        // confetti({
+                                        //     particleCount: 120,
+                                        //     spread: 80,
+                                        //     origin: { y: 0.6 },
+                                        // });
 
                                         toast.success(
                                             "Unité chargée avec succès"
