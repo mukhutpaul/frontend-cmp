@@ -98,6 +98,14 @@ export default function ControlePage() {
         }
     };
 
+    const profile =
+        typeof window !== "undefined"
+            ? localStorage.getItem("profile")
+            : null;
+
+    const canAdmin =
+        profile === "ADMIN" || profile === "MANAGER";
+
     /* ========================= PHOTO ZOOM ========================= */
     useEffect(() => {
         if (zoomPhoto) {
@@ -661,7 +669,8 @@ export default function ControlePage() {
                                             )}
 
 
-                                            {(c.present === true || c.justifie === true) && (
+                                            {((c.present === true || c.justifie === true) && canAdmin ) && (
+
 
                                                 <button
                                                     className="
